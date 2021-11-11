@@ -27,8 +27,8 @@
 <meta property="og:site_name" content="Study Node">
 <meta property="og:description" content="1、本系列博客，主要是面向Java8的虚拟机。如有特殊说明，会进行标注。 2、本系列博客主要参考尚硅谷的JVM视频教程，整理不易，所以图片打上了一些水印，还请读者见谅。后续可能会加上一些补充的东西。  第1章-JVM和Java体系架构前言你是否也遇到过这些问题？   运行着的线上系统突然卡死，系统无法访问，甚至直接OOM！  想解决线上JVM GC问题，但却无从下手。  新项目上线，对各种JVM">
 <meta property="og:locale" content="en_US">
-<meta property="og:image" content="http://image.moguit.cn/28210d9c1a1a4b93a9034c6ba899b0a2">
-<meta property="og:image" content="http://image.moguit.cn/98cc135498c74c39b4ac2db301e9e749">
+<meta property="og:image" content="https://nodeandimg.oss-cn-wulanchabu.aliyuncs.com/H8]3%7DFLKTIQ@1CUY[O8G~8.png">
+<meta property="og:image" content="https://nodeandimg.oss-cn-wulanchabu.aliyuncs.com/LM%60J85N6AJ41@K2KYNYR%F.png">
 <meta property="og:image" content="https://nodeandimg.oss-cn-wulanchabu.aliyuncs.com/XHN1VXM61][~TA7ZFYXLKT8.png">
 <meta property="og:image" content="https://nodeandimg.oss-cn-wulanchabu.aliyuncs.com/BO4JS0FIW7G%7BCY_OL2DW%7BRJ.png">
 <meta property="og:image" content="https://nodeandimg.oss-cn-wulanchabu.aliyuncs.com/0NG(~36CI53N9Q)]]BWF8Q7.png">
@@ -43,7 +43,7 @@
 <meta property="article:author" content="Hao">
 <meta property="article:tag" content="-JVM -虚拟机">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:image" content="http://image.moguit.cn/28210d9c1a1a4b93a9034c6ba899b0a2">
+<meta name="twitter:image" content="https://nodeandimg.oss-cn-wulanchabu.aliyuncs.com/H8]3%7DFLKTIQ@1CUY[O8G~8.png">
 
 
 <link rel="canonical" href="http://yoursite-url/undefined/JVM%E7%B3%BB%E5%88%97-%E7%AC%AC1%E7%AB%A0-JVM%E4%B8%8EJava%E4%BD%93%E7%B3%BB%E7%BB%93%E6%9E%84/">
@@ -154,7 +154,7 @@
         <span class="site-state-item-name">categories</span>
       </div>
       <div class="site-state-item site-state-tags">
-        <span class="site-state-item-count">1</span>
+        <span class="site-state-item-count">2</span>
         <span class="site-state-item-name">tags</span>
       </div>
   </nav>
@@ -254,11 +254,11 @@
 <li> 新项目上线，对各种JVM参数设置一脸茫然，直接默认吧然后就JJ了。</li>
 <li> 每次面试之前都要重新背一遍JVM的一些原理概念性的东西，然而面试官却经常问你在实际项目中如何调优VM参数，如何解决GC、OOM等问题，一脸懵逼。</li>
 </ol>
-<p><img src="http://image.moguit.cn/28210d9c1a1a4b93a9034c6ba899b0a2" alt="image-20200704111417472"></p>
+<p><img src="https://nodeandimg.oss-cn-wulanchabu.aliyuncs.com/H8]3%7DFLKTIQ@1CUY[O8G~8.png"></p>
 <p>大部分Java开发人员，除会在项目中使用到与Java平台相关的各种高精尖技术，对于Java技术的核心Java虚拟机了解甚少。</p>
 <p>一些有一定工作经验的开发人员，打心眼儿里觉得SSM、微服务等上层技术才是重点，基础技术并不重要，这其实是一种本末倒置的“病态”。如果我们把核心类库的API比做数学公式的话，那么Java虚拟机的知识就好比公式的推导过程。</p>
 <p>计算机系统体系对我们来说越来越远，在不了解底层实现方式的前提下，通过高级语言很容易编写程序代码。但事实上计算机并不认识高级语言</p>
-<p><img src="http://image.moguit.cn/98cc135498c74c39b4ac2db301e9e749" alt="image-20200704112119729"></p>
+<p><img src="https://nodeandimg.oss-cn-wulanchabu.aliyuncs.com/LM%60J85N6AJ41@K2KYNYR%F.png"></p>
 <h2 id="架构师每天都在思考什么？"><a href="#架构师每天都在思考什么？" class="headerlink" title="架构师每天都在思考什么？"></a>架构师每天都在思考什么？</h2><ul>
 <li>应该如何让我的系统更快？</li>
 <li>如何避免系统出现瓶颈？</li>
