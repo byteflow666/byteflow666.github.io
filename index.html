@@ -237,10 +237,11 @@
 <li> 新项目上线，对各种JVM参数设置一脸茫然，直接默认吧然后就JJ了。</li>
 <li> 每次面试之前都要重新背一遍JVM的一些原理概念性的东西，然而面试官却经常问你在实际项目中如何调优VM参数，如何解决GC、OOM等问题，一脸懵逼。</li>
 </ol>
-<p><img src="https://nodeandimg.oss-cn-wulanchabu.aliyuncs.com/H8]3%7DFLKT">IQ@1CUY[O8G~8.png)</p>
+<p><img src="http://image.moguit.cn/28210d9c1a1a4b93a9034c6ba899b0a2" alt="image-20200704111417472"></p>
 <p>大部分Java开发人员，除会在项目中使用到与Java平台相关的各种高精尖技术，对于Java技术的核心Java虚拟机了解甚少。</p>
 <p>一些有一定工作经验的开发人员，打心眼儿里觉得SSM、微服务等上层技术才是重点，基础技术并不重要，这其实是一种本末倒置的“病态”。如果我们把核心类库的API比做数学公式的话，那么Java虚拟机的知识就好比公式的推导过程。</p>
 <p>计算机系统体系对我们来说越来越远，在不了解底层实现方式的前提下，通过高级语言很容易编写程序代码。但事实上计算机并不认识高级语言</p>
+<p><img src="http://image.moguit.cn/98cc135498c74c39b4ac2db301e9e749" alt="image-20200704112119729"></p>
 <h2 id="架构师每天都在思考什么？"><a href="#架构师每天都在思考什么？" class="headerlink" title="架构师每天都在思考什么？"></a>架构师每天都在思考什么？</h2><ul>
 <li>应该如何让我的系统更快？</li>
 <li>如何避免系统出现瓶颈？</li>
@@ -265,9 +266,9 @@
 </li>
 </ul>
 <h2 id="Java-vs-C"><a href="#Java-vs-C" class="headerlink" title="Java vs C++"></a>Java vs C++</h2><p>垃圾收集机制为我们打理了很多繁琐的工作，大大提高了开发的效率，但是，垃圾收集也不是万能的，懂得JVM内部的内存结构、工作机制，是设计高扩展性应用和诊断运行时问题的基础，也是Java工程师进阶的必备能力。</p>
-<p><img src="http://image.moguit.cn/2d7c6889b9ef489daa1fbefd429e60c0" alt="image-20200704112700211"></p>
+<p><img src="https://nodeandimg.oss-cn-wulanchabu.aliyuncs.com/XHN1VXM61][~TA7ZFYXLKT8.png"></p>
 <p>C语言需要自己来分配内存和回收内存，Java全部交给JVM进行分配和回收。</p>
-<h2 id="推荐书籍"><a href="#推荐书籍" class="headerlink" title="推荐书籍"></a>推荐书籍</h2><p><img src="http://image.moguit.cn/40901d4f04d8412d886ad498e9905800" alt="image-20200704145340513"></p>
+<h2 id="推荐书籍"><a href="#推荐书籍" class="headerlink" title="推荐书籍"></a>推荐书籍</h2><p><img src="https://nodeandimg.oss-cn-wulanchabu.aliyuncs.com/BO4JS0FIW7G%7BCY_OL2DW%7BRJ.png"></p>
 <h2 id="Java生态圈"><a href="#Java生态圈" class="headerlink" title="Java生态圈"></a>Java生态圈</h2><p>Java是目前应用最为广泛的软件开发平台之一。随着Java以及Java社区的不断壮大Java 也早已不再是简简单单的一门计算机语言了，它更是一个平台、一种文化、一个社区。</p>
 <ul>
 <li>作为一个平台，Java虚拟机扮演着举足轻重的作用<ul>
@@ -281,7 +282,7 @@
 </li>
 <li>作为一个社区，Java拥有全世界最多的技术拥护者和开源社区支持，有数不清的论坛和资料。从桌面应用软件、嵌入式开发到企业级应用、后台服务器、中间件，都可以看到Java的身影。其应用形式之复杂、参与人数之众多也令人咋舌。</li>
 </ul>
-<p><img src="http://image.moguit.cn/6e7c0592372b4c28abbb6f8156148514" alt="image-20200704151731216"></p>
+<p><img src="https://nodeandimg.oss-cn-wulanchabu.aliyuncs.com/0NG(~36CI53N9Q)]]BWF8Q7.png"></p>
 <p>每个语言都需要转换成字节码文件，最后转换的字节码文件都能通过Java虚拟机进行运行和处理</p>
 <p><img src="http://image.moguit.cn/ea6a8d836f6c4ee5a19ccb9c6e1df27c" alt="image-20200704152052489"></p>
 <p>随着Java7的正式发布，Java虚拟机的设计者们通过JSR-292规范基本实现在Java虚拟机平台上运行非Java语言编写的程序。</p>
@@ -364,9 +365,9 @@
 <li><p>在今天，Java程序的运行性能早已脱胎换骨，已经达到了可以和C/C++程序一较高下的地步。</p>
 </li>
 </ul>
-<p><img src="http://image.moguit.cn/6a8c45cf15694680936358d8b0c439e8" alt="image-20200704183436495"></p>
+<p><img src="https://nodeandimg.oss-cn-wulanchabu.aliyuncs.com/@1B_DX_~RTC3~%7B_CEDG8ON6.png"></p>
 <p>执行引擎包含三部分：解释器，及时编译器，垃圾回收器</p>
-<h2 id="Java代码执行流程"><a href="#Java代码执行流程" class="headerlink" title="Java代码执行流程"></a>Java代码执行流程</h2><p><img src="http://image.moguit.cn/b42d3440ece442e8977247c7e22b3685" alt="image-20200704210429535"></p>
+<h2 id="Java代码执行流程"><a href="#Java代码执行流程" class="headerlink" title="Java代码执行流程"></a>Java代码执行流程</h2><p><img src="https://nodeandimg.oss-cn-wulanchabu.aliyuncs.com/DJ72XD]@T~%60O~L1~XRJIPZ4.png"></p>
 <p>只是能生成被Java虚拟机所能解释的字节码文件，那么理论上就可以自己设计一套代码了</p>
 <h2 id="JVM的架构模型"><a href="#JVM的架构模型" class="headerlink" title="JVM的架构模型"></a>JVM的架构模型</h2><p>Java编译器输入的指令流基本上是一种基于栈的指令集架构，另外一种指令集架构则是基于寄存器的指令集架构。具体来说：这两种架构之间的区别：</p>
 <p>基于栈式架构的特点</p>
