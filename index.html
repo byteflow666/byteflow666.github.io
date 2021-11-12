@@ -122,6 +122,8 @@
 
         <div class="site-overview-wrap sidebar-panel">
           <div class="site-author site-overview-item animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="Hao"
+      src="https://nodeandimg.oss-cn-wulanchabu.aliyuncs.com/}VRZRM08TG_W9[WMAD}69[O.png">
   <p class="site-author-name" itemprop="name">Hao</p>
   <div class="site-description" itemprop="description">It's an IT blog...</div>
 </div>
@@ -134,15 +136,25 @@
         </a>
       </div>
       <div class="site-state-item site-state-categories">
+          <a href="/categories/">
         <span class="site-state-item-count">2</span>
-        <span class="site-state-item-name">categories</span>
+        <span class="site-state-item-name">categories</span></a>
       </div>
       <div class="site-state-item site-state-tags">
+          <a href="/tags/">
         <span class="site-state-item-count">2</span>
-        <span class="site-state-item-name">tags</span>
+        <span class="site-state-item-name">tags</span></a>
       </div>
   </nav>
 </div>
+  <div class="links-of-author site-overview-item animated">
+      <span class="links-of-author-item">
+        <a href="https://github.com/byteflow666" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;byteflow666" rel="noopener" target="_blank">GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="/1455843190@qq.com" title="E-Mail → 1455843190@qq.com">E-Mail</a>
+      </span>
+  </div>
 
 
 
@@ -179,7 +191,7 @@
     <link itemprop="mainEntityOfPage" href="http://yoursite-url/undefined/JVM%E7%B3%BB%E5%88%97-%E7%AC%AC3%E7%AB%A0-%E8%BF%90%E8%A1%8C%E6%97%B6%E6%95%B0%E6%8D%AE%E5%8C%BA/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="image" content="https://nodeandimg.oss-cn-wulanchabu.aliyuncs.com/}VRZRM08TG_W9[WMAD}69[O.png">
       <meta itemprop="name" content="Hao">
       <meta itemprop="description" content="It's an IT blog...">
     </span>
@@ -290,7 +302,7 @@
     <link itemprop="mainEntityOfPage" href="http://yoursite-url/undefined/JVM%E7%B3%BB%E5%88%97-%E7%AC%AC2%E7%AB%A0-%E7%B1%BB%E5%8A%A0%E8%BD%BD%E5%AD%90%E7%B3%BB%E7%BB%9F/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="image" content="https://nodeandimg.oss-cn-wulanchabu.aliyuncs.com/}VRZRM08TG_W9[WMAD}69[O.png">
       <meta itemprop="name" content="Hao">
       <meta itemprop="description" content="It's an IT blog...">
     </span>
@@ -558,7 +570,7 @@
     <link itemprop="mainEntityOfPage" href="http://yoursite-url/undefined/JVM%E7%B3%BB%E5%88%97-%E7%AC%AC1%E7%AB%A0-JVM%E4%B8%8EJava%E4%BD%93%E7%B3%BB%E7%BB%93%E6%9E%84/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="image" content="https://nodeandimg.oss-cn-wulanchabu.aliyuncs.com/}VRZRM08TG_W9[WMAD}69[O.png">
       <meta itemprop="name" content="Hao">
       <meta itemprop="description" content="It's an IT blog...">
     </span>
@@ -663,7 +675,7 @@
 </ul>
 <p><img src="https://nodeandimg.oss-cn-wulanchabu.aliyuncs.com/0NG(~36CI53N9Q)]]BWF8Q7.png"></p>
 <p>每个语言都需要转换成字节码文件，最后转换的字节码文件都能通过Java虚拟机进行运行和处理</p>
-<p><img src="http://image.moguit.cn/ea6a8d836f6c4ee5a19ccb9c6e1df27c" alt="image-20200704152052489"></p>
+<p><img src="https://nodeandimg.oss-cn-wulanchabu.aliyuncs.com/sdf134.png"></p>
 <p>随着Java7的正式发布，Java虚拟机的设计者们通过JSR-292规范基本实现在Java虚拟机平台上运行非Java语言编写的程序。</p>
 <p>Java虚拟机根本不关心运行在其内部的程序到底是使用何种编程语言编写的，它只关心“字节码”文件。也就是说Java虚拟机拥有语言无关性，并不会单纯地与Java语言“终身绑定”，只要其他编程语言的编译结果满足并包含Java虚拟机的内部指令集、符号表以及其他的辅助信息，它就是一个有效的字节码文件，就能够被虚拟机所识别并装载运行。</p>
 <h2 id="字节码"><a href="#字节码" class="headerlink" title="字节码"></a>字节码</h2><p>我们平时说的java字节码，指的是用java语言编译成的字节码。准确的说任何能在jvm平台上执行的字节码格式都是一样的。所以应该统称为：jvm字节码。</p>
@@ -712,9 +724,9 @@
 <li><p>同年，JDK11发布，LTS版本的JDK，发布革命性的zGc，调整JDK授权许可</p>
 </li>
 <li><p>2019年，JDK12发布，加入RedHat领导开发的shenandoah GC</p>
+<p><img src="https://nodeandimg.oss-cn-wulanchabu.aliyuncs.com/6SG4O%60EF4NWLHJ[Z@C1]CPH.png"></p>
 </li>
 </ul>
-<p><img src="http://image.moguit.cn/39bad17df8ab4632944fb87dc35b6c51" alt="image-20200704182035810"></p>
 <p>在JDK11之前，oracleJDK中还会存在一些openJDK中没有的、闭源的功能。但在JDK11中，我们可以认为openJDK和oracleJDK代码实质上已经完全一致的程度。</p>
 <h2 id="虚拟机与Java虚拟机"><a href="#虚拟机与Java虚拟机" class="headerlink" title="虚拟机与Java虚拟机"></a>虚拟机与Java虚拟机</h2><h3 id="虚拟机"><a href="#虚拟机" class="headerlink" title="虚拟机"></a>虚拟机</h3><p>所谓虚拟机（Virtual Machine），就是一台虚拟的计算机。它是一款软件，用来执行一系列虚拟计算机指令。大体上，虚拟机可以分为系统虚拟机和程序虚拟机。</p>
 <ul>
@@ -733,9 +745,9 @@
 <li>自动垃圾回收功能</li>
 </ul>
 <h2 id="JVM的位置"><a href="#JVM的位置" class="headerlink" title="JVM的位置"></a>JVM的位置</h2><p>JVM是运行在操作系统之上的，它与硬件没有直接的交互</p>
-<p><img src="http://image.moguit.cn/ca8b06db56664543b3905295e884345e" alt="image-20200704183048061"></p>
+<p><img src="https://nodeandimg.oss-cn-wulanchabu.aliyuncs.com/%Z%60KY[BDR3YQN27D0K65.png"></p>
 <p>Java的体系结构</p>
-<p><img src="http://image.moguit.cn/dd1609513a824607b4703474f00a8df0" alt="image-20200704183236169"></p>
+<p><img src="https://nodeandimg.oss-cn-wulanchabu.aliyuncs.com/VFT3UC%7DB]K.png"></p>
 <h2 id="JVM整体结构"><a href="#JVM整体结构" class="headerlink" title="JVM整体结构"></a>JVM整体结构</h2><ul>
 <li><p>HotSpot VM是目前市面上高性能虚拟机的代表作之一。</p>
 </li>
