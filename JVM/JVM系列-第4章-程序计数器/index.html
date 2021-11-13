@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="JVM">
 <head>
   <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width">
@@ -25,10 +25,10 @@
 <meta name="description" content="程序计数器介绍JVM中的程序计数寄存器（Program Counter Register）中，Register的命名源于CPU的寄存器，寄存器存储指令相关的现场信息。CPU只有把数据装载到寄存器才能够运行。这里，并非是广义上所指的物理寄存器，或许将其翻译为PC计数器（或指令计数器）会更加贴切（也称为程序钩子），并且也不容易引起一些不必要的误会。JVM中的PC寄存器是对物理PC寄存器的一种抽象模拟。">
 <meta property="og:type" content="article">
 <meta property="og:title" content="JVM系列-第4章-程序计数器">
-<meta property="og:url" content="http://yoursite-url/undefined/JVM%E7%B3%BB%E5%88%97-%E7%AC%AC4%E7%AB%A0-%E7%A8%8B%E5%BA%8F%E8%AE%A1%E6%95%B0%E5%99%A8/index.html">
+<meta property="og:url" content="http://yoursite-url/JVM/JVM%E7%B3%BB%E5%88%97-%E7%AC%AC4%E7%AB%A0-%E7%A8%8B%E5%BA%8F%E8%AE%A1%E6%95%B0%E5%99%A8/index.html">
 <meta property="og:site_name" content="Study Node">
 <meta property="og:description" content="程序计数器介绍JVM中的程序计数寄存器（Program Counter Register）中，Register的命名源于CPU的寄存器，寄存器存储指令相关的现场信息。CPU只有把数据装载到寄存器才能够运行。这里，并非是广义上所指的物理寄存器，或许将其翻译为PC计数器（或指令计数器）会更加贴切（也称为程序钩子），并且也不容易引起一些不必要的误会。JVM中的PC寄存器是对物理PC寄存器的一种抽象模拟。">
-<meta property="og:locale" content="en_US">
+<meta property="og:locale">
 <meta property="og:image" content="https://nodeandimg.oss-cn-wulanchabu.aliyuncs.com/rhszxccsdg.png">
 <meta property="og:image" content="https://nodeandimg.oss-cn-wulanchabu.aliyuncs.com/12easda.png">
 <meta property="og:image" content="https://nodeandimg.oss-cn-wulanchabu.aliyuncs.com/dfzdfzdfzfzs.png">
@@ -44,11 +44,11 @@
 <meta name="twitter:image" content="https://nodeandimg.oss-cn-wulanchabu.aliyuncs.com/rhszxccsdg.png">
 
 
-<link rel="canonical" href="http://yoursite-url/undefined/JVM%E7%B3%BB%E5%88%97-%E7%AC%AC4%E7%AB%A0-%E7%A8%8B%E5%BA%8F%E8%AE%A1%E6%95%B0%E5%99%A8/">
+<link rel="canonical" href="http://yoursite-url/JVM/JVM%E7%B3%BB%E5%88%97-%E7%AC%AC4%E7%AB%A0-%E7%A8%8B%E5%BA%8F%E8%AE%A1%E6%95%B0%E5%99%A8/">
 
 
 
-<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"en","comments":true,"permalink":"http://yoursite-url/undefined/JVM%E7%B3%BB%E5%88%97-%E7%AC%AC4%E7%AB%A0-%E7%A8%8B%E5%BA%8F%E8%AE%A1%E6%95%B0%E5%99%A8/","path":"undefined/JVM系列-第4章-程序计数器/","title":"JVM系列-第4章-程序计数器"}</script>
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"JVM","comments":true,"permalink":"http://yoursite-url/JVM/JVM%E7%B3%BB%E5%88%97-%E7%AC%AC4%E7%AB%A0-%E7%A8%8B%E5%BA%8F%E8%AE%A1%E6%95%B0%E5%99%A8/","path":"JVM/JVM系列-第4章-程序计数器/","title":"JVM系列-第4章-程序计数器"}</script>
 
 <script class="next-config" data-name="calendar" type="application/json">""</script>
 <title>JVM系列-第4章-程序计数器 | Study Node</title>
@@ -172,7 +172,7 @@
   <nav class="site-state">
       <div class="site-state-item site-state-posts">
         <a href="/archives/">
-          <span class="site-state-item-count">8</span>
+          <span class="site-state-item-count">11</span>
           <span class="site-state-item-name">posts</span>
         </a>
       </div>
@@ -229,8 +229,8 @@
   
   
 
-  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="en">
-    <link itemprop="mainEntityOfPage" href="http://yoursite-url/undefined/JVM%E7%B3%BB%E5%88%97-%E7%AC%AC4%E7%AB%A0-%E7%A8%8B%E5%BA%8F%E8%AE%A1%E6%95%B0%E5%99%A8/">
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="JVM">
+    <link itemprop="mainEntityOfPage" href="http://yoursite-url/JVM/JVM%E7%B3%BB%E5%88%97-%E7%AC%AC4%E7%AB%A0-%E7%A8%8B%E5%BA%8F%E8%AE%A1%E6%95%B0%E5%99%A8/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="image" content="https://nodeandimg.oss-cn-wulanchabu.aliyuncs.com/}VRZRM08TG_W9[WMAD}69[O.png">
@@ -332,12 +332,12 @@
 
           <div class="post-nav">
             <div class="post-nav-item">
-                <a href="/undefined/JVM%E7%B3%BB%E5%88%97-%E7%AC%AC3%E7%AB%A0-%E8%BF%90%E8%A1%8C%E6%97%B6%E6%95%B0%E6%8D%AE%E5%8C%BA/" rel="prev" title="JVM系列-第3章-运行时数据区概述及线程">
+                <a href="/JVM/JVM%E7%B3%BB%E5%88%97-%E7%AC%AC3%E7%AB%A0-%E8%BF%90%E8%A1%8C%E6%97%B6%E6%95%B0%E6%8D%AE%E5%8C%BA/" rel="prev" title="JVM系列-第3章-运行时数据区概述及线程">
                   <i class="fa fa-chevron-left"></i> JVM系列-第3章-运行时数据区概述及线程
                 </a>
             </div>
             <div class="post-nav-item">
-                <a href="/undefined/JVM%E7%B3%BB%E5%88%97-%E7%AC%AC5%E7%AB%A0-%E8%99%9A%E6%8B%9F%E6%9C%BA%E6%A0%88/" rel="next" title="JVM系列-第5章-虚拟机栈">
+                <a href="/JVM/JVM%E7%B3%BB%E5%88%97-%E7%AC%AC5%E7%AB%A0-%E8%99%9A%E6%8B%9F%E6%9C%BA%E6%A0%88/" rel="next" title="JVM系列-第5章-虚拟机栈">
                   JVM系列-第5章-虚拟机栈 <i class="fa fa-chevron-right"></i>
                 </a>
             </div>

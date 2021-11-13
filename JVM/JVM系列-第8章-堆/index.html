@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="JVM">
 <head>
   <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width">
@@ -25,10 +25,10 @@
 <meta name="description" content="堆堆的核心概念堆针对一个JVM进程来说是唯一的，也就是一个进程只有一个JVM，但是进程包含多个线程，他们是共享同一堆空间的。  一个JVM实例只存在一个堆内存，堆也是Java内存管理的核心区域。 Java堆区在JVM启动的时候即被创建，其空间大小也就确定了。是JVM管理的最大一块内存空间。  堆内存的大小是可以调节的。  《Java虚拟机规范》规定，堆可以处于物理上不连续的内存空间中，但在逻辑上它">
 <meta property="og:type" content="article">
 <meta property="og:title" content="JVM系列-第8章-堆">
-<meta property="og:url" content="http://yoursite-url/undefined/JVM%E7%B3%BB%E5%88%97-%E7%AC%AC8%E7%AB%A0-%E5%A0%86/index.html">
+<meta property="og:url" content="http://yoursite-url/JVM/JVM%E7%B3%BB%E5%88%97-%E7%AC%AC8%E7%AB%A0-%E5%A0%86/index.html">
 <meta property="og:site_name" content="Study Node">
 <meta property="og:description" content="堆堆的核心概念堆针对一个JVM进程来说是唯一的，也就是一个进程只有一个JVM，但是进程包含多个线程，他们是共享同一堆空间的。  一个JVM实例只存在一个堆内存，堆也是Java内存管理的核心区域。 Java堆区在JVM启动的时候即被创建，其空间大小也就确定了。是JVM管理的最大一块内存空间。  堆内存的大小是可以调节的。  《Java虚拟机规范》规定，堆可以处于物理上不连续的内存空间中，但在逻辑上它">
-<meta property="og:locale" content="en_US">
+<meta property="og:locale">
 <meta property="og:image" content="https://nodeandimg.oss-cn-wulanchabu.aliyuncs.com/70%7DWFU5U%60_M3TRX.png">
 <meta property="og:image" content="https://nodeandimg.oss-cn-wulanchabu.aliyuncs.com/B09SW4E_XK.png">
 <meta property="og:image" content="https://nodeandimg.oss-cn-wulanchabu.aliyuncs.com/VQ~53U57XD.png">
@@ -64,11 +64,11 @@
 <meta name="twitter:image" content="https://nodeandimg.oss-cn-wulanchabu.aliyuncs.com/70%7DWFU5U%60_M3TRX.png">
 
 
-<link rel="canonical" href="http://yoursite-url/undefined/JVM%E7%B3%BB%E5%88%97-%E7%AC%AC8%E7%AB%A0-%E5%A0%86/">
+<link rel="canonical" href="http://yoursite-url/JVM/JVM%E7%B3%BB%E5%88%97-%E7%AC%AC8%E7%AB%A0-%E5%A0%86/">
 
 
 
-<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"en","comments":true,"permalink":"http://yoursite-url/undefined/JVM%E7%B3%BB%E5%88%97-%E7%AC%AC8%E7%AB%A0-%E5%A0%86/","path":"undefined/JVM系列-第8章-堆/","title":"JVM系列-第8章-堆"}</script>
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"JVM","comments":true,"permalink":"http://yoursite-url/JVM/JVM%E7%B3%BB%E5%88%97-%E7%AC%AC8%E7%AB%A0-%E5%A0%86/","path":"JVM/JVM系列-第8章-堆/","title":"JVM系列-第8章-堆"}</script>
 
 <script class="next-config" data-name="calendar" type="application/json">""</script>
 <title>JVM系列-第8章-堆 | Study Node</title>
@@ -192,7 +192,7 @@
   <nav class="site-state">
       <div class="site-state-item site-state-posts">
         <a href="/archives/">
-          <span class="site-state-item-count">8</span>
+          <span class="site-state-item-count">11</span>
           <span class="site-state-item-name">posts</span>
         </a>
       </div>
@@ -249,8 +249,8 @@
   
   
 
-  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="en">
-    <link itemprop="mainEntityOfPage" href="http://yoursite-url/undefined/JVM%E7%B3%BB%E5%88%97-%E7%AC%AC8%E7%AB%A0-%E5%A0%86/">
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="JVM">
+    <link itemprop="mainEntityOfPage" href="http://yoursite-url/JVM/JVM%E7%B3%BB%E5%88%97-%E7%AC%AC8%E7%AB%A0-%E5%A0%86/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="image" content="https://nodeandimg.oss-cn-wulanchabu.aliyuncs.com/}VRZRM08TG_W9[WMAD}69[O.png">
@@ -713,11 +713,14 @@
 
           <div class="post-nav">
             <div class="post-nav-item">
-                <a href="/undefined/JVM%E7%B3%BB%E5%88%97-%E7%AC%AC7%E7%AB%A0-%E6%9C%AC%E5%9C%B0%E6%96%B9%E6%B3%95%E6%A0%88/" rel="prev" title="JVM系列-第7章-本地方法栈">
+                <a href="/JVM/JVM%E7%B3%BB%E5%88%97-%E7%AC%AC7%E7%AB%A0-%E6%9C%AC%E5%9C%B0%E6%96%B9%E6%B3%95%E6%A0%88/" rel="prev" title="JVM系列-第7章-本地方法栈">
                   <i class="fa fa-chevron-left"></i> JVM系列-第7章-本地方法栈
                 </a>
             </div>
             <div class="post-nav-item">
+                <a href="/JVM/JVM%E7%B3%BB%E5%88%97-%E7%AC%AC9%E7%AB%A0-%E6%96%B9%E6%B3%95%E5%8C%BA/" rel="next" title="JVM系列-第9章-方法区">
+                  JVM系列-第9章-方法区 <i class="fa fa-chevron-right"></i>
+                </a>
             </div>
           </div>
     </footer>

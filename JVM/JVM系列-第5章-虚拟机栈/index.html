@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="JVM">
 <head>
   <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width">
@@ -25,10 +25,10 @@
 <meta name="description" content="虚拟机栈简介虚拟机栈的出现背景  由于跨平台性的设计，Java的指令都是根据栈来设计的。不同平台CPU架构不同，所以不能设计为基于寄存器的【如果设计成基于寄存器的，耦合度高，性能会有所提升，因为可以对具体的CPU架构进行优化，但是跨平台性大大降低】。  优点是跨平台，指令集小，编译器容易实现，缺点是性能下降，实现同样的功能需要更多的指令。  内存中的栈与堆 首先栈是运行时的单位，而堆是存储的单位。">
 <meta property="og:type" content="article">
 <meta property="og:title" content="JVM系列-第5章-虚拟机栈">
-<meta property="og:url" content="http://yoursite-url/undefined/JVM%E7%B3%BB%E5%88%97-%E7%AC%AC5%E7%AB%A0-%E8%99%9A%E6%8B%9F%E6%9C%BA%E6%A0%88/index.html">
+<meta property="og:url" content="http://yoursite-url/JVM/JVM%E7%B3%BB%E5%88%97-%E7%AC%AC5%E7%AB%A0-%E8%99%9A%E6%8B%9F%E6%9C%BA%E6%A0%88/index.html">
 <meta property="og:site_name" content="Study Node">
 <meta property="og:description" content="虚拟机栈简介虚拟机栈的出现背景  由于跨平台性的设计，Java的指令都是根据栈来设计的。不同平台CPU架构不同，所以不能设计为基于寄存器的【如果设计成基于寄存器的，耦合度高，性能会有所提升，因为可以对具体的CPU架构进行优化，但是跨平台性大大降低】。  优点是跨平台，指令集小，编译器容易实现，缺点是性能下降，实现同样的功能需要更多的指令。  内存中的栈与堆 首先栈是运行时的单位，而堆是存储的单位。">
-<meta property="og:locale" content="en_US">
+<meta property="og:locale">
 <meta property="og:image" content="https://nodeandimg.oss-cn-wulanchabu.aliyuncs.com/IFF3AN8IDVE6SG]0F$@_TGB.png">
 <meta property="og:image" content="https://nodeandimg.oss-cn-wulanchabu.aliyuncs.com/$OWFF3P~NWR[9DPUOU48.png">
 <meta property="og:image" content="https://nodeandimg.oss-cn-wulanchabu.aliyuncs.com/_W%7D85%7B8IO@DJOOY8J~S]0%7B7.png">
@@ -57,11 +57,11 @@
 <meta name="twitter:image" content="https://nodeandimg.oss-cn-wulanchabu.aliyuncs.com/IFF3AN8IDVE6SG]0F$@_TGB.png">
 
 
-<link rel="canonical" href="http://yoursite-url/undefined/JVM%E7%B3%BB%E5%88%97-%E7%AC%AC5%E7%AB%A0-%E8%99%9A%E6%8B%9F%E6%9C%BA%E6%A0%88/">
+<link rel="canonical" href="http://yoursite-url/JVM/JVM%E7%B3%BB%E5%88%97-%E7%AC%AC5%E7%AB%A0-%E8%99%9A%E6%8B%9F%E6%9C%BA%E6%A0%88/">
 
 
 
-<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"en","comments":true,"permalink":"http://yoursite-url/undefined/JVM%E7%B3%BB%E5%88%97-%E7%AC%AC5%E7%AB%A0-%E8%99%9A%E6%8B%9F%E6%9C%BA%E6%A0%88/","path":"undefined/JVM系列-第5章-虚拟机栈/","title":"JVM系列-第5章-虚拟机栈"}</script>
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"JVM","comments":true,"permalink":"http://yoursite-url/JVM/JVM%E7%B3%BB%E5%88%97-%E7%AC%AC5%E7%AB%A0-%E8%99%9A%E6%8B%9F%E6%9C%BA%E6%A0%88/","path":"JVM/JVM系列-第5章-虚拟机栈/","title":"JVM系列-第5章-虚拟机栈"}</script>
 
 <script class="next-config" data-name="calendar" type="application/json">""</script>
 <title>JVM系列-第5章-虚拟机栈 | Study Node</title>
@@ -185,7 +185,7 @@
   <nav class="site-state">
       <div class="site-state-item site-state-posts">
         <a href="/archives/">
-          <span class="site-state-item-count">8</span>
+          <span class="site-state-item-count">11</span>
           <span class="site-state-item-name">posts</span>
         </a>
       </div>
@@ -242,8 +242,8 @@
   
   
 
-  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="en">
-    <link itemprop="mainEntityOfPage" href="http://yoursite-url/undefined/JVM%E7%B3%BB%E5%88%97-%E7%AC%AC5%E7%AB%A0-%E8%99%9A%E6%8B%9F%E6%9C%BA%E6%A0%88/">
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="JVM">
+    <link itemprop="mainEntityOfPage" href="http://yoursite-url/JVM/JVM%E7%B3%BB%E5%88%97-%E7%AC%AC5%E7%AB%A0-%E8%99%9A%E6%8B%9F%E6%9C%BA%E6%A0%88/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="image" content="https://nodeandimg.oss-cn-wulanchabu.aliyuncs.com/}VRZRM08TG_W9[WMAD}69[O.png">
@@ -823,12 +823,12 @@
 
           <div class="post-nav">
             <div class="post-nav-item">
-                <a href="/undefined/JVM%E7%B3%BB%E5%88%97-%E7%AC%AC4%E7%AB%A0-%E7%A8%8B%E5%BA%8F%E8%AE%A1%E6%95%B0%E5%99%A8/" rel="prev" title="JVM系列-第4章-程序计数器">
+                <a href="/JVM/JVM%E7%B3%BB%E5%88%97-%E7%AC%AC4%E7%AB%A0-%E7%A8%8B%E5%BA%8F%E8%AE%A1%E6%95%B0%E5%99%A8/" rel="prev" title="JVM系列-第4章-程序计数器">
                   <i class="fa fa-chevron-left"></i> JVM系列-第4章-程序计数器
                 </a>
             </div>
             <div class="post-nav-item">
-                <a href="/undefined/JVM%E7%B3%BB%E5%88%97-%E7%AC%AC6%E7%AB%A0-%E6%9C%AC%E5%9C%B0%E6%96%B9%E6%B3%95%E6%8E%A5%E5%8F%A3/" rel="next" title="JVM系列-第6章-本地方法接口">
+                <a href="/JVM/JVM%E7%B3%BB%E5%88%97-%E7%AC%AC6%E7%AB%A0-%E6%9C%AC%E5%9C%B0%E6%96%B9%E6%B3%95%E6%8E%A5%E5%8F%A3/" rel="next" title="JVM系列-第6章-本地方法接口">
                   JVM系列-第6章-本地方法接口 <i class="fa fa-chevron-right"></i>
                 </a>
             </div>
