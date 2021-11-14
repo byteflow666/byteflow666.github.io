@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="JVM">
+<html lang="思考">
 <head>
   <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width">
@@ -22,32 +22,33 @@
   <script src="https://cdn.jsdelivr.net/npm/pace-js@1.2.4/pace.min.js" integrity="sha256-gqd7YTjg/BtfqWSwsJOvndl0Bxc8gFImLEkXQT8+qj0=" crossorigin="anonymous"></script>
 
 <script class="next-config" data-name="main" type="application/json">{"hostname":"yoursite-url","root":"/","images":"/images","scheme":"Gemini","darkmode":false,"version":"8.8.1","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12},"copycode":false,"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"Searching...","empty":"We didn't find any results for the search: ${query}","hits_time":"${hits} results found in ${time} ms","hits":"${hits} results found"},"path":"/search.json","localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false}}</script><script src="/js/config.js"></script>
-<meta name="description" content="直接内存 Direct Memory不是虚拟机运行时数据区的一部分，也不是《Java虚拟机规范》中定义的内存区域。 直接内存是在Java堆外的、直接向系统申请的内存区间。 来源于NIO，通过存在堆中的DirectByteBuffer操作Native内存 通常，访问直接内存的速度会优于Java堆。即读写性能高。  因此出于性能考虑，读写频繁的场合可能会考虑使用直接内存。 Java的NIO库允许Jav">
+<meta name="description" content="开发一个笔记软件为什么要开发一个笔记软件目前我是一个大三的计算机专业学生，每次都要用电脑区学一些东西但是笔记软件太多以至于我数不过来,我刚开始老师都用的记事本,我发现这东西形同虚设记了等于没记。有时候想看笔记还必要要打开电脑去看笔记,所以我就搭建了一个自己的博客。今天突然想到了为什么不可以开发出来一个手机电脑都可以用的笔记软件的结构清晰的笔记软件呢  注:这里的结构清晰指的是逻辑结构 例如目录等">
 <meta property="og:type" content="article">
-<meta property="og:title" content="JVM系列-第11章-直接内存">
-<meta property="og:url" content="http://yoursite-url/JVM/JVM%E7%B3%BB%E5%88%97-%E7%AC%AC11%E7%AB%A0-%E7%9B%B4%E6%8E%A5%E5%86%85%E5%AD%98/index.html">
+<meta property="og:title" content="开发一个笔记软件">
+<meta property="og:url" content="http://yoursite-url/%E6%80%9D%E8%80%83/%E8%AE%B0%E7%AC%94%E8%AE%B0%E8%BD%AF%E4%BB%B6/index.html">
 <meta property="og:site_name" content="Study Node">
-<meta property="og:description" content="直接内存 Direct Memory不是虚拟机运行时数据区的一部分，也不是《Java虚拟机规范》中定义的内存区域。 直接内存是在Java堆外的、直接向系统申请的内存区间。 来源于NIO，通过存在堆中的DirectByteBuffer操作Native内存 通常，访问直接内存的速度会优于Java堆。即读写性能高。  因此出于性能考虑，读写频繁的场合可能会考虑使用直接内存。 Java的NIO库允许Jav">
+<meta property="og:description" content="开发一个笔记软件为什么要开发一个笔记软件目前我是一个大三的计算机专业学生，每次都要用电脑区学一些东西但是笔记软件太多以至于我数不过来,我刚开始老师都用的记事本,我发现这东西形同虚设记了等于没记。有时候想看笔记还必要要打开电脑去看笔记,所以我就搭建了一个自己的博客。今天突然想到了为什么不可以开发出来一个手机电脑都可以用的笔记软件的结构清晰的笔记软件呢  注:这里的结构清晰指的是逻辑结构 例如目录等">
 <meta property="og:locale">
-<meta property="og:image" content="https://nodeandimg.oss-cn-wulanchabu.aliyuncs.com/F%60BIGT9TCQI4X~FB2Y.png">
-<meta property="og:image" content="https://nodeandimg.oss-cn-wulanchabu.aliyuncs.com/7ESAKZ%7B%60Z%7DPHF.png">
-<meta property="article:published_time" content="2021-10-23T02:38:42.000Z">
-<meta property="article:modified_time" content="2021-10-23T02:38:42.000Z">
+<meta property="og:image" content="https://nodeandimg.oss-cn-wulanchabu.aliyuncs.com/W%K0_O_X64N6M8%%7BLDEEQFE.png">
+<meta property="og:image" content="https://nodeandimg.oss-cn-wulanchabu.aliyuncs.com/JYAPJRM3QTJWM1KGGKJI.png">
+<meta property="og:image" content="https://nodeandimg.oss-cn-wulanchabu.aliyuncs.com/BVL8L2GW2HD9M6YBRP.png">
+<meta property="og:image" content="https://nodeandimg.oss-cn-wulanchabu.aliyuncs.com/X9URTOVN~N2FN7NQ6C_J.png">
+<meta property="article:published_time" content="2021-11-14T11:55:26.000Z">
+<meta property="article:modified_time" content="2021-11-14T11:55:26.000Z">
 <meta property="article:author" content="Hao">
-<meta property="article:tag" content="JVM">
-<meta property="article:tag" content="虚拟机">
+<meta property="article:tag" content="思考">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:image" content="https://nodeandimg.oss-cn-wulanchabu.aliyuncs.com/F%60BIGT9TCQI4X~FB2Y.png">
+<meta name="twitter:image" content="https://nodeandimg.oss-cn-wulanchabu.aliyuncs.com/W%K0_O_X64N6M8%%7BLDEEQFE.png">
 
 
-<link rel="canonical" href="http://yoursite-url/JVM/JVM%E7%B3%BB%E5%88%97-%E7%AC%AC11%E7%AB%A0-%E7%9B%B4%E6%8E%A5%E5%86%85%E5%AD%98/">
+<link rel="canonical" href="http://yoursite-url/%E6%80%9D%E8%80%83/%E8%AE%B0%E7%AC%94%E8%AE%B0%E8%BD%AF%E4%BB%B6/">
 
 
 
-<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"JVM","comments":true,"permalink":"http://yoursite-url/JVM/JVM%E7%B3%BB%E5%88%97-%E7%AC%AC11%E7%AB%A0-%E7%9B%B4%E6%8E%A5%E5%86%85%E5%AD%98/","path":"JVM/JVM系列-第11章-直接内存/","title":"JVM系列-第11章-直接内存"}</script>
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"思考","comments":true,"permalink":"http://yoursite-url/%E6%80%9D%E8%80%83/%E8%AE%B0%E7%AC%94%E8%AE%B0%E8%BD%AF%E4%BB%B6/","path":"思考/记笔记软件/","title":"开发一个笔记软件"}</script>
 
 <script class="next-config" data-name="calendar" type="application/json">""</script>
-<title>JVM系列-第11章-直接内存 | Study Node</title>
+<title>开发一个笔记软件 | Study Node</title>
   
 
 
@@ -153,7 +154,7 @@
       <div class="sidebar-panel-container">
         <!--noindex-->
         <div class="post-toc-wrap sidebar-panel">
-            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#%E7%9B%B4%E6%8E%A5%E5%86%85%E5%AD%98-Direct-Memory"><span class="nav-number">1.</span> <span class="nav-text">直接内存 Direct Memory</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E9%9D%9E%E7%9B%B4%E6%8E%A5%E7%BC%93%E5%AD%98%E5%8C%BA%E5%92%8C%E7%BC%93%E5%AD%98%E5%8C%BA"><span class="nav-number">1.1.</span> <span class="nav-text">非直接缓存区和缓存区</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%AD%98%E5%9C%A8%E7%9A%84%E9%97%AE%E9%A2%98"><span class="nav-number">1.2.</span> <span class="nav-text">存在的问题</span></a></li></ol></li></ol></div>
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#%E5%BC%80%E5%8F%91%E4%B8%80%E4%B8%AA%E7%AC%94%E8%AE%B0%E8%BD%AF%E4%BB%B6"><span class="nav-number">1.</span> <span class="nav-text">开发一个笔记软件</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%B8%BA%E4%BB%80%E4%B9%88%E8%A6%81%E5%BC%80%E5%8F%91%E4%B8%80%E4%B8%AA%E7%AC%94%E8%AE%B0%E8%BD%AF%E4%BB%B6"><span class="nav-number">1.1.</span> <span class="nav-text">为什么要开发一个笔记软件</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E8%87%AA%E5%B7%B1%E7%94%A8%E7%AC%94%E8%AE%B0%E8%BD%AF%E4%BB%B6%E5%8E%86%E7%A8%8B"><span class="nav-number">1.2.</span> <span class="nav-text">自己用笔记软件历程</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%B8%80%E5%BC%80%E5%A7%8B%E7%94%A8%E7%9A%84%E7%AC%94%E8%AE%B0%E6%9C%AC%E8%AE%B0%E7%AC%94%E8%AE%B0"><span class="nav-number">1.2.1.</span> <span class="nav-text">一开始用的笔记本记笔记</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%90%8E%E9%9D%A2%E6%8D%A2%E4%BA%86mybase"><span class="nav-number">1.2.2.</span> <span class="nav-text">后面换了mybase</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E8%87%AA%E5%B7%B1%E6%90%AD%E5%BB%BA%E4%B8%80%E4%B8%AA%E5%8D%9A%E5%AE%A2"><span class="nav-number">1.2.3.</span> <span class="nav-text">自己搭建一个博客</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#markdow-%E8%AF%AD%E6%B3%95"><span class="nav-number">1.2.4.</span> <span class="nav-text">markdow 语法</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%AC%94%E8%AE%B0%E7%9A%84%E4%BD%9C%E7%94%A8"><span class="nav-number">1.3.</span> <span class="nav-text">笔记的作用</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%AF%B9%E7%AC%94%E8%AE%B0%E8%BD%AF%E4%BB%B6%E7%9A%84%E6%9C%9F%E8%AE%B8"><span class="nav-number">1.4.</span> <span class="nav-text">对笔记软件的期许</span></a></li></ol></li></ol></div>
         </div>
         <!--/noindex-->
 
@@ -225,8 +226,8 @@
   
   
 
-  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="JVM">
-    <link itemprop="mainEntityOfPage" href="http://yoursite-url/JVM/JVM%E7%B3%BB%E5%88%97-%E7%AC%AC11%E7%AB%A0-%E7%9B%B4%E6%8E%A5%E5%86%85%E5%AD%98/">
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="思考">
+    <link itemprop="mainEntityOfPage" href="http://yoursite-url/%E6%80%9D%E8%80%83/%E8%AE%B0%E7%AC%94%E8%AE%B0%E8%BD%AF%E4%BB%B6/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="image" content="https://nodeandimg.oss-cn-wulanchabu.aliyuncs.com/}VRZRM08TG_W9[WMAD}69[O.png">
@@ -239,7 +240,7 @@
     </span>
       <header class="post-header">
         <h1 class="post-title" itemprop="name headline">
-          JVM系列-第11章-直接内存
+          开发一个笔记软件
         </h1>
 
         <div class="post-meta-container">
@@ -250,7 +251,7 @@
       </span>
       <span class="post-meta-item-text">Posted on</span>
 
-      <time title="Created: 2021-10-23 10:38:42" itemprop="dateCreated datePublished" datetime="2021-10-23T10:38:42+08:00">2021-10-23</time>
+      <time title="Created: 2021-11-14 19:55:26" itemprop="dateCreated datePublished" datetime="2021-11-14T19:55:26+08:00">2021-11-14</time>
     </span>
     <span class="post-meta-item">
       <span class="post-meta-item-icon">
@@ -258,11 +259,7 @@
       </span>
       <span class="post-meta-item-text">In</span>
         <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-          <a href="/categories/JVM/" itemprop="url" rel="index"><span itemprop="name">JVM</span></a>
-        </span>
-          , 
-        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-          <a href="/categories/JVM/1-%E5%86%85%E5%AD%98%E4%B8%8E%E5%9E%83%E5%9C%BE%E5%9B%9E%E6%94%B6%E7%AF%87/" itemprop="url" rel="index"><span itemprop="name">1.内存与垃圾回收篇</span></a>
+          <a href="/categories/%E6%80%9D%E8%80%83/" itemprop="url" rel="index"><span itemprop="name">思考</span></a>
         </span>
     </span>
 
@@ -283,29 +280,38 @@
     
     
     <div class="post-body" itemprop="articleBody">
-        <h1 id="直接内存-Direct-Memory"><a href="#直接内存-Direct-Memory" class="headerlink" title="直接内存 Direct Memory"></a>直接内存 Direct Memory</h1><p>不是虚拟机运行时数据区的一部分，也不是《Java虚拟机规范》中定义的内存区域。</p>
-<p>直接内存是在Java堆外的、直接向系统申请的内存区间。</p>
-<p>来源于NIO，通过存在堆中的DirectByteBuffer操作Native内存</p>
-<p>通常，访问直接内存的速度会优于Java堆。即读写性能高。</p>
-<ul>
-<li>因此出于性能考虑，读写频繁的场合可能会考虑使用直接内存。</li>
-<li>Java的NIO库允许Java程序使用直接内存，用于数据缓冲区</li>
-</ul>
-<p>使用下列代码，直接分配本地内存空间</p>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">int</span> BUFFER = <span class="number">1024</span>*<span class="number">1024</span>*<span class="number">1024</span>; <span class="comment">// 1GB</span></span><br><span class="line">ByteBuffer byteBuffer = ByteBuffer.allocateDirect(BUFFER);</span><br></pre></td></tr></table></figure>
+        <h1 id="开发一个笔记软件"><a href="#开发一个笔记软件" class="headerlink" title="开发一个笔记软件"></a>开发一个笔记软件</h1><h2 id="为什么要开发一个笔记软件"><a href="#为什么要开发一个笔记软件" class="headerlink" title="为什么要开发一个笔记软件"></a>为什么要开发一个笔记软件</h2><p>目前我是一个大三的计算机专业学生，每次都要用电脑区学一些东西但是笔记软件太多以至于我数不过来,我刚开始老师都用的记事本,我发现这东西形同虚设记了等于没记。有时候想看笔记还必要要打开电脑去看笔记,所以我就搭建了一个自己的博客。今天突然想到了为什么不可以开发出来一个手机电脑都可以用的笔记软件的<strong>结构清晰</strong>的笔记软件呢</p>
+<blockquote>
+<p>注:这里的结构清晰指的是逻辑结构 例如目录等</p>
+</blockquote>
+<h2 id="自己用笔记软件历程"><a href="#自己用笔记软件历程" class="headerlink" title="自己用笔记软件历程"></a>自己用笔记软件历程</h2><h3 id="一开始用的笔记本记笔记"><a href="#一开始用的笔记本记笔记" class="headerlink" title="一开始用的笔记本记笔记"></a>一开始用的笔记本记笔记</h3><p>例如这种</p>
+<p><img src="https://nodeandimg.oss-cn-wulanchabu.aliyuncs.com/W%K0_O_X64N6M8%%7BLDEEQFE.png"></p>
+<p>打开之后</p>
+<img src="https://nodeandimg.oss-cn-wulanchabu.aliyuncs.com/JYAPJRM3QTJWM1KGGKJI.png" style="zoom:50%;" />
 
-<h2 id="非直接缓存区和缓存区"><a href="#非直接缓存区和缓存区" class="headerlink" title="非直接缓存区和缓存区"></a>非直接缓存区和缓存区</h2><p>原来采用BIO的架构，我们需要从用户态切换成内核态</p>
-<p><img src="https://nodeandimg.oss-cn-wulanchabu.aliyuncs.com/F%60BIGT9TCQI4X~FB2Y.png"></p>
-<p>NIO的方式使用了缓存区的概念</p>
-<h2 id="存在的问题"><a href="#存在的问题" class="headerlink" title="存在的问题"></a>存在的问题</h2><p>也可能导致outofMemoryError异常</p>
-<p>由于直接内存在Java堆外，因此它的大小不会直接受限于-xmx指定的最大堆大小，但是系统内存是有限的，Java堆和直接内存的总和依然受限于操作系统能给出的最大内存。 缺点</p>
+<p>这种笔记我就很不喜欢 时间一长自己都不知道第几天讲的什么 当然这里还要提到笔记的作用 可以等等说一下</p>
+<p>我相信如果一个老师如果用这种方式来讲课记笔记,那么他的学生也会感到很痛苦吧。</p>
+<h3 id="后面换了mybase"><a href="#后面换了mybase" class="headerlink" title="后面换了mybase"></a>后面换了mybase</h3><p><img src="https://nodeandimg.oss-cn-wulanchabu.aliyuncs.com/BVL8L2GW2HD9M6YBRP.png"></p>
+<p>这种格式有没有让人看起来很舒服 让人耳目一新,这个记笔记软件是个数据库文件。用起来相当之舒服，这里要感谢我的一个学长给我推荐的这个软件，对我的帮助也很大。不过这样还有一个缺点就是我到晚上睡觉的时候想复习总不能在打开电脑去看吧 后面我就想了自己搭建一个博客</p>
+<h3 id="自己搭建一个博客"><a href="#自己搭建一个博客" class="headerlink" title="自己搭建一个博客"></a>自己搭建一个博客</h3><p><img src="https://nodeandimg.oss-cn-wulanchabu.aliyuncs.com/X9URTOVN~N2FN7NQ6C_J.png"></p>
+<p>这个博客是通过github和hexo简单的搭建了 刚刚那个不能通过手机访问问题就解决了</p>
+<h3 id="markdow-语法"><a href="#markdow-语法" class="headerlink" title="markdow 语法"></a>markdow 语法</h3><p>markdown语法在我看来是一个很不错很高效的语法,我看b站的视频也有很多的up主在用Typora这款软件来笔记但是同样也解决不了手机访问这个问题</p>
+<h2 id="笔记的作用"><a href="#笔记的作用" class="headerlink" title="笔记的作用"></a>笔记的作用</h2><p>有的笔记只是做一个简单备忘，应该称作备忘录。学习、读书、工作笔记不同，笔记的目的不止备忘，还包括理清、辅助思考、积累…… 深入了解笔记的意义，能够更好的利用笔记，常常能达到事半功倍的效益。</p>
+<p>笔记有以下作用：</p>
 <ul>
-<li>分配回收成本较高</li>
-<li>不受JVM内存回收管理</li>
+<li>加深记忆、储存备忘。</li>
+<li>捕捉工作、学习、生活中的美好，和自己的思想、灵感。</li>
+<li>通过清晰简明、结构良好的笔记，帮助理清、理解、掌握知识、思想、事情。</li>
+<li>笔记同时也是归纳、整合、条理清晰等能力、习惯锻炼和养成。</li>
+<li>事后，通过笔记就可以快速地概览、重温，是不断地深入理解、记忆、进步的高效方法。</li>
+<li>使用笔记，辅助再次、深入的阅读、复习，以及改进工作。</li>
+<li>重阅笔记，唤醒沉睡的记忆，以及触类旁通。</li>
 </ul>
-<p>直接内存大小可以通过MaxDirectMemorySize设置</p>
-<p>如果不指定，默认与堆的最大值-xmx参数值一致</p>
-<p><img src="https://nodeandimg.oss-cn-wulanchabu.aliyuncs.com/7ESAKZ%7B%60Z%7DPHF.png"></p>
+<p>可以说，笔记是学习、工作、生活高效的辅助和工具</p>
+<p>上面这些话来自于百度 我认为笔记是特别重要的一个东西 不然学了等于白学 我也是大学的学习中让我认识到笔记重要性。</p>
+<p>我总结的:笔记的作用,在我看来就是整理自己每天所学的，时间长了自己有些知识可能会遗忘,可以快速的查漏补缺</p>
+<h2 id="对笔记软件的期许"><a href="#对笔记软件的期许" class="headerlink" title="对笔记软件的期许"></a>对笔记软件的期许</h2><p>现在是计算机飞速发展的时代,我一个财经的同学都在学c语言，所以我思考能不能开发一个笔记软件，电脑手机都可以去进行读写操作。</p>
+<p>因为每个人都要用电脑和手机 每个人都要学习而笔记软件也成为了我们生活中补课分开的一部分当然这只是一个不成熟的想法。</p>
 
     </div>
 
@@ -315,22 +321,18 @@
 
     <footer class="post-footer">
           <div class="post-tags">
-              <a href="/tags/JVM/" rel="tag"># JVM</a>
-              <a href="/tags/%E8%99%9A%E6%8B%9F%E6%9C%BA/" rel="tag"># 虚拟机</a>
+              <a href="/tags/%E6%80%9D%E8%80%83/" rel="tag"># 思考</a>
           </div>
 
         
 
           <div class="post-nav">
             <div class="post-nav-item">
-                <a href="/JVM/JVM%E7%B3%BB%E5%88%97-%E7%AC%AC10%E7%AB%A0-%E5%AF%B9%E8%B1%A1%E5%AE%9E%E4%BE%8B%E5%8C%96%E5%8F%8A%E8%AE%BF%E9%97%AE%E5%AE%9A%E4%BD%8D/" rel="prev" title="JVM系列-第10章-对象实例化及访问定位">
-                  <i class="fa fa-chevron-left"></i> JVM系列-第10章-对象实例化及访问定位
+                <a href="/JVM/JVM%E7%B3%BB%E5%88%97-%E7%AC%AC17%E7%AB%A0-%E5%9E%83%E5%9C%BE%E5%9B%9E%E6%94%B6%E5%99%A8/" rel="prev" title="JVM系列-第17章-垃圾回收器">
+                  <i class="fa fa-chevron-left"></i> JVM系列-第17章-垃圾回收器
                 </a>
             </div>
             <div class="post-nav-item">
-                <a href="/JVM/JVM%E7%B3%BB%E5%88%97-%E7%AC%AC12%E7%AB%A0-%E6%89%A7%E8%A1%8C%E5%BC%95%E6%93%8E/" rel="next" title="JVM系列-第12章-执行引擎">
-                  JVM系列-第12章-执行引擎 <i class="fa fa-chevron-right"></i>
-                </a>
             </div>
           </div>
     </footer>
