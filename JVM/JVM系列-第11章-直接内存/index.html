@@ -22,19 +22,22 @@
   <script src="https://cdn.jsdelivr.net/npm/pace-js@1.2.4/pace.min.js" integrity="sha256-gqd7YTjg/BtfqWSwsJOvndl0Bxc8gFImLEkXQT8+qj0=" crossorigin="anonymous"></script>
 
 <script class="next-config" data-name="main" type="application/json">{"hostname":"yoursite-url","root":"/","images":"/images","scheme":"Gemini","darkmode":false,"version":"8.8.1","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12},"copycode":false,"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"Searching...","empty":"We didn't find any results for the search: ${query}","hits_time":"${hits} results found in ${time} ms","hits":"${hits} results found"},"path":"/search.json","localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false}}</script><script src="/js/config.js"></script>
-<meta name="description" content="It&#39;s an IT blog...">
+<meta name="description" content="直接内存 Direct Memory不是虚拟机运行时数据区的一部分，也不是《Java虚拟机规范》中定义的内存区域。 直接内存是在Java堆外的、直接向系统申请的内存区间。 来源于NIO，通过存在堆中的DirectByteBuffer操作Native内存 通常，访问直接内存的速度会优于Java堆。即读写性能高。  因此出于性能考虑，读写频繁的场合可能会考虑使用直接内存。 Java的NIO库允许Jav">
 <meta property="og:type" content="article">
 <meta property="og:title" content="JVM系列-第11章-直接内存">
 <meta property="og:url" content="http://yoursite-url/JVM/JVM%E7%B3%BB%E5%88%97-%E7%AC%AC11%E7%AB%A0-%E7%9B%B4%E6%8E%A5%E5%86%85%E5%AD%98/index.html">
 <meta property="og:site_name" content="Study Node">
-<meta property="og:description" content="It&#39;s an IT blog...">
+<meta property="og:description" content="直接内存 Direct Memory不是虚拟机运行时数据区的一部分，也不是《Java虚拟机规范》中定义的内存区域。 直接内存是在Java堆外的、直接向系统申请的内存区间。 来源于NIO，通过存在堆中的DirectByteBuffer操作Native内存 通常，访问直接内存的速度会优于Java堆。即读写性能高。  因此出于性能考虑，读写频繁的场合可能会考虑使用直接内存。 Java的NIO库允许Jav">
 <meta property="og:locale">
+<meta property="og:image" content="https://nodeandimg.oss-cn-wulanchabu.aliyuncs.com/F%60BIGT9TCQI4X~FB2Y.png">
+<meta property="og:image" content="https://nodeandimg.oss-cn-wulanchabu.aliyuncs.com/7ESAKZ%7B%60Z%7DPHF.png">
 <meta property="article:published_time" content="2021-10-23T02:38:42.000Z">
 <meta property="article:modified_time" content="2021-10-23T02:38:42.000Z">
 <meta property="article:author" content="Hao">
 <meta property="article:tag" content="JVM">
 <meta property="article:tag" content="虚拟机">
 <meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://nodeandimg.oss-cn-wulanchabu.aliyuncs.com/F%60BIGT9TCQI4X~FB2Y.png">
 
 
 <link rel="canonical" href="http://yoursite-url/JVM/JVM%E7%B3%BB%E5%88%97-%E7%AC%AC11%E7%AB%A0-%E7%9B%B4%E6%8E%A5%E5%86%85%E5%AD%98/">
@@ -137,7 +140,7 @@
 
   <aside class="sidebar">
 
-    <div class="sidebar-inner sidebar-overview-active">
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
       <ul class="sidebar-nav">
         <li class="sidebar-nav-toc">
           Table of Contents
@@ -150,6 +153,7 @@
       <div class="sidebar-panel-container">
         <!--noindex-->
         <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#%E7%9B%B4%E6%8E%A5%E5%86%85%E5%AD%98-Direct-Memory"><span class="nav-number">1.</span> <span class="nav-text">直接内存 Direct Memory</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E9%9D%9E%E7%9B%B4%E6%8E%A5%E7%BC%93%E5%AD%98%E5%8C%BA%E5%92%8C%E7%BC%93%E5%AD%98%E5%8C%BA"><span class="nav-number">1.1.</span> <span class="nav-text">非直接缓存区和缓存区</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%AD%98%E5%9C%A8%E7%9A%84%E9%97%AE%E9%A2%98"><span class="nav-number">1.2.</span> <span class="nav-text">存在的问题</span></a></li></ol></li></ol></div>
         </div>
         <!--/noindex-->
 
@@ -164,7 +168,7 @@
   <nav class="site-state">
       <div class="site-state-item site-state-posts">
         <a href="/archives/">
-          <span class="site-state-item-count">11</span>
+          <span class="site-state-item-count">14</span>
           <span class="site-state-item-name">posts</span>
         </a>
       </div>
@@ -279,7 +283,30 @@
     
     
     <div class="post-body" itemprop="articleBody">
-        
+        <h1 id="直接内存-Direct-Memory"><a href="#直接内存-Direct-Memory" class="headerlink" title="直接内存 Direct Memory"></a>直接内存 Direct Memory</h1><p>不是虚拟机运行时数据区的一部分，也不是《Java虚拟机规范》中定义的内存区域。</p>
+<p>直接内存是在Java堆外的、直接向系统申请的内存区间。</p>
+<p>来源于NIO，通过存在堆中的DirectByteBuffer操作Native内存</p>
+<p>通常，访问直接内存的速度会优于Java堆。即读写性能高。</p>
+<ul>
+<li>因此出于性能考虑，读写频繁的场合可能会考虑使用直接内存。</li>
+<li>Java的NIO库允许Java程序使用直接内存，用于数据缓冲区</li>
+</ul>
+<p>使用下列代码，直接分配本地内存空间</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">int</span> BUFFER = <span class="number">1024</span>*<span class="number">1024</span>*<span class="number">1024</span>; <span class="comment">// 1GB</span></span><br><span class="line">ByteBuffer byteBuffer = ByteBuffer.allocateDirect(BUFFER);</span><br></pre></td></tr></table></figure>
+
+<h2 id="非直接缓存区和缓存区"><a href="#非直接缓存区和缓存区" class="headerlink" title="非直接缓存区和缓存区"></a>非直接缓存区和缓存区</h2><p>原来采用BIO的架构，我们需要从用户态切换成内核态</p>
+<p><img src="https://nodeandimg.oss-cn-wulanchabu.aliyuncs.com/F%60BIGT9TCQI4X~FB2Y.png"></p>
+<p>NIO的方式使用了缓存区的概念</p>
+<h2 id="存在的问题"><a href="#存在的问题" class="headerlink" title="存在的问题"></a>存在的问题</h2><p>也可能导致outofMemoryError异常</p>
+<p>由于直接内存在Java堆外，因此它的大小不会直接受限于-xmx指定的最大堆大小，但是系统内存是有限的，Java堆和直接内存的总和依然受限于操作系统能给出的最大内存。 缺点</p>
+<ul>
+<li>分配回收成本较高</li>
+<li>不受JVM内存回收管理</li>
+</ul>
+<p>直接内存大小可以通过MaxDirectMemorySize设置</p>
+<p>如果不指定，默认与堆的最大值-xmx参数值一致</p>
+<p><img src="https://nodeandimg.oss-cn-wulanchabu.aliyuncs.com/7ESAKZ%7B%60Z%7DPHF.png"></p>
+
     </div>
 
     
@@ -301,6 +328,9 @@
                 </a>
             </div>
             <div class="post-nav-item">
+                <a href="/JVM/JVM%E7%B3%BB%E5%88%97-%E7%AC%AC12%E7%AB%A0-%E6%89%A7%E8%A1%8C%E5%BC%95%E6%93%8E/" rel="next" title="JVM系列-第12章-执行引擎">
+                  JVM系列-第12章-执行引擎 <i class="fa fa-chevron-right"></i>
+                </a>
             </div>
           </div>
     </footer>
