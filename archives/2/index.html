@@ -160,7 +160,7 @@
   <nav class="site-state">
       <div class="site-state-item site-state-posts">
         <a href="/archives/">
-          <span class="site-state-item-count">28</span>
+          <span class="site-state-item-count">29</span>
           <span class="site-state-item-name">posts</span>
         </a>
       </div>
@@ -208,6 +208,161 @@
 
 
     <div class="main-inner index posts-expand">
+
+    
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="JUC">
+    <link itemprop="mainEntityOfPage" href="http://yoursite-url/JUC/JUC%E7%B3%BB%E5%88%97-%E7%AC%AC%E4%BA%8C%E7%AB%A0-Lock%E6%8E%A5%E5%8F%A3/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="https://nodeandimg.oss-cn-wulanchabu.aliyuncs.com/}VRZRM08TG_W9[WMAD}69[O.png">
+      <meta itemprop="name" content="Hao">
+      <meta itemprop="description" content="It's an IT blog...">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Study Node">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          <a href="/JUC/JUC%E7%B3%BB%E5%88%97-%E7%AC%AC%E4%BA%8C%E7%AB%A0-Lock%E6%8E%A5%E5%8F%A3/" class="post-title-link" itemprop="url">JUC系列-Lock接口</a>
+        </h2>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">Posted on</span>
+
+      <time title="Created: 2021-11-14 09:31:29" itemprop="dateCreated datePublished" datetime="2021-11-14T09:31:29+08:00">2021-11-14</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">In</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/JUC/" itemprop="url" rel="index"><span itemprop="name">JUC</span></a>
+        </span>
+    </span>
+
+  
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+          <h1 id="Lock接口"><a href="#Lock接口" class="headerlink" title="Lock接口"></a>Lock接口</h1><h2 id="Synchronized"><a href="#Synchronized" class="headerlink" title="Synchronized"></a><strong>Synchronized</strong></h2><h3 id="Synchronized-关键字回顾"><a href="#Synchronized-关键字回顾" class="headerlink" title="Synchronized 关键字回顾"></a><strong>Synchronized 关键字回顾</strong></h3><p>synchronized 是 Java 中的关键字，是一种同步锁。它修饰的对象有以下几种：</p>
+<ol>
+<li><p>修饰一个代码块，被修饰的代码块称为同步语句块，其作用的范围是大括号{}括起来的代码，作用的对象是调用这个代码块的对象；</p>
+</li>
+<li><p>修饰一个方法，被修饰的方法称为同步方法，其作用的范围是整个方法，作用的对象是调用这个方法的对象；</p>
+</li>
+</ol>
+<p>o 虽然可以使用 synchronized 来定义方法，但 synchronized 并不属于方法定</p>
+<p>义的一部分，因此，synchronized 关键字不能被继承。如果在父类中的某个方法使用了 synchronized 关键字，而在子类中覆盖了这个方法，在子类中的这个方法默认情况下并不是同步的，而必须显式地在子类的这个方法中加上synchronized 关键字才可以。当然，还可以在子类方法中调用父类中相应的方法，这样虽然子类中的方法不是同步的，但子类调用了父类的同步方法，因此，子类的方法也就相当于同步了。</p>
+<ol start="3">
+<li>修改一个静态的方法，其作用的范围是整个静态方法，作用的对象是这个类的</li>
+</ol>
+<p>所有对象；</p>
+<ol start="4">
+<li>修改一个类，其作用的范围是 synchronized 后面括号括起来的部分，作用主</li>
+</ol>
+<p>的对象是这个类的所有对象。</p>
+<h3 id="售票案例"><a href="#售票案例" class="headerlink" title="售票案例"></a>售票案例</h3><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Ticket</span> </span>&#123;</span><br><span class="line">    <span class="comment">//票数</span></span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">int</span> number = <span class="number">30</span>;</span><br><span class="line">    <span class="comment">//操作方法：卖票</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">synchronized</span> <span class="keyword">void</span> <span class="title">sale</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        <span class="comment">//判断：是否有票</span></span><br><span class="line">        <span class="keyword">if</span>(number &gt; <span class="number">0</span>) &#123;</span><br><span class="line">            System.out.println(Thread.currentThread().getName()+<span class="string">&quot; : &quot;</span>+(number--)+<span class="string">&quot; &quot;</span>+number);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125; &#125;</span><br></pre></td></tr></table></figure>
+
+<p>如果一个代码块被 synchronized 修饰了，当一个线程获取了对应的锁，并执行该代码块时，其他线程便只能一直等待，等待获取锁的线程释放锁，而这里获取锁的线程释放锁只会有两种情况：</p>
+<ul>
+<li><p>获取锁的线程执行完了该代码块，然后线程释放对锁的占有；</p>
+</li>
+<li><p>线程执行发生异常，此时 JVM 会让线程自动释放锁。</p>
+</li>
+</ul>
+<p> 那么如果这个获取锁的线程由于要等待 IO 或者其他原因（比如调用 sleep方法）被阻塞了，但是又没有释放锁，其他线程便只能干巴巴地等待，试想一下，这多么影响程序执行效率。因此就需要有一种机制可以不让等待的线程一直无期限地等待下去（比如只等待一定的时间或者能够响应中断），通过 Lock 就可以办到。</p>
+<h2 id="什么是-Lock"><a href="#什么是-Lock" class="headerlink" title="什么是 Lock"></a><strong>什么是 Lock</strong></h2><p>Lock 锁实现提供了比使用同步方法和语句可以获得的更广泛的锁操作。它们允许更灵活的结构，可能具有非常不同的属性，并且可能支持多个关联的条件对象。Lock 提供了比 synchronized 更多的功能。</p>
+<p>Lock 与的 Synchronized 区别</p>
+<p>Lock 不是 Java 语言内置的，synchronized 是 Java 语言的关键字，因此是内置特性。Lock 是一个类，通过这个类可以实现同步访问；</p>
+<p>• Lock 和 synchronized 有一点非常大的不同，采用 synchronized 不需要用户去手动释放锁，当 synchronized 方法或者 synchronized 代码块执行完之后，系统会自动让线程释放对锁的占用；而 Lock 则必须要用户去手动释放锁，如果没有主动释放锁，就有可能导致出现死锁现象。</p>
+<h3 id="Lock-接口"><a href="#Lock-接口" class="headerlink" title="Lock 接口"></a><strong>Lock 接口</strong></h3><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">interface</span> <span class="title">Lock</span> </span>&#123;</span><br><span class="line">	<span class="function"><span class="keyword">void</span> <span class="title">lock</span><span class="params">()</span></span>;</span><br><span class="line">	<span class="function"><span class="keyword">void</span> <span class="title">lockInterruptibly</span><span class="params">()</span> <span class="keyword">throws</span> InterruptedException</span>;</span><br><span class="line">	<span class="function"><span class="keyword">boolean</span> <span class="title">tryLock</span><span class="params">()</span></span>;</span><br><span class="line">	<span class="function"><span class="keyword">boolean</span> <span class="title">tryLock</span><span class="params">(<span class="keyword">long</span> time, TimeUnit unit)</span> <span class="keyword">throws</span> InterruptedException</span>;</span><br><span class="line">	<span class="function"><span class="keyword">void</span> <span class="title">unlock</span><span class="params">()</span></span>;</span><br><span class="line"><span class="function">Condition <span class="title">newCondition</span><span class="params">()</span></span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>下面来逐个讲述 Lock 接口中每个方法的使用</p>
+<h3 id="lock"><a href="#lock" class="headerlink" title="lock"></a>lock</h3><p>lock()方法是平常使用得最多的一个方法，就是用来获取锁。如果锁已被其他线程获取，则进行等待。</p>
+<p>采用 Lock，必须主动去释放锁，并且在发生异常时，不会自动释放锁。因此一般来说，使用 Lock 必须在 try{}catch{}块中进行，并且将释放锁的操作放在finally 块中进行，以保证锁一定被被释放，防止死锁的发生。通常使用 Lock来进行同步的话，是以下面这种形式去使用的：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">Lock lock = ...;</span><br><span class="line">lock.lock();</span><br><span class="line"><span class="keyword">try</span>&#123;</span><br><span class="line"><span class="comment">//处理任务</span></span><br><span class="line">&#125;<span class="keyword">catch</span>(Exception ex)&#123;</span><br><span class="line">&#125;<span class="keyword">finally</span>&#123;</span><br><span class="line">    lock.unlock(); <span class="comment">//释放锁</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h3 id="newCondition"><a href="#newCondition" class="headerlink" title="newCondition"></a>newCondition</h3><p>关键字 synchronized 与 wait()/notify()这两个方法一起使用可以实现等待/通知模式， Lock 锁的 newContition()方法返回 Condition 对象，Condition 类也可以实现等待/通知模式。</p>
+<p>用 notify()通知时，JVM 会随机唤醒某个等待的线程， 使用 Condition 类可以进行选择性通知， Condition 比较常用的两个方法：</p>
+<p>• await()会使当前线程等待,同时会释放锁,当其他线程调用 signal()时,线程会重新获得锁并继续执行。</p>
+<p>• signal()用于唤醒一个等待的线程。</p>
+<p>==注意：在调用 Condition 的 await()/signal()方法前，也需要线程持有相关的 Lock 锁，调用 await()后线程会释放这个锁，在 singal()调用后会从当前Condition 对象的等待队列中，唤醒 一个线程，唤醒的线程尝试获得锁， 一旦获得锁成功就继续执行。</p>
+<h2 id="ReentrantLock"><a href="#ReentrantLock" class="headerlink" title="ReentrantLock"></a>ReentrantLock</h2><p>ReentrantLock，意思是“可重入锁”，关于可重入锁的概念将在后面讲述。</p>
+<p>ReentrantLock 是唯一实现了 Lock 接口的类，并且 ReentrantLock 提供了更多的方法。下面通过一些实例看具体看一下如何使用。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br></pre></td><td class="code"><pre><span class="line">public class Test &#123;</span><br><span class="line">    private ArrayList&lt;Integer&gt; arrayList = new ArrayList&lt;Integer&gt;();</span><br><span class="line">    public static void main(String[] args) &#123;</span><br><span class="line">        final Test test = new Test();</span><br><span class="line">        new Thread()&#123;</span><br><span class="line">            public void run() &#123;</span><br><span class="line">                test.insert(Thread.currentThread());</span><br><span class="line">            &#125;;</span><br><span class="line">        &#125;.start();</span><br><span class="line">        new Thread()&#123;</span><br><span class="line">            public void run() &#123;</span><br><span class="line">                test.insert(Thread.currentThread());</span><br><span class="line">            &#125;;</span><br><span class="line">        &#125;.start();</span><br><span class="line">    &#125;</span><br><span class="line">    public void insert(Thread thread) &#123;</span><br><span class="line">        Lock lock = new ReentrantLock(); //注意这个地方</span><br><span class="line">        lock.lock();</span><br><span class="line">        try &#123;</span><br><span class="line">            System.out.println(thread.getName()+&quot;得到了锁&quot;);</span><br><span class="line">            for(int i=0;i&lt;5;i++) &#123;</span><br><span class="line">                arrayList.add(i);</span><br><span class="line">            &#125;</span><br><span class="line">        &#125; catch (Exception e) &#123;</span><br><span class="line">// TODO: handle exception</span><br><span class="line">        &#125;finally &#123;</span><br><span class="line">            System.out.println(thread.getName()+&quot;释放了锁&quot;);</span><br><span class="line">            lock.unlock();</span><br><span class="line">        &#125; &#125; &#125;</span><br></pre></td></tr></table></figure>
+
+<h2 id="ReadWriteLock"><a href="#ReadWriteLock" class="headerlink" title="ReadWriteLock"></a>ReadWriteLock</h2><p>ReadWriteLock 也是一个接口，在它里面只定义了两个方法：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">interface</span> <span class="title">ReadWriteLock</span> </span>&#123;</span><br><span class="line"> <span class="comment">/**</span></span><br><span class="line"><span class="comment"> * Returns the lock used for reading.</span></span><br><span class="line"><span class="comment"> *</span></span><br><span class="line"><span class="comment"> * <span class="doctag">@return</span> the lock used for reading.</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"> <span class="function">Lock <span class="title">readLock</span><span class="params">()</span></span>;</span><br><span class="line"> <span class="comment">/**</span></span><br><span class="line"><span class="comment"> * Returns the lock used for writing.</span></span><br><span class="line"><span class="comment"> *</span></span><br><span class="line"><span class="comment"> * <span class="doctag">@return</span> the lock used for writing.</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"> <span class="function">Lock <span class="title">writeLock</span><span class="params">()</span></span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>一个用来获取读锁，一个用来获取写锁。也就是说将文件的读写操作分开，分成 2 个锁来分配给线程，从而使得多个线程可以同时进行读操作。下面的<strong>ReentrantReadWriteLock</strong> 实现了 ReadWriteLock 接口。</p>
+<p>ReentrantReadWriteLock 里面提供了很多丰富的方法，不过最主要的有两个</p>
+<p>方法：readLock()和 writeLock()用来获取读锁和写锁。</p>
+<p>下面通过几个例子来看一下 ReentrantReadWriteLock 具体用法。</p>
+<p>假如有多个线程要同时进行读操作的话，先看一下 synchronized 达到的效果：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">Test</span> </span>&#123;</span><br><span class="line">    <span class="keyword">private</span> ReentrantReadWriteLock rwl = <span class="keyword">new</span></span><br><span class="line">            ReentrantReadWriteLock();</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">final</span> Test test = <span class="keyword">new</span> Test();</span><br><span class="line"></span><br><span class="line">        <span class="keyword">new</span> Thread()&#123;</span><br><span class="line">            <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">run</span><span class="params">()</span> </span>&#123;</span><br><span class="line">                test.get(Thread.currentThread());</span><br><span class="line">            &#125;;</span><br><span class="line">        &#125;.start();</span><br><span class="line"></span><br><span class="line">        <span class="keyword">new</span> Thread()&#123;</span><br><span class="line">            <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">run</span><span class="params">()</span> </span>&#123;</span><br><span class="line">                test.get(Thread.currentThread());</span><br><span class="line">            &#125;;</span><br><span class="line">        &#125;.start();</span><br><span class="line"></span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">synchronized</span> <span class="keyword">void</span> <span class="title">get</span><span class="params">(Thread thread)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">long</span> start = System.currentTimeMillis();</span><br><span class="line">        <span class="keyword">while</span>(System.currentTimeMillis() - start &lt;= <span class="number">1</span>) &#123;</span><br><span class="line">            System.out.println(thread.getName()+<span class="string">&quot;正在进行读操作&quot;</span>);</span><br><span class="line">        &#125;</span><br><span class="line">        System.out.println(thread.getName()+<span class="string">&quot;读操作完毕&quot;</span>);</span><br><span class="line">    &#125; &#125;</span><br></pre></td></tr></table></figure>
+
+
+
+<p>而改成用读写锁的话：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> java.util.concurrent.locks.ReentrantReadWriteLock;</span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">Test</span> </span>&#123;</span><br><span class="line">    <span class="keyword">private</span> ReentrantReadWriteLock rwl = <span class="keyword">new</span> ReentrantReadWriteLock();</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">final</span> Test test = <span class="keyword">new</span> Test();</span><br><span class="line"></span><br><span class="line">        <span class="keyword">new</span> Thread()&#123;</span><br><span class="line">            <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">run</span><span class="params">()</span> </span>&#123;</span><br><span class="line">                test.get(Thread.currentThread());</span><br><span class="line">            &#125;;</span><br><span class="line">        &#125;.start();</span><br><span class="line"></span><br><span class="line">        <span class="keyword">new</span> Thread()&#123;</span><br><span class="line">            <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">run</span><span class="params">()</span> </span>&#123;</span><br><span class="line">                test.get(Thread.currentThread());</span><br><span class="line">            &#125;;</span><br><span class="line">        &#125;.start();</span><br><span class="line"></span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">get</span><span class="params">(Thread thread)</span> </span>&#123;</span><br><span class="line">        rwl.readLock().lock();</span><br><span class="line">        <span class="keyword">try</span> &#123;</span><br><span class="line">            <span class="keyword">long</span> start = System.currentTimeMillis();</span><br><span class="line"></span><br><span class="line">            <span class="keyword">while</span>(System.currentTimeMillis() - start &lt;= <span class="number">1</span>) &#123;</span><br><span class="line">                System.out.println(thread.getName()+<span class="string">&quot;正在进行读操作&quot;</span>);</span><br><span class="line">            &#125;</span><br><span class="line">            System.out.println(thread.getName()+<span class="string">&quot;读操作完毕&quot;</span>);</span><br><span class="line">        &#125; <span class="keyword">finally</span> &#123;</span><br><span class="line">            rwl.readLock().unlock();</span><br><span class="line">        &#125;</span><br><span class="line">    &#125; &#125;</span><br></pre></td></tr></table></figure>
+
+<p>说明 thread1 和 thread2 在同时进行读操作。这样就大大提升了读操作的效率。</p>
+<p>==<strong>注意:</strong>==</p>
+<ul>
+<li><p>如果有一个线程已经占用了读锁，则此时其他线程如果要申请写锁，则申请写锁的线程会一直等待释放读锁。</p>
+</li>
+<li><p> 如果有一个线程已经占用了写锁，则此时其他线程如果申请写锁或者读锁，则申请的线程会一直等待释放写锁。</p>
+</li>
+</ul>
+<h2 id="小结-重点"><a href="#小结-重点" class="headerlink" title="小结(重点)"></a><strong>小结(重点)</strong></h2><p>Lock 和 synchronized 有以下几点不同：</p>
+<ol>
+<li><p>Lock 是一个接口，而 synchronized 是 Java 中的关键字，synchronized 是内置的语言实现；</p>
+</li>
+<li><p>synchronized 在发生异常时，会自动释放线程占有的锁，因此不会导致死锁现象发生；而 Lock 在发生异常时，如果没有主动通过 unLock()去释放锁，则很可能造成死锁现象，因此使用 Lock 时需要在 finally 块中释放锁；</p>
+</li>
+<li><p>Lock 可以让等待锁的线程响应中断，而 synchronized 却不行，使用synchronized 时，等待的线程会一直等待下去，不能够响应中断；</p>
+</li>
+<li><p> 通过 Lock 可以知道有没有成功获取锁，而 synchronized 却无法办到。</p>
+</li>
+<li><p>Lock 可以提高多个线程进行读操作的效率。在性能上来说，如果竞争资源不激烈，两者的性能是差不多的，而当竞争资源非常激烈时（即有大量线程同时竞争），此时 Lock 的性能要远远优于synchronized。 </p>
+</li>
+</ol>
+
+      
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+</div>
+
+
+
 
     
 
@@ -2425,293 +2580,6 @@
 <p>reference中存储稳定句柄地址，对象被移动（垃圾收集时移动对象很普遍）时只会改变句柄中实例数据指针即可，reference本身不需要被修改</p>
 <h3 id="直接指针（HotSpot采用）"><a href="#直接指针（HotSpot采用）" class="headerlink" title="直接指针（HotSpot采用）"></a>直接指针（HotSpot采用）</h3><p><img src="https://nodeandimg.oss-cn-wulanchabu.aliyuncs.com/57FJ%7BW18]0QR]XEX7BZ2.png"></p>
 <p>直接指针是局部变量表中的引用，直接指向堆中的实例，在对象实例中有类型指针，指向的是方法区中的对象类型数据</p>
-
-      
-    </div>
-
-    
-    
-    
-
-    <footer class="post-footer">
-        <div class="post-eof"></div>
-      
-    </footer>
-  </article>
-</div>
-
-
-
-
-    
-
-
-<div class="post-block">
-  
-  
-
-  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="JVM">
-    <link itemprop="mainEntityOfPage" href="http://yoursite-url/JVM/JVM%E7%B3%BB%E5%88%97-%E7%AC%AC9%E7%AB%A0-%E6%96%B9%E6%B3%95%E5%8C%BA/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="https://nodeandimg.oss-cn-wulanchabu.aliyuncs.com/}VRZRM08TG_W9[WMAD}69[O.png">
-      <meta itemprop="name" content="Hao">
-      <meta itemprop="description" content="It's an IT blog...">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Study Node">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          <a href="/JVM/JVM%E7%B3%BB%E5%88%97-%E7%AC%AC9%E7%AB%A0-%E6%96%B9%E6%B3%95%E5%8C%BA/" class="post-title-link" itemprop="url">JVM系列-第9章-方法区</a>
-        </h2>
-
-        <div class="post-meta-container">
-          <div class="post-meta">
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-calendar"></i>
-      </span>
-      <span class="post-meta-item-text">Posted on</span>
-
-      <time title="Created: 2021-10-21 10:38:42" itemprop="dateCreated datePublished" datetime="2021-10-21T10:38:42+08:00">2021-10-21</time>
-    </span>
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-folder"></i>
-      </span>
-      <span class="post-meta-item-text">In</span>
-        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-          <a href="/categories/JVM/" itemprop="url" rel="index"><span itemprop="name">JVM</span></a>
-        </span>
-          , 
-        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-          <a href="/categories/JVM/1-%E5%86%85%E5%AD%98%E4%B8%8E%E5%9E%83%E5%9C%BE%E5%9B%9E%E6%94%B6%E7%AF%87/" itemprop="url" rel="index"><span itemprop="name">1.内存与垃圾回收篇</span></a>
-        </span>
-    </span>
-
-  
-</div>
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-          <h1 id="方法区"><a href="#方法区" class="headerlink" title="方法区"></a>方法区</h1><h2 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h2><p>这次所讲述的是运行时数据区的最后一个部分</p>
-<p><img src="https://nodeandimg.oss-cn-wulanchabu.aliyuncs.com/5O[7ZY~ZNLI0YURNU[$N.png"></p>
-<p>从线程共享与否的角度来看</p>
-<p><img src="https://nodeandimg.oss-cn-wulanchabu.aliyuncs.com/DF[27DXTA0L63[XQM8D.png"></p>
-<p>ThreadLocal：如何保证多个线程在并发环境下的安全性？典型应用就是数据库连接管理，以及会话管理</p>
-<h2 id="栈、堆、方法区的交互关系"><a href="#栈、堆、方法区的交互关系" class="headerlink" title="栈、堆、方法区的交互关系"></a>栈、堆、方法区的交互关系</h2><p>下面就涉及了对象的访问定位</p>
-<p><img src="https://nodeandimg.oss-cn-wulanchabu.aliyuncs.com/J80UWFNU_G[~BR3Q_NY.png"></p>
-<ul>
-<li>Person：存放在元空间，也可以说方法区</li>
-<li>person：存放在Java栈的局部变量表中</li>
-<li>new Person()：存放在Java堆中</li>
-</ul>
-<h2 id="方法区的理解"><a href="#方法区的理解" class="headerlink" title="方法区的理解"></a>方法区的理解</h2><p>《Java虚拟机规范》中明确说明：“尽管所有的方法区在逻辑上是属于堆的一部分，但一些简单的实现可能不会选择去进行垃圾收集或者进行压缩。”但对于HotSpotJVM而言，方法区还有一个别名叫做Non-Heap（非堆），目的就是要和堆分开。</p>
-<p>所以，方法区看作是一块独立于Java堆的内存空间。</p>
-<p><img src="https://nodeandimg.oss-cn-wulanchabu.aliyuncs.com/97CFZM7%7DIQ7AFI2$Y71XC4B.png"></p>
-<p>方法区主要存放的是 Class，而堆中主要存放的是 实例化的对象</p>
-<ul>
-<li>方法区（Method Area）与Java堆一样，是各个线程共享的内存区域。</li>
-<li>方法区在JVM启动的时候被创建，并且它的实际的物理内存空间中和Java堆区一样都可以是不连续的。</li>
-<li>方法区的大小，跟堆空间一样，可以选择固定大小或者可扩展。</li>
-<li>方法区的大小决定了系统可以保存多少个类，如果系统定义了太多的类，导致方法区溢出，虚拟机同样会抛出内存溢出错误：ava.lang.OutofMemoryError：PermGen space 或者java.lang.OutOfMemoryError:Metaspace<ul>
-<li>加载大量的第三方的jar包</li>
-<li>Tomcat部署的工程过多（30~50个）</li>
-<li>大量动态的生成反射类</li>
-</ul>
-</li>
-<li>关闭JVM就会释放这个区域的内存。</li>
-</ul>
-<h3 id="HotSpot中方法区的演进"><a href="#HotSpot中方法区的演进" class="headerlink" title="HotSpot中方法区的演进"></a>HotSpot中方法区的演进</h3><p>在jdk7及以前，习惯上把方法区，称为永久代。jdk8开始，使用元空间取代了永久代。</p>
-<ul>
-<li>JDK 1.8后，元空间存放在堆外内存中</li>
-</ul>
-<p>本质上，方法区和永久代并不等价。仅是对hotspot而言的。《Java虚拟机规范》对如何实现方法区，不做统一要求。例如：BEAJRockit / IBM J9 中不存在永久代的概念。</p>
-<blockquote>
-<p>现在来看，当年使用永久代，不是好的idea。导致Java程序更容易oom（超过-XX:MaxPermsize上限）</p>
-</blockquote>
-<p><img src="https://nodeandimg.oss-cn-wulanchabu.aliyuncs.com/D_O_HPQXLH%RRFR9.png"></p>
-<p>而到了JDK8，终于完全废弃了永久代的概念，改用与JRockit、J9一样在本地内存中实现的元空间（Metaspace）来代替</p>
-<p><img src="https://nodeandimg.oss-cn-wulanchabu.aliyuncs.com/RHE$JZCLZ%60JL_XRU.png"></p>
-<p>元空间的本质和永久代类似，都是对JVM规范中方法区的实现。不过元空间与永久代最大的区别在于：元空间不在虚拟机设置的内存中，而是使用本地内存</p>
-<p>永久代、元空间二者并不只是名字变了，内部结构也调整了</p>
-<p>根据《Java虚拟机规范》的规定，如果方法区无法满足新的内存分配需求时，将抛出OOM异常</p>
-<h2 id="设置方法区大小与OOM"><a href="#设置方法区大小与OOM" class="headerlink" title="设置方法区大小与OOM"></a>设置方法区大小与OOM</h2><p>方法区的大小不必是固定的，JVM可以根据应用的需要动态调整。</p>
-<h3 id="jdk7及以前"><a href="#jdk7及以前" class="headerlink" title="jdk7及以前"></a>jdk7及以前</h3><ul>
-<li>通过-xx:Permsize来设置永久代初始分配空间。默认值是20.75M</li>
-<li>-XX:MaxPermsize来设定永久代最大可分配空间。32位机器默认是64M，64位机器模式是82M</li>
-<li>当JVM加载的类信息容量超过了这个值，会报异常OutofMemoryError:PermGen space。</li>
-</ul>
-<p><img src="https://nodeandimg.oss-cn-wulanchabu.aliyuncs.com/0JAQX4P]CO47HD9E.png"></p>
-<h3 id="JDK8以后"><a href="#JDK8以后" class="headerlink" title="JDK8以后"></a>JDK8以后</h3><p>元数据区大小可以使用参数 -XX:MetaspaceSize 和 -XX:MaxMetaspaceSize指定</p>
-<p>默认值依赖于平台。windows下，-XX:MetaspaceSize是21M，-XX:MaxMetaspaceSize的值是-1，即没有限制。</p>
-<p>与永久代不同，如果不指定大小，默认情况下，虚拟机会耗尽所有的可用系统内存。如果元数据区发生溢出，虚拟机一样会抛出异常OutOfMemoryError:Metaspace</p>
-<p>-XX:MetaspaceSize：设置初始的元空间大小。对于一个64位的服务器端JVM来说，其默认的-xx:MetaspaceSize值为21MB。这就是初始的高水位线，一旦触及这个水位线，Ful1GC将会被触发并卸载没用的类（即这些类对应的类加载器不再存活）然后这个高水位线将会重置。新的高水位线的值取决于GC后释放了多少元空间。如果释放的空间不足，那么在不超过MaxMetaspaceSize时，适当提高该值。如果释放空间过多，则适当降低该值。</p>
-<p>如果初始化的高水位线设置过低，上述高水位线调整情况会发生很多次。通过垃圾回收器的日志可以观察到Ful1GC多次调用。为了避免频繁地GC，建议将-XX:MetaspaceSize设置为一个相对较高的值。</p>
-<h3 id="如何解决这些OOM"><a href="#如何解决这些OOM" class="headerlink" title="如何解决这些OOM"></a>如何解决这些OOM</h3><ul>
-<li>要解决ooM异常或heap space的异常，一般的手段是首先通过内存映像分析工具（如Ec1ipse Memory Analyzer）对dump出来的堆转储快照进行分析，重点是确认内存中的对象是否是必要的，也就是要先分清楚到底是出现了内存泄漏（Memory Leak）还是内存溢出（Memory Overflow）<ul>
-<li>内存泄漏就是 有大量的引用指向某些对象，但是这些对象以后不会使用了，但是因为它们还和GC ROOT有关联，所以导致以后这些对象也不会被回收，这就是内存泄漏的问题</li>
-</ul>
-</li>
-<li>如果是内存泄漏，可进一步通过工具查看泄漏对象到GC Roots的引用链。于是就能找到泄漏对象是通过怎样的路径与GCRoots相关联并导致垃圾收集器无法自动回收它们的。掌握了泄漏对象的类型信息，以及GCRoots引用链的信息，就可以比较准确地定位出泄漏代码的位置。</li>
-<li>如果不存在内存泄漏，换句话说就是内存中的对象确实都还必须存活着，那就应当检查虚拟机的堆参数（-Xmx与-Xms），与机器物理内存对比看是否还可以调大，从代码上检查是否存在某些对象生命周期过长、持有状态时间过长的情况，尝试减少程序运行期的内存消耗。</li>
-</ul>
-<h2 id="方法区的内部结构"><a href="#方法区的内部结构" class="headerlink" title="方法区的内部结构"></a>方法区的内部结构</h2><p><img src="https://nodeandimg.oss-cn-wulanchabu.aliyuncs.com/JL6W8SUJZPU0%60%7D%60TJ%%M.png"></p>
-<p>《深入理解Java虚拟机》书中对方法区（Method Area）存储内容描述如下：它用于存储已被虚拟机加载的类型信息、常量、静态变量、即时编译器编译后的代码缓存等。</p>
-<p><img src="https://nodeandimg.oss-cn-wulanchabu.aliyuncs.com/OQQ[48FU9[V@NOA55.png"></p>
-<h3 id="类型信息"><a href="#类型信息" class="headerlink" title="类型信息"></a>类型信息</h3><p>对每个加载的类型（类class、接口interface、枚举enum、注解annotation），JVm必须在方法区中存储以下类型信息：</p>
-<ul>
-<li>这个类型的完整有效名称（全名=包名.类名）</li>
-<li>这个类型直接父类的完整有效名（对于interface或是java.lang.object，都没有父类）</li>
-<li>这个类型的修饰符（public，abstract，final的某个子集）</li>
-<li>这个类型直接接口的一个有序列表</li>
-</ul>
-<h3 id="域信息"><a href="#域信息" class="headerlink" title="域信息"></a>域信息</h3><p>JVM必须在方法区中保存类型的所有域的相关信息以及域的声明顺序。</p>
-<p>域的相关信息包括：域名称、域类型、域修饰符（public，private，protected，static，final，volatile，transient的某个子集）</p>
-<h3 id="方法（Method）信息"><a href="#方法（Method）信息" class="headerlink" title="方法（Method）信息"></a>方法（Method）信息</h3><p>JVM必须保存所有方法的以下信息，同域信息一样包括声明顺序：</p>
-<ul>
-<li>方法名称</li>
-<li>方法的返回类型（或void）</li>
-<li>方法参数的数量和类型（按顺序）</li>
-<li>方法的修饰符（public，private，protected，static，final，synchronized，native，abstract的一个子集）</li>
-<li>方法的字节码（bytecodes）、操作数栈、局部变量表及大小（abstract和native方法除外）</li>
-<li>异常表（abstract和native方法除外）</li>
-</ul>
-<blockquote>
-<p>每个异常处理的开始位置、结束位置、代码处理在程序计数器中的偏移地址、被捕获的异常类的常量池索引</p>
-</blockquote>
-<h3 id="non-final的类变量"><a href="#non-final的类变量" class="headerlink" title="non-final的类变量"></a>non-final的类变量</h3><p>静态变量和类关联在一起，随着类的加载而加载，他们成为类数据在逻辑上的一部分</p>
-<p>类变量被类的所有实例共享，即使没有类实例时，你也可以访问它</p>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">MethodAreaTest</span> </span>&#123;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> </span>&#123;</span><br><span class="line">        Order order = <span class="keyword">new</span> Order();</span><br><span class="line">        order.hello();</span><br><span class="line">        System.out.println(order.count);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Order</span> </span>&#123;</span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">int</span> count = <span class="number">1</span>;</span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">final</span> <span class="keyword">int</span> number = <span class="number">2</span>;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">hello</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        System.out.println(<span class="string">&quot;hello!&quot;</span>);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<p>如上代码所示，即使我们把order设置为null，也不会出现空指针异常</p>
-<h3 id="全局常量"><a href="#全局常量" class="headerlink" title="全局常量"></a>全局常量</h3><p>全局常量就是使用 static final 进行修饰</p>
-<p>被声明为final的类变量的处理方法则不同，每个全局常量在编译的时候就会被分配了。</p>
-<h3 id="运行时常量池-VS-常量池"><a href="#运行时常量池-VS-常量池" class="headerlink" title="运行时常量池 VS 常量池"></a>运行时常量池 VS 常量池</h3><p>运行时常量池，就是运行时常量池</p>
-<p><img src="https://nodeandimg.oss-cn-wulanchabu.aliyuncs.com/QHYC6_R%60[I154~O4.png"></p>
-<ul>
-<li>方法区，内部包含了运行时常量池</li>
-<li>字节码文件，内部包含了常量池</li>
-<li>要弄清楚方法区，需要理解清楚C1assFile，因为加载类的信息都在方法区。</li>
-<li>要弄清楚方法区的运行时常量池，需要理解清楚classFile中的常量池。</li>
-</ul>
-<h3 id="常量池"><a href="#常量池" class="headerlink" title="常量池"></a>常量池</h3><p><img src="https://nodeandimg.oss-cn-wulanchabu.aliyuncs.com/]LJHSPOGO4ORHQT%60AN%60%60W6.png"></p>
-<p>一个有效的字节码文件中除了包含类的版本信息、字段、方法以及接口等描述符信息外，还包含一项信息就是常量池表（Constant Pool Table），包括各种字面量和对类型、域和方法的符号引用</p>
-<h4 id="为什么需要常量池"><a href="#为什么需要常量池" class="headerlink" title="为什么需要常量池"></a>为什么需要常量池</h4><p>一个java源文件中的类、接口，编译后产生一个字节码文件。而Java中的字节码需要数据支持，通常这种数据会很大以至于不能直接存到字节码里，换另一种方式，可以存到常量池，这个字节码包含了指向常量池的引用。r在动态链接的时候会用到运行时常量池，之前有介绍。</p>
-<p>比如：如下的代码：</p>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">SimpleClass</span> </span>&#123;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">sayHello</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        System.out.println(<span class="string">&quot;hello&quot;</span>);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<p>虽然上述代码只有194字节，但是里面却使用了String、System、PrintStream及Object等结构。这里的代码量其实很少了，如果代码多的话，引用的结构将会更多，这里就需要用到常量池了。</p>
-<h4 id="常量池中有什么"><a href="#常量池中有什么" class="headerlink" title="常量池中有什么"></a>常量池中有什么</h4><ul>
-<li>数量值</li>
-<li>字符串值</li>
-<li>类引用</li>
-<li>字段引用</li>
-<li>方法引用</li>
-</ul>
-<p>例如下面这段代码</p>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">MethodAreaTest2</span> </span>&#123;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String args[])</span> </span>&#123;</span><br><span class="line">        Object obj = <span class="keyword">new</span> Object();</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<p>将会被翻译成如下字节码</p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">new <span class="comment">#2  </span></span><br><span class="line">dup</span><br><span class="line">invokespecial</span><br></pre></td></tr></table></figure>
-
-<h4 id="小结"><a href="#小结" class="headerlink" title="小结"></a>小结</h4><p>常量池、可以看做是一张表，虚拟机指令根据这张常量表找到要执行的类名、方法名、参数类型、字面量等类型</p>
-<h3 id="运行时常量池"><a href="#运行时常量池" class="headerlink" title="运行时常量池"></a>运行时常量池</h3><p>运行时常量池（Runtime Constant Pool）是方法区的一部分。</p>
-<p>常量池表（Constant Pool Table）是Class文件的一部分，用于存放编译期生成的各种字面量与符号引用，这部分内容将在类加载后存放到方法区的运行时常量池中。</p>
-<p>运行时常量池，在加载类和接口到虚拟机后，就会创建对应的运行时常量池。</p>
-<p>JVM为每个已加载的类型（类或接口）都维护一个常量池。池中的数据项像数组项一样，是通过索引访问的。</p>
-<p>运行时常量池中包含多种不同的常量，包括编译期就已经明确的数值字面量，也包括到运行期解析后才能够获得的方法或者字段引用。此时不再是常量池中的符号地址了，这里换为真实地址。</p>
-<p>运行时常量池，相对于Class文件常量池的另一重要特征是：具备动态性。</p>
-<p>运行时常量池类似于传统编程语言中的符号表（symboltable），但是它所包含的数据却比符号表要更加丰富一些。</p>
-<p>当创建类或接口的运行时常量池时，如果构造运行时常量池所需的内存空间超过了方法区所能提供的最大值，则JVM会抛outofMemoryError异常。</p>
-<h2 id="方法区使用举例"><a href="#方法区使用举例" class="headerlink" title="方法区使用举例"></a>方法区使用举例</h2><p>如下代码</p>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">MethodAreaDemo</span> </span>&#123;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String args[])</span> </span>&#123;</span><br><span class="line">        <span class="keyword">int</span> x = <span class="number">500</span>;</span><br><span class="line">        <span class="keyword">int</span> y = <span class="number">100</span>;</span><br><span class="line">        <span class="keyword">int</span> a = x / y;</span><br><span class="line">        <span class="keyword">int</span> b = <span class="number">50</span>;</span><br><span class="line">        System.out.println(a+b);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<p>字节码执行过程展示</p>
-<p><img src="https://nodeandimg.oss-cn-wulanchabu.aliyuncs.com/3rsrer234r22t452.png"></p>
-<p>首先现将操作数500放入到操作数栈中</p>
-<p><img src="https://nodeandimg.oss-cn-wulanchabu.aliyuncs.com/6BZYO_GL[2NYI]RPD7NH.png"></p>
-<p>然后存储到局部变量表中</p>
-<p><img src="https://nodeandimg.oss-cn-wulanchabu.aliyuncs.com/N5OD537VG6Y6H.png"></p>
-<p>然后重复一次，把100放入局部变量表中，最后再将变量表中的500 和 100 取出，进行操作</p>
-<p><img src="https://nodeandimg.oss-cn-wulanchabu.aliyuncs.com/234rtgfdserf.png"></p>
-<p>将500 和 100 进行一个除法运算，在把结果入栈</p>
-<p><img src="https://nodeandimg.oss-cn-wulanchabu.aliyuncs.com/4BTURZGGYLQGPQCWOU~M14P.png"></p>
-<p>在最后就是输出流，需要调用运行时常量池的常量</p>
-<p><img src="https://nodeandimg.oss-cn-wulanchabu.aliyuncs.com/3790U[%7D5CJ.png"></p>
-<p>最后调用invokevirtual（虚方法调用），然后返回</p>
-<p><img src="https://nodeandimg.oss-cn-wulanchabu.aliyuncs.com/QV7QQLD[@0]0C%7D9.png"></p>
-<p>返回时</p>
-<p><img src="https://nodeandimg.oss-cn-wulanchabu.aliyuncs.com/88455115151651465.png"></p>
-<p>程序计数器始终计算的都是当前代码运行的位置，目的是为了方便记录 方法调用后能够正常返回，或者是进行了CPU切换后，也能回来到原来的代码进行执行。</p>
-<h2 id="方法区的演进细节"><a href="#方法区的演进细节" class="headerlink" title="方法区的演进细节"></a>方法区的演进细节</h2><p>首先明确：只有Hotspot才有永久代。BEA JRockit、IBMJ9等来说，是不存在永久代的概念的。原则上如何实现方法区属于虚拟机实现细节，不受《Java虚拟机规范》管束，并不要求统一</p>
-<p>Hotspot中方法区的变化：</p>
-<p>| JDK1.6及以前 | 有永久代，静态变量存储在永久代上 | | ———— | ———————————————————— | | JDK1.7 | 有永久代，但已经逐步 “去永久代”，字符串常量池，静态变量移除，保存在堆中 | | JDK1.8 | 无永久代，类型信息，字段，方法，常量保存在本地内存的元空间，但字符串常量池、静态变量仍然在堆中。 |</p>
-<p>JDK6的时候</p>
-<p><img src="https://nodeandimg.oss-cn-wulanchabu.aliyuncs.com/IS_590SBV~36K76%7D7PQVPC.png"></p>
-<p>JDK7的时候</p>
-<p><img src="https://nodeandimg.oss-cn-wulanchabu.aliyuncs.com/N1A%7BJPDQT3DGSD[6XS.png"></p>
-<p>JDK8的时候，元空间大小只受物理内存影响</p>
-<h3 id="为什么永久代要被元空间替代？"><a href="#为什么永久代要被元空间替代？" class="headerlink" title="为什么永久代要被元空间替代？"></a>为什么永久代要被元空间替代？</h3><p>JRockit是和HotSpot融合后的结果，因为JRockit没有永久代，所以他们不需要配置永久代</p>
-<p>随着Java8的到来，HotSpot VM中再也见不到永久代了。但是这并不意味着类的元数据信息也消失了。这些数据被移到了一个与堆不相连的本地内存区域，这个区域叫做元空间（Metaspace）。</p>
-<p>由于类的元数据分配在本地内存中，元空间的最大可分配空间就是系统可用内存空间，这项改动是很有必要的，原因有：</p>
-<ul>
-<li>为永久代设置空间大小是很难确定的。</li>
-</ul>
-<p>在某些场景下，如果动态加载类过多，容易产生Perm区的oom。比如某个实际Web工 程中，因为功能点比较多，在运行过程中，要不断动态加载很多类，经常出现致命错误。</p>
-<p>“Exception in thread‘dubbo client x.x connector’java.lang.OutOfMemoryError:PermGen space”</p>
-<p>而元空间和永久代之间最大的区别在于：元空间并不在虚拟机中，而是使用本地内存。 因此，默认情况下，元空间的大小仅受本地内存限制。</p>
-<ul>
-<li>对永久代进行调优是很困难的。<ul>
-<li>主要是为了降低Full GC</li>
-</ul>
-</li>
-</ul>
-<p>有些人认为方法区（如HotSpot虚拟机中的元空间或者永久代）是没有垃圾收集行为的，其实不然。《Java虚拟机规范》对方法区的约束是非常宽松的，提到过可以不要求虚拟机在方法区中实现垃圾收集。事实上也确实有未实现或未能完整实现方法区类型卸载的收集器存在（如JDK11时期的ZGC收集器就不支持类卸载）。 一般来说这个区域的回收效果比较难令人满意，尤其是类型的卸载，条件相当苛刻。但是这部分区域的回收有时又确实是必要的。以前sun公司的Bug列表中，曾出现过的若干个严重的Bug就是由于低版本的HotSpot虚拟机对此区域未完全回收而导致内存泄漏</p>
-<p>方法区的垃圾收集主要回收两部分内容：常量池中废弃的常量和不在使用的类型</p>
-<h3 id="StringTable为什么要调整位置"><a href="#StringTable为什么要调整位置" class="headerlink" title="StringTable为什么要调整位置"></a>StringTable为什么要调整位置</h3><p>jdk7中将StringTable放到了堆空间中。因为永久代的回收效率很低，在full gc的时候才会触发。而ful1gc是老年代的空间不足、永久代不足时才会触发。</p>
-<p>这就导致stringTable回收效率不高。而我们开发中会有大量的字符串被创建，回收效率低，导致永久代内存不足。放到堆里，能及时回收内存。</p>
-<h3 id="静态变量存放在那里？"><a href="#静态变量存放在那里？" class="headerlink" title="静态变量存放在那里？"></a>静态变量存放在那里？</h3><p>静态引用对应的对象实体始终都存在堆空间</p>
-<p>可以使用 jhsdb.ext，需要在jdk9的时候才引入的</p>
-<p>staticobj随着Test的类型信息存放在方法区，instanceobj随着Test的对象实例存放在Java堆，localobject则是存放在foo（）方法栈帧的局部变量表中。</p>
-<p><img src="https://nodeandimg.oss-cn-wulanchabu.aliyuncs.com/awweaa23.png"></p>
-<p>测试发现：三个对象的数据在内存中的地址都落在Eden区范围内，所以结论：只要是对象实例必然会在Java堆中分配。</p>
-<p>接着，找到了一个引用该staticobj对象的地方，是在一个java.1ang.Class的实例里，并且给出了这个实例的地址，通过Inspector查看该对象实例，可以清楚看到这确实是一个java.lang.Class类型的对象实例，里面有一个名为staticobj的实例字段：</p>
-<p><img src="https://nodeandimg.oss-cn-wulanchabu.aliyuncs.com/T23O3O99HIGNO8OEE.png"></p>
-<p>从《Java虚拟机规范》所定义的概念模型来看，所有Class相关的信息都应该存放在方法区之中，但方法区该如何实现，《Java虚拟机规范》并未做出规定，这就成了一件允许不同虚拟机自己灵活把握的事情。JDK7及其以后版本的HotSpot虚拟机选择把静态变量与类型在Java语言一端的映射class对象存放在一起，存储于Java堆之中，从我们的实验中也明确验证了这一点</p>
-<h2 id="方法区的垃圾回收"><a href="#方法区的垃圾回收" class="headerlink" title="方法区的垃圾回收"></a>方法区的垃圾回收</h2><p>有些人认为方法区（如Hotspot虚拟机中的元空间或者永久代）是没有垃圾收集行为的，其实不然。《Java虚拟机规范》对方法区的约束是非常宽松的，提到过可以不要求虚拟机在方法区中实现垃圾收集。事实上也确实有未实现或未能完整实现方法区类型卸载的收集器存在（如JDK11时期的zGC收集器就不支持类卸载）。</p>
-<p>一般来说这个区域的回收效果比较难令人满意，尤其是类型的卸载，条件相当苛刻。但是这部分区域的回收有时又确实是必要的。以前sun公司的Bug列表中，曾出现过的若干个严重的Bug就是由于低版本的HotSpot虚拟机对此区域未完全回收而导致内存泄漏。</p>
-<p>方法区的垃圾收集主要回收两部分内容：常量池中废弃的常量和不再使用的类型。</p>
-<p>先来说说方法区内常量池之中主要存放的两大类常量：字面量和符号引用。字面量比较接近Java语言层次的常量概念，如文本字符串、被声明为final的常量值等。而符号引用则属于编译原理方面的概念，包括下面三类常量：</p>
-<ul>
-<li>类和接口的全限定名</li>
-<li>字段的名称和描述符</li>
-<li>方法的名称和描述符</li>
-</ul>
-<p>HotSpot虚拟机对常量池的回收策略是很明确的，只要常量池中的常量没有被任何地方引用，就可以被回收。</p>
-<p>回收废弃常量与回收Java堆中的对象非常类似。（关于常量的回收比较简单，重点是类的回收）</p>
-<p>判定一个常量是否“废弃”还是相对简单，而要判定一个类型是否属于“不再被使用的类”的条件就比较苛刻了。需要同时满足下面三个条件：</p>
-<ul>
-<li>该类所有的实例都已经被回收，也就是Java堆中不存在该类及其任何派生子类的实例。 加载该类的类加载器已经被回收，这个条件除非是经过精心设计的可替换类加载器的场景，如osGi、JSP的重加载等，否则通常是很难达成的。</li>
-<li>该类对应的java.lang.C1ass对象没有在任何地方被引用，无法在任何地方通过反射访问该类的方法。I Java虚拟机被允许对满足上述三个条件的无用类进行回收，这里说的仅仅是“被允许”，而并不是和对象一样，没有引用了就必然会回收。关于是否要对类型进行回收，HotSpot虚拟机提供了-Xnoclassgc参数进行控制，还可以使用-verbose:class 以及 -XX：+TraceClass-Loading、-XX：+TraceClassUnLoading查看类加载和卸载信息</li>
-<li>在大量使用反射、动态代理、CGLib等字节码框架，动态生成JSP以及oSGi这类频繁自定义类加载器的场景中，通常都需要Java虚拟机具备类型卸载的能力，以保证不会对方法区造成过大的内存压力。</li>
-</ul>
-<h2 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h2><p><img src="https://nodeandimg.oss-cn-wulanchabu.aliyuncs.com/K]TDX%60CSMAKVNFF0V3L.png"></p>
-<h3 id="常见面试题"><a href="#常见面试题" class="headerlink" title="常见面试题"></a>常见面试题</h3><p>百度 三面：说一下JVM内存模型吧，有哪些区？分别干什么的？</p>
-<p>蚂蚁金服： Java8的内存分代改进 JVM内存分哪几个区，每个区的作用是什么？ 一面：JVM内存分布/内存结构？栈和堆的区别？堆的结构？为什么两个survivor区？ 二面：Eden和survior的比例分配</p>
-<p>小米： jvm内存分区，为什么要有新生代和老年代</p>
-<p>字节跳动： 二面：Java的内存分区 二面：讲讲vm运行时数据库区 什么时候对象会进入老年代？</p>
-<p>京东： JVM的内存结构，Eden和Survivor比例。 JVM内存为什么要分成新生代，老年代，持久代。新生代中为什么要分为Eden和survivor。</p>
-<p>天猫： 一面：Jvm内存模型以及分区，需要详细到每个区放什么。 一面：JVM的内存模型，Java8做了什么改</p>
-<p>拼多多： JVM内存分哪几个区，每个区的作用是什么？</p>
-<p>美团： java内存分配 jvm的永久代中会发生垃圾回收吗？ 一面：jvm内存分区，为什么要有新生代和老年代？</p>
 
       
     </div>
