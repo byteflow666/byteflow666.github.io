@@ -160,18 +160,18 @@
   <nav class="site-state">
       <div class="site-state-item site-state-posts">
         <a href="/archives/">
-          <span class="site-state-item-count">29</span>
+          <span class="site-state-item-count">30</span>
           <span class="site-state-item-name">posts</span>
         </a>
       </div>
       <div class="site-state-item site-state-categories">
           <a href="/categories/">
-        <span class="site-state-item-count">5</span>
+        <span class="site-state-item-count">8</span>
         <span class="site-state-item-name">categories</span></a>
       </div>
       <div class="site-state-item site-state-tags">
           <a href="/tags/">
-        <span class="site-state-item-count">5</span>
+        <span class="site-state-item-count">6</span>
         <span class="site-state-item-name">tags</span></a>
       </div>
   </nav>
@@ -208,6 +208,110 @@
 
 
     <div class="main-inner index posts-expand">
+
+    
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="JUC">
+    <link itemprop="mainEntityOfPage" href="http://yoursite-url/JUC/JUC%E7%B3%BB%E5%88%97-%E7%AC%AC%E4%B8%89%E7%AB%A0-%E7%BA%BF%E7%A8%8B%E9%97%B4%E9%80%9A%E4%BF%A1/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="https://nodeandimg.oss-cn-wulanchabu.aliyuncs.com/}VRZRM08TG_W9[WMAD}69[O.png">
+      <meta itemprop="name" content="Hao">
+      <meta itemprop="description" content="It's an IT blog...">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Study Node">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          <a href="/JUC/JUC%E7%B3%BB%E5%88%97-%E7%AC%AC%E4%B8%89%E7%AB%A0-%E7%BA%BF%E7%A8%8B%E9%97%B4%E9%80%9A%E4%BF%A1/" class="post-title-link" itemprop="url">JUC系列-线程间通信</a>
+        </h2>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">Posted on</span>
+
+      <time title="Created: 2021-11-14 10:29:29" itemprop="dateCreated datePublished" datetime="2021-11-14T10:29:29+08:00">2021-11-14</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">In</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/JUC/" itemprop="url" rel="index"><span itemprop="name">JUC</span></a>
+        </span>
+    </span>
+
+  
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+          <h1 id="线程间通信"><a href="#线程间通信" class="headerlink" title="线程间通信"></a>线程间通信</h1><p>线程间通信的模型有两种：共享内存和消息传递，以下方式都是基本这两种模</p>
+<p>型来实现的。我们来基本一道面试常见的题目来分析</p>
+<p><strong>场景—两个线程，一个线程对当前数值加 1，另一个线程对当前数值减 1,要求</strong></p>
+<p><strong>用线程间通信</strong></p>
+<h2 id="synchronized-方案"><a href="#synchronized-方案" class="headerlink" title="synchronized 方案"></a>synchronized 方案</h2><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//第一步 创建资源类，定义属性和操作方法</span></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Share</span> </span>&#123;</span><br><span class="line">    <span class="comment">//初始值</span></span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">int</span> number = <span class="number">0</span>;</span><br><span class="line">    <span class="comment">//+1的方法</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">synchronized</span> <span class="keyword">void</span> <span class="title">incr</span><span class="params">()</span> <span class="keyword">throws</span> InterruptedException </span>&#123;</span><br><span class="line">        <span class="comment">//第二步 判断 干活 通知</span></span><br><span class="line">       <span class="keyword">if</span>(number != <span class="number">0</span>) &#123; <span class="comment">//判断number值是否是0，如果不是0，等待</span></span><br><span class="line">            <span class="keyword">this</span>.wait(); <span class="comment">//在哪里睡，就在哪里醒</span></span><br><span class="line">        &#125;</span><br><span class="line">        <span class="comment">//如果number值是0，就+1操作</span></span><br><span class="line">        number++;</span><br><span class="line">        System.out.println(Thread.currentThread().getName()+<span class="string">&quot; :: &quot;</span>+number);</span><br><span class="line">        <span class="comment">//通知其他线程</span></span><br><span class="line">        <span class="keyword">this</span>.notifyAll();</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">//-1的方法</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">synchronized</span> <span class="keyword">void</span> <span class="title">decr</span><span class="params">()</span> <span class="keyword">throws</span> InterruptedException </span>&#123;</span><br><span class="line">        <span class="comment">//判断</span></span><br><span class="line">        <span class="keyword">if</span>(number != <span class="number">1</span>) &#123;</span><br><span class="line">            <span class="keyword">this</span>.wait();</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="comment">//干活</span></span><br><span class="line">        number--;</span><br><span class="line">        System.out.println(Thread.currentThread().getName()+<span class="string">&quot; :: &quot;</span>+number);</span><br><span class="line">        <span class="comment">//通知其他线程</span></span><br><span class="line">        <span class="keyword">this</span>.notifyAll();</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">ThreadDemo1</span> </span>&#123;</span><br><span class="line">    <span class="comment">//第三步 创建多个线程，调用资源类的操作方法</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> </span>&#123;</span><br><span class="line">        Share share = <span class="keyword">new</span> Share();</span><br><span class="line">        <span class="comment">//创建线程</span></span><br><span class="line">        <span class="keyword">new</span> Thread(()-&gt;&#123;</span><br><span class="line">            <span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">1</span>; i &lt;=<span class="number">10</span>; i++) &#123;</span><br><span class="line">                <span class="keyword">try</span> &#123;</span><br><span class="line">                    share.incr(); <span class="comment">//+1</span></span><br><span class="line">                &#125; <span class="keyword">catch</span> (InterruptedException e) &#123;</span><br><span class="line">                    e.printStackTrace();</span><br><span class="line">                &#125;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;,<span class="string">&quot;AA&quot;</span>).start();</span><br><span class="line"></span><br><span class="line">        <span class="keyword">new</span> Thread(()-&gt;&#123;</span><br><span class="line">            <span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">1</span>; i &lt;=<span class="number">10</span>; i++) &#123;</span><br><span class="line">                <span class="keyword">try</span> &#123;</span><br><span class="line">                    share.decr(); <span class="comment">//-1</span></span><br><span class="line">                &#125; <span class="keyword">catch</span> (InterruptedException e) &#123;</span><br><span class="line">                    e.printStackTrace();</span><br><span class="line">                &#125;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;,<span class="string">&quot;BB&quot;</span>).start();</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<p>代码截图</p>
+<p><img src="https://nodeandimg.oss-cn-wulanchabu.aliyuncs.com/CW3UWLTRMWP%60GWC0%7BV5.png"></p>
+<p>如果使用多个线程，添加额外两个线程，且操作要依次执行</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">new</span> Thread(()-&gt;&#123;</span><br><span class="line">    <span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">1</span>; i &lt;=<span class="number">10</span>; i++) &#123;</span><br><span class="line">        <span class="keyword">try</span> &#123;</span><br><span class="line">            share.incr(); <span class="comment">//+1</span></span><br><span class="line">        &#125; <span class="keyword">catch</span> (InterruptedException e) &#123;</span><br><span class="line">            e.printStackTrace();</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;,<span class="string">&quot;CC&quot;</span>).start();</span><br><span class="line"></span><br><span class="line"><span class="keyword">new</span> Thread(()-&gt;&#123;</span><br><span class="line">    <span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">1</span>; i &lt;=<span class="number">10</span>; i++) &#123;</span><br><span class="line">        <span class="keyword">try</span> &#123;</span><br><span class="line">            share.decr(); <span class="comment">//-1</span></span><br><span class="line">        &#125; <span class="keyword">catch</span> (InterruptedException e) &#123;</span><br><span class="line">            e.printStackTrace();</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;,<span class="string">&quot;DD&quot;</span>).start();</span><br></pre></td></tr></table></figure>
+
+<p>但截图是</p>
+<p><img src="https://nodeandimg.oss-cn-wulanchabu.aliyuncs.com/6IN8QO8WFM~R3NHE330.png"></p>
+<p>主要是虚拟唤醒导致：如果一个线程执行完毕后，通知其他线程，该线程又进入等待睡眠，可能会因为某些原因被唤醒后，if结构的语句就不会判断了，一直往下执行，所以需要将if换成while结构，每次都判断。因为wait在哪里睡眠就在哪里被唤醒，结果被某个异常唤醒了后回不去了，if结构不会在判断了，需要更改为while</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">while</span>(number != <span class="number">0</span>) &#123; <span class="comment">//判断number值是否是0，如果不是0，等待</span></span><br><span class="line">    <span class="keyword">this</span>.wait(); <span class="comment">//在哪里睡，就在哪里醒</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>实现中断和虚假唤醒是可能的，需要将其while方法用在循环中</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">incr</span><span class="params">()</span> <span class="keyword">throws</span> InterruptedException </span>&#123;</span><br><span class="line">    <span class="comment">//上锁</span></span><br><span class="line">    lock.lock();</span><br><span class="line">    <span class="keyword">try</span> &#123;</span><br><span class="line">        <span class="comment">//判断</span></span><br><span class="line">        <span class="keyword">while</span> (number != <span class="number">0</span>)&#123;</span><br><span class="line">            condition.await();</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="comment">//干活</span></span><br><span class="line">        number++;</span><br><span class="line">        System.out.println(Thread.currentThread().getName() +<span class="string">&quot;: :&quot;</span> + number);</span><br><span class="line">        <span class="comment">//通知</span></span><br><span class="line">        condition.signalAll();</span><br><span class="line">    &#125;<span class="keyword">finally</span> &#123;</span><br><span class="line">        <span class="comment">//解锁</span></span><br><span class="line">        lock.unlock();</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h2 id="Lock方案"><a href="#Lock方案" class="headerlink" title="Lock方案"></a>Lock方案</h2><p>使用lock先要创建锁的对象以及通知的对象<br>放置在资源类中</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//创建Lock</span></span><br><span class="line"><span class="keyword">private</span> Lock lock = <span class="keyword">new</span> ReentrantLock();</span><br><span class="line"><span class="keyword">private</span> Condition condition = lock.newCondition();</span><br></pre></td></tr></table></figure>
+
+<blockquote>
+<p>上锁<code>lock.lock();</code><br>解锁<code>lock.unlock();</code><br><strong>以下都为condition类：</strong><br>唤醒所有等待的线程<code>signalAll()</code>，带上类名<code>condition.signalAll();</code><br>唤醒一个等待线程<code>signal()</code>，带上类名，<code>condition.signal();</code></p>
+</blockquote>
+<p>造成当前线程在接到信号或者被中断之前一直处于等待状态<code>await()</code>，带上类名，<code>condition.await();</code></p>
+<p>同样是上面的案例题目换成lock<br>比如一个加1操作</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//+1</span></span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">incr</span><span class="params">()</span> <span class="keyword">throws</span> InterruptedException </span>&#123;</span><br><span class="line">    <span class="comment">//上锁</span></span><br><span class="line">    lock.lock();</span><br><span class="line">    <span class="keyword">try</span> &#123;</span><br><span class="line">        <span class="comment">//判断</span></span><br><span class="line">        <span class="keyword">while</span> (number != <span class="number">0</span>) &#123;</span><br><span class="line">            condition.await();</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="comment">//干活</span></span><br><span class="line">        number++;</span><br><span class="line">        System.out.println(Thread.currentThread().getName()+<span class="string">&quot; :: &quot;</span>+number);</span><br><span class="line">        <span class="comment">//通知</span></span><br><span class="line">        condition.signalAll();</span><br><span class="line">    &#125;<span class="keyword">finally</span> &#123;</span><br><span class="line">        <span class="comment">//解锁</span></span><br><span class="line">        lock.unlock();</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>具体完整的代码示列<br><strong>一般调用资源类的方法，先调用，在idea中使用快捷键抛出异常</strong></p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//第一步 创建资源类，定义属性和操作方法</span></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Share</span> </span>&#123;</span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">int</span> number = <span class="number">0</span>;</span><br><span class="line"></span><br><span class="line">    <span class="comment">//创建Lock</span></span><br><span class="line">    <span class="keyword">private</span> Lock lock = <span class="keyword">new</span> ReentrantLock();</span><br><span class="line">    <span class="keyword">private</span> Condition condition = lock.newCondition();</span><br><span class="line"></span><br><span class="line">    <span class="comment">//+1</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">incr</span><span class="params">()</span> <span class="keyword">throws</span> InterruptedException </span>&#123;</span><br><span class="line">        <span class="comment">//上锁</span></span><br><span class="line">        lock.lock();</span><br><span class="line">        <span class="keyword">try</span> &#123;</span><br><span class="line">            <span class="comment">//判断</span></span><br><span class="line">            <span class="keyword">while</span> (number != <span class="number">0</span>) &#123;</span><br><span class="line">                condition.await();</span><br><span class="line">            &#125;</span><br><span class="line">            <span class="comment">//干活</span></span><br><span class="line">            number++;</span><br><span class="line">            System.out.println(Thread.currentThread().getName()+<span class="string">&quot; :: &quot;</span>+number);</span><br><span class="line">            <span class="comment">//通知</span></span><br><span class="line">            condition.signalAll();</span><br><span class="line">        &#125;<span class="keyword">finally</span> &#123;</span><br><span class="line">            <span class="comment">//解锁</span></span><br><span class="line">            lock.unlock();</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">//-1</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">decr</span><span class="params">()</span> <span class="keyword">throws</span> InterruptedException </span>&#123;</span><br><span class="line">        lock.lock();</span><br><span class="line">        <span class="keyword">try</span> &#123;</span><br><span class="line">            <span class="keyword">while</span>(number != <span class="number">1</span>) &#123;</span><br><span class="line">                condition.await();</span><br><span class="line">            &#125;</span><br><span class="line">            number--;</span><br><span class="line">            System.out.println(Thread.currentThread().getName()+<span class="string">&quot; :: &quot;</span>+number);</span><br><span class="line">            condition.signalAll();</span><br><span class="line">        &#125;<span class="keyword">finally</span> &#123;</span><br><span class="line">            lock.unlock();</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">ThreadDemo2</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> </span>&#123;</span><br><span class="line">        Share share = <span class="keyword">new</span> Share();</span><br><span class="line">        <span class="keyword">new</span> Thread(()-&gt;&#123;</span><br><span class="line">            <span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">1</span>; i &lt;=<span class="number">10</span>; i++) &#123;</span><br><span class="line">                <span class="keyword">try</span> &#123;</span><br><span class="line">                    share.incr();</span><br><span class="line">                &#125; <span class="keyword">catch</span> (InterruptedException e) &#123;</span><br><span class="line">                    e.printStackTrace();</span><br><span class="line">                &#125;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;,<span class="string">&quot;AA&quot;</span>).start();</span><br><span class="line">        <span class="keyword">new</span> Thread(()-&gt;&#123;</span><br><span class="line">            <span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">1</span>; i &lt;=<span class="number">10</span>; i++) &#123;</span><br><span class="line">                <span class="keyword">try</span> &#123;</span><br><span class="line">                    share.decr();</span><br><span class="line">                &#125; <span class="keyword">catch</span> (InterruptedException e) &#123;</span><br><span class="line">                    e.printStackTrace();</span><br><span class="line">                &#125;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;,<span class="string">&quot;BB&quot;</span>).start();</span><br><span class="line"></span><br><span class="line">        <span class="keyword">new</span> Thread(()-&gt;&#123;</span><br><span class="line">            <span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">1</span>; i &lt;=<span class="number">10</span>; i++) &#123;</span><br><span class="line">                <span class="keyword">try</span> &#123;</span><br><span class="line">                    share.incr();</span><br><span class="line">                &#125; <span class="keyword">catch</span> (InterruptedException e) &#123;</span><br><span class="line">                    e.printStackTrace();</span><br><span class="line">                &#125;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;,<span class="string">&quot;CC&quot;</span>).start();</span><br><span class="line">        <span class="keyword">new</span> Thread(()-&gt;&#123;</span><br><span class="line">            <span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">1</span>; i &lt;=<span class="number">10</span>; i++) &#123;</span><br><span class="line">                <span class="keyword">try</span> &#123;</span><br><span class="line">                    share.decr();</span><br><span class="line">                &#125; <span class="keyword">catch</span> (InterruptedException e) &#123;</span><br><span class="line">                    e.printStackTrace();</span><br><span class="line">                &#125;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;,<span class="string">&quot;DD&quot;</span>).start();</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+
+      
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+</div>
+
+
+
 
     
 
@@ -2430,174 +2534,6 @@
 
 
 
-    
-
-
-<div class="post-block">
-  
-  
-
-  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="JVM">
-    <link itemprop="mainEntityOfPage" href="http://yoursite-url/JVM/JVM%E7%B3%BB%E5%88%97-%E7%AC%AC10%E7%AB%A0-%E5%AF%B9%E8%B1%A1%E5%AE%9E%E4%BE%8B%E5%8C%96%E5%8F%8A%E8%AE%BF%E9%97%AE%E5%AE%9A%E4%BD%8D/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="https://nodeandimg.oss-cn-wulanchabu.aliyuncs.com/}VRZRM08TG_W9[WMAD}69[O.png">
-      <meta itemprop="name" content="Hao">
-      <meta itemprop="description" content="It's an IT blog...">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Study Node">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          <a href="/JVM/JVM%E7%B3%BB%E5%88%97-%E7%AC%AC10%E7%AB%A0-%E5%AF%B9%E8%B1%A1%E5%AE%9E%E4%BE%8B%E5%8C%96%E5%8F%8A%E8%AE%BF%E9%97%AE%E5%AE%9A%E4%BD%8D/" class="post-title-link" itemprop="url">JVM系列-第10章-对象实例化及访问定位</a>
-        </h2>
-
-        <div class="post-meta-container">
-          <div class="post-meta">
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-calendar"></i>
-      </span>
-      <span class="post-meta-item-text">Posted on</span>
-
-      <time title="Created: 2021-10-22 10:38:42" itemprop="dateCreated datePublished" datetime="2021-10-22T10:38:42+08:00">2021-10-22</time>
-    </span>
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-folder"></i>
-      </span>
-      <span class="post-meta-item-text">In</span>
-        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-          <a href="/categories/JVM/" itemprop="url" rel="index"><span itemprop="name">JVM</span></a>
-        </span>
-          , 
-        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-          <a href="/categories/JVM/1-%E5%86%85%E5%AD%98%E4%B8%8E%E5%9E%83%E5%9C%BE%E5%9B%9E%E6%94%B6%E7%AF%87/" itemprop="url" rel="index"><span itemprop="name">1.内存与垃圾回收篇</span></a>
-        </span>
-    </span>
-
-  
-</div>
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-          <h1 id="对象实例化内存布局与访问定位"><a href="#对象实例化内存布局与访问定位" class="headerlink" title="对象实例化内存布局与访问定位"></a>对象实例化内存布局与访问定位</h1><h2 id="对象实例化"><a href="#对象实例化" class="headerlink" title="对象实例化"></a>对象实例化</h2><h3 id="面试题"><a href="#面试题" class="headerlink" title="面试题"></a>面试题</h3><ul>
-<li>对象在JVM中是怎么存储的？</li>
-<li>对象头信息里面有哪些东西？</li>
-<li>Java对象头有什么？</li>
-</ul>
-<p>从对象创建的方式 和 步骤开始说</p>
-<p><img src="https://nodeandimg.oss-cn-wulanchabu.aliyuncs.com/X_VFHL%60OZZW0U.png"></p>
-<h3 id="对象创建方式"><a href="#对象创建方式" class="headerlink" title="对象创建方式"></a>对象创建方式</h3><ul>
-<li>new：最常见的方式、单例类中调用getInstance的静态类方法，XXXFactory的静态方法</li>
-<li>Class的newInstance方法：在JDK9里面被标记为过时的方法，因为只能调用空参构造器</li>
-<li>Constructor的newInstance(XXX)：反射的方式，可以调用空参的，或者带参的构造器</li>
-<li>使用clone()：不调用任何的构造器，要求当前的类需要实现Cloneable接口中的clone接口</li>
-<li>使用序列化：序列化一般用于Socket的网络传输</li>
-<li>第三方库 Objenesis</li>
-</ul>
-<h3 id="创建对象的步骤"><a href="#创建对象的步骤" class="headerlink" title="创建对象的步骤"></a>创建对象的步骤</h3><h4 id="判断对象对应的类是否加载、链接、初始化"><a href="#判断对象对应的类是否加载、链接、初始化" class="headerlink" title="判断对象对应的类是否加载、链接、初始化"></a>判断对象对应的类是否加载、链接、初始化</h4><p>虚拟机遇到一条new指令，首先去检查这个指令的参数能否在Metaspace的常量池中定位到一个类的符号引用，并且检查这个符号引用代表的类是否已经被加载，解析和初始化。（即判断类元信息是否存在）。如果没有，那么在双亲委派模式下，使用当前类加载器以ClassLoader + 包名 + 类名为key进行查找对应的 .class文件，如果没有找到文件，则抛出ClassNotFoundException异常，如果找到，则进行类加载，并生成对应的Class对象。</p>
-<h4 id="为对象分配内存"><a href="#为对象分配内存" class="headerlink" title="为对象分配内存"></a>为对象分配内存</h4><p>首先计算对象占用空间的大小，接着在堆中划分一块内存给新对象。如果实例成员变量是引用变量，仅分配引用变量空间即可，即4个字节大小</p>
-<ul>
-<li>如果内存规整：指针碰撞</li>
-<li>如果内存不规整<ul>
-<li>虚拟表需要维护一个列表</li>
-<li>空闲列表分配</li>
-</ul>
-</li>
-</ul>
-<p>如果内存是规整的，那么虚拟机将采用的是指针碰撞法（Bump The Point）来为对象分配内存。</p>
-<p>意思是所有用过的内存在一边，空闲的内存放另外一边，中间放着一个指针作为分界点的指示器，分配内存就仅仅是把指针指向空闲那边挪动一段与对象大小相等的距离罢了。如果垃圾收集器选择的是Serial ，ParNew这种基于压缩算法的，虚拟机采用这种分配方式。一般使用带Compact（整理）过程的收集器时，使用指针碰撞。</p>
-<p>如果内存不是规整的，已使用的内存和未使用的内存相互交错，那么虚拟机将采用的是空闲列表来为对象分配内存。意思是虚拟机维护了一个列表，记录上那些内存块是可用的，再分配的时候从列表中找到一块足够大的空间划分给对象实例，并更新列表上的内容。这种分配方式成为了 “空闲列表（Free List）”</p>
-<p>选择哪种分配方式由Java堆是否规整所决定，而Java堆是否规整又由所采用的垃圾收集器是否带有压缩整理功能决定。</p>
-<h4 id="处理并发问题"><a href="#处理并发问题" class="headerlink" title="处理并发问题"></a>处理并发问题</h4><ul>
-<li>采用CAS配上失败重试保证更新的原子性</li>
-<li>每个线程预先分配TLAB - 通过设置 -XX:+UseTLAB参数来设置（区域加锁机制）<ul>
-<li>在Eden区给每个线程分配一块区域</li>
-</ul>
-</li>
-</ul>
-<h3 id="初始化分配到的内存"><a href="#初始化分配到的内存" class="headerlink" title="初始化分配到的内存"></a>初始化分配到的内存</h3><p>给对象属性赋值的操作</p>
-<ul>
-<li>属性的默认初始化</li>
-<li>显示初始化</li>
-<li>代码块中的初始化</li>
-<li>构造器初始化</li>
-<li>所有属性设置默认值，保证对象实例字段在不赋值可以直接使用</li>
-</ul>
-<h3 id="设置对象的对象头"><a href="#设置对象的对象头" class="headerlink" title="设置对象的对象头"></a>设置对象的对象头</h3><p>将对象的所属类（即类的元数据信息）、对象的HashCode和对象的GC信息、锁信息等数据存储在对象的对象头中。这个过程的具体设置方式取决于JVM实现。</p>
-<h3 id="执行init方法进行初始化"><a href="#执行init方法进行初始化" class="headerlink" title="执行init方法进行初始化"></a>执行init方法进行初始化</h3><p>在Java程序的视角看来，初始化才正式开始。初始化成员变量，执行实例化代码块，调用类的构造方法，并把堆内对象的首地址赋值给引用变量</p>
-<p>因此一般来说（由字节码中跟随invokespecial指令所决定），new指令之后会接着就是执行方法，把对象按照程序员的意愿进行初始化，这样一个真正可用的对象才算完成创建出来。</p>
-<h3 id="对象实例化的过程"><a href="#对象实例化的过程" class="headerlink" title="对象实例化的过程"></a>对象实例化的过程</h3><ul>
-<li>加载类元信息</li>
-<li>为对象分配内存</li>
-<li>处理并发问题</li>
-<li>属性的默认初始化（零值初始化）</li>
-<li>设置对象头信息</li>
-<li>属性的显示初始化、代码块中初始化、构造器中初始化</li>
-</ul>
-<h2 id="对象内存布局"><a href="#对象内存布局" class="headerlink" title="对象内存布局"></a>对象内存布局</h2><p><img src="https://nodeandimg.oss-cn-wulanchabu.aliyuncs.com/2HN93YJHO8R04YR0V2O.png"></p>
-<h3 id="对象头"><a href="#对象头" class="headerlink" title="对象头"></a>对象头</h3><p>对象头包含了两部分，分别是 运行时元数据（Mark Word）和 类型指针</p>
-<blockquote>
-<p>如果是数组，还需要记录数组的长度</p>
-</blockquote>
-<h4 id="运行时元数据"><a href="#运行时元数据" class="headerlink" title="运行时元数据"></a>运行时元数据</h4><ul>
-<li>哈希值（HashCode）</li>
-<li>GC分代年龄</li>
-<li>锁状态标志</li>
-<li>线程持有的锁</li>
-<li>偏向线程ID</li>
-<li>翩向时间戳</li>
-</ul>
-<h4 id="类型指针"><a href="#类型指针" class="headerlink" title="类型指针"></a>类型指针</h4><p>指向类元数据InstanceKlass，确定该对象所属的类型。指向的其实是方法区中存放的类元信息</p>
-<h3 id="实例数据（Instance-Data）"><a href="#实例数据（Instance-Data）" class="headerlink" title="实例数据（Instance Data）"></a>实例数据（Instance Data）</h3><p>它是对象真正存储的有效信息，包括程序代码中定义的各种类型的字段（包括从父类继承下来的和本身拥有的字段）</p>
-<ul>
-<li><p>相同宽度的字段总是被分配在一起</p>
-</li>
-<li><p>父类中定义的变量会出现在子类之前</p>
-</li>
-<li><p>如果CompactFields参数为true（默认为true）：子类的窄变量可能插入到父类变量的空隙</p>
-</li>
-</ul>
-<h3 id="对齐填充（Padding）"><a href="#对齐填充（Padding）" class="headerlink" title="对齐填充（Padding）"></a>对齐填充（Padding）</h3><p>不是必须的，也没有特别的含义，仅仅起到占位符的作用</p>
-<p><strong>举例</strong></p>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">Customer</span></span>&#123;</span><br><span class="line">    <span class="keyword">int</span> id = <span class="number">1001</span>;</span><br><span class="line">    String name;</span><br><span class="line">    Account acct;</span><br><span class="line"></span><br><span class="line">    &#123;</span><br><span class="line">        name = <span class="string">&quot;匿名客户&quot;</span>;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="title">Customer</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        acct = <span class="keyword">new</span> Account();</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">CustomerTest</span></span>&#123;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(string[] args)</span></span>&#123;</span><br><span class="line">        Customer cust=<span class="keyword">new</span> Customer();</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<p><strong>图示</strong></p>
-<p><img src="https://nodeandimg.oss-cn-wulanchabu.aliyuncs.com/LHFAPCQ7M]G~GCV.png"></p>
-<h3 id="小结"><a href="#小结" class="headerlink" title="小结"></a>小结</h3><p><img src="https://nodeandimg.oss-cn-wulanchabu.aliyuncs.com/]DU2Y4ECJ047RDXU%7DZ%60C.png"></p>
-<h2 id="对象的访问定位"><a href="#对象的访问定位" class="headerlink" title="对象的访问定位"></a>对象的访问定位</h2><p><img src="https://nodeandimg.oss-cn-wulanchabu.aliyuncs.com/KWMY78G7E1EWYXKW3.png"></p>
-<p>JVM是如何通过栈帧中的对象引用访问到其内部的对象实例呢？</p>
-<p><img src="https://nodeandimg.oss-cn-wulanchabu.aliyuncs.com/E7H]83DO1YK]6Z613E7.png"></p>
-<h3 id="句柄访问"><a href="#句柄访问" class="headerlink" title="句柄访问"></a>句柄访问</h3><p><img src="https://nodeandimg.oss-cn-wulanchabu.aliyuncs.com/WRRTZ9BRLZUB1~V71AD.png"></p>
-<p>reference中存储稳定句柄地址，对象被移动（垃圾收集时移动对象很普遍）时只会改变句柄中实例数据指针即可，reference本身不需要被修改</p>
-<h3 id="直接指针（HotSpot采用）"><a href="#直接指针（HotSpot采用）" class="headerlink" title="直接指针（HotSpot采用）"></a>直接指针（HotSpot采用）</h3><p><img src="https://nodeandimg.oss-cn-wulanchabu.aliyuncs.com/57FJ%7BW18]0QR]XEX7BZ2.png"></p>
-<p>直接指针是局部变量表中的引用，直接指向堆中的实例，在对象实例中有类型指针，指向的是方法区中的对象类型数据</p>
-
-      
-    </div>
-
-    
-    
-    
-
-    <footer class="post-footer">
-        <div class="post-eof"></div>
-      
-    </footer>
-  </article>
-</div>
-
-
-
-
   <nav class="pagination">
     <a class="extend prev" rel="prev" href="/"><i class="fa fa-angle-left" aria-label="Previous page"></i></a><a class="page-number" href="/">1</a><span class="page-number current">2</span><a class="page-number" href="/archives/3/">3</a><a class="extend next" rel="next" href="/archives/3/"><i class="fa fa-angle-right" aria-label="Next page"></i></a>
   </nav>
@@ -2611,7 +2547,7 @@
 
 <div class="copyright">
   &copy; 
-  <span itemprop="copyrightYear">2021</span>
+  <span itemprop="copyrightYear">2022</span>
   <span class="with-love">
     <i class="fa fa-heart"></i>
   </span>
