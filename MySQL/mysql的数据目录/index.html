@@ -22,12 +22,12 @@
   <script src="https://cdn.jsdelivr.net/npm/pace-js@1.2.4/pace.min.js" integrity="sha256-gqd7YTjg/BtfqWSwsJOvndl0Bxc8gFImLEkXQT8+qj0=" crossorigin="anonymous"></script>
 
 <script class="next-config" data-name="main" type="application/json">{"hostname":"yoursite-url","root":"/","images":"/images","scheme":"Gemini","darkmode":false,"version":"8.8.1","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12},"copycode":false,"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"Searching...","empty":"We didn't find any results for the search: ${query}","hits_time":"${hits} results found in ${time} ms","hits":"${hits} results found"}}</script><script src="/js/config.js"></script>
-<meta name="description" content="MySQL的数据目录MySQL8的主要目录结构1[root@atguigu01 ~]# find &#x2F; -name mysql  安装好MySQL 8之后，我们查看如下的目录结构： 数据库文件的存放路劲MySQL数据库文件的存放路径：&#x2F;var&#x2F;lib&#x2F;mysql&#x2F; 1234mysql&gt; show variables like &amp;#x27;datadir&amp;#x27;; +------------">
+<meta name="description" content="这份笔记是康师傅的笔记 不得不说康师傅讲的是真好 写这份笔记只是为了更好的复习https:&#x2F;&#x2F;www.bilibili.com&#x2F;video&#x2F;BV1iq4y1u7vj?p&#x3D;52&amp;spm_id_from&#x3D;pageDriver视频在这 MySQL的数据目录MySQL8的主要目录结构1[root@atguigu01 ~]# find &#x2F; -name mysql  安装好MySQL 8之后，我们查看">
 <meta property="og:type" content="article">
 <meta property="og:title" content="MySQL的数据目录">
 <meta property="og:url" content="http://yoursite-url/MySQL/mysql%E7%9A%84%E6%95%B0%E6%8D%AE%E7%9B%AE%E5%BD%95/index.html">
 <meta property="og:site_name" content="Study Node">
-<meta property="og:description" content="MySQL的数据目录MySQL8的主要目录结构1[root@atguigu01 ~]# find &#x2F; -name mysql  安装好MySQL 8之后，我们查看如下的目录结构： 数据库文件的存放路劲MySQL数据库文件的存放路径：&#x2F;var&#x2F;lib&#x2F;mysql&#x2F; 1234mysql&gt; show variables like &amp;#x27;datadir&amp;#x27;; +------------">
+<meta property="og:description" content="这份笔记是康师傅的笔记 不得不说康师傅讲的是真好 写这份笔记只是为了更好的复习https:&#x2F;&#x2F;www.bilibili.com&#x2F;video&#x2F;BV1iq4y1u7vj?p&#x3D;52&amp;spm_id_from&#x3D;pageDriver视频在这 MySQL的数据目录MySQL8的主要目录结构1[root@atguigu01 ~]# find &#x2F; -name mysql  安装好MySQL 8之后，我们查看">
 <meta property="og:locale">
 <meta property="og:image" content="https://nodeandimg.oss-cn-wulanchabu.aliyuncs.com/awdasda32.png">
 <meta property="article:published_time" content="2022-01-17T13:09:48.000Z">
@@ -140,13 +140,13 @@
   <nav class="site-state">
       <div class="site-state-item site-state-posts">
         <a href="/archives/">
-          <span class="site-state-item-count">31</span>
+          <span class="site-state-item-count">32</span>
           <span class="site-state-item-name">posts</span>
         </a>
       </div>
       <div class="site-state-item site-state-categories">
           <a href="/categories/">
-        <span class="site-state-item-count">8</span>
+        <span class="site-state-item-count">11</span>
         <span class="site-state-item-name">categories</span></a>
       </div>
       <div class="site-state-item site-state-tags">
@@ -255,7 +255,8 @@
     
     
     <div class="post-body" itemprop="articleBody">
-        <h1 id="MySQL的数据目录"><a href="#MySQL的数据目录" class="headerlink" title="MySQL的数据目录"></a>MySQL的数据目录</h1><h2 id="MySQL8的主要目录结构"><a href="#MySQL8的主要目录结构" class="headerlink" title="MySQL8的主要目录结构"></a>MySQL8的主要目录结构</h2><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">[root@atguigu01 ~]# find / -name mysql</span><br></pre></td></tr></table></figure>
+        <p>这份笔记是康师傅的笔记 不得不说康师傅讲的是真好 写这份笔记只是为了更好的复习<a target="_blank" rel="noopener" href="https://www.bilibili.com/video/BV1iq4y1u7vj?p=52&amp;spm_id_from=pageDriver%E8%A7%86%E9%A2%91%E5%9C%A8%E8%BF%99">https://www.bilibili.com/video/BV1iq4y1u7vj?p=52&amp;spm_id_from=pageDriver视频在这</a></p>
+<h1 id="MySQL的数据目录"><a href="#MySQL的数据目录" class="headerlink" title="MySQL的数据目录"></a>MySQL的数据目录</h1><h2 id="MySQL8的主要目录结构"><a href="#MySQL8的主要目录结构" class="headerlink" title="MySQL8的主要目录结构"></a>MySQL8的主要目录结构</h2><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">[root@atguigu01 ~]# find / -name mysql</span><br></pre></td></tr></table></figure>
 
 <p>安装好MySQL 8之后，我们查看如下的目录结构：</p>
 <h3 id="数据库文件的存放路劲"><a href="#数据库文件的存放路劲" class="headerlink" title="数据库文件的存放路劲"></a>数据库文件的存放路劲</h3><p>MySQL数据库文件的存放路径：/var/lib/mysql/</p>
@@ -369,8 +370,8 @@
 
           <div class="post-nav">
             <div class="post-nav-item">
-                <a href="/JUC/JUC%E7%B3%BB%E5%88%97-%E7%AC%AC%E5%8D%81%E7%AB%A0-ThreadPool-%E7%BA%BF%E7%A8%8B%E6%B1%A0/" rel="prev" title="JUC系列-ThreadPool 线程池">
-                  <i class="fa fa-chevron-left"></i> JUC系列-ThreadPool 线程池
+                <a href="/MySQL/%E5%A4%9A%E8%A1%A8%E6%9F%A5%E8%AF%A2/" rel="prev" title="多表查询">
+                  <i class="fa fa-chevron-left"></i> 多表查询
                 </a>
             </div>
             <div class="post-nav-item">
