@@ -133,7 +133,7 @@
   <nav class="site-state">
       <div class="site-state-item site-state-posts">
         <a href="/archives/">
-          <span class="site-state-item-count">31</span>
+          <span class="site-state-item-count">32</span>
           <span class="site-state-item-name">posts</span>
         </a>
       </div>
@@ -181,6 +181,320 @@
 
 
     <div class="main-inner index posts-expand">
+
+    
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="MySQL">
+    <link itemprop="mainEntityOfPage" href="http://yoursite-url/MySQL/%E9%80%BB%E8%BE%91%E6%9E%B6%E6%9E%84/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="https://nodeandimg.oss-cn-wulanchabu.aliyuncs.com/}VRZRM08TG_W9[WMAD}69[O.png">
+      <meta itemprop="name" content="Hao">
+      <meta itemprop="description" content="It's an IT blog...">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Study Node">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          <a href="/MySQL/%E9%80%BB%E8%BE%91%E6%9E%B6%E6%9E%84/" class="post-title-link" itemprop="url">逻辑架构</a>
+        </h2>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">Posted on</span>
+
+      <time title="Created: 2022-01-17 22:35:34" itemprop="dateCreated datePublished" datetime="2022-01-17T22:35:34+08:00">2022-01-17</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">In</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/MySQL%E9%AB%98%E7%BA%A7/" itemprop="url" rel="index"><span itemprop="name">MySQL高级</span></a>
+        </span>
+          , 
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/MySQL%E9%AB%98%E7%BA%A7/%E6%95%B0%E6%8D%AE%E5%BA%93/" itemprop="url" rel="index"><span itemprop="name">数据库</span></a>
+        </span>
+    </span>
+
+  
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+          <h1 id="逻辑架构"><a href="#逻辑架构" class="headerlink" title="逻辑架构"></a><strong>逻辑架构</strong></h1><h2 id="逻辑架构剖析"><a href="#逻辑架构剖析" class="headerlink" title="逻辑架构剖析"></a><strong>逻辑架构剖析</strong></h2><h3 id="服务器处理客户端请求"><a href="#服务器处理客户端请求" class="headerlink" title="服务器处理客户端请求"></a><strong>服务器处理客户端请求</strong></h3><p>那服务器进程对客户端进程发送的请求做了什么处理，才能产生最后的处理结果呢？这里以查询请求为例展示：</p>
+<p><img src="https://nodeandimg.oss-cn-wulanchabu.aliyuncs.com/asdaweawefdsss.png"></p>
+<p>下面具体展开看一下：</p>
+<p><img src="https://nodeandimg.oss-cn-wulanchabu.aliyuncs.com/19W8M1J4XS5G0.png"></p>
+<h3 id="Connectors"><a href="#Connectors" class="headerlink" title="Connectors"></a><strong>Connectors</strong></h3><p>Connectors,指的是不同语言中与SQL得交互。MySQL首先是一个网络程序,在TCP之上定义了自己得应用层协议。所以要用MySQL,我们可以编写代码,根MySQL Server建立TCP连接,之后按照其定义好的协议进行交互。或者比较方便的方法是调用SDK，比如Native C API，JDBC,PHP等各语言MySQL Connectors,或者通过ODBC。但通过SDK来访问MySQL ，本质上还是在TCP连接上通过MySQL协议根MySQL进行交互。</p>
+<p><strong>接下来MySQL Server结构可以分为如下的三层:</strong></p>
+<h3 id="第1层：连接层"><a href="#第1层：连接层" class="headerlink" title="第1层：连接层"></a><strong>第1层：连接层</strong></h3><p>系统（客户端）访问 MySQL 服务器前，做的第一件事就是建立 TCP 连接。</p>
+<p>经过三次握手建立连接成功后， MySQL 服务器对 TCP 传输过来的账号密码做身份认证、权限获取。</p>
+<ul>
+<li><p><strong>用户名或密码不对，会收到一个Access denied for user错误，客户端程序结束执行</strong></p>
+</li>
+<li><p><strong>用户名密码认证通过，会从权限表查出账号拥有的权限与连接关联，之后的权限判断逻辑，都将依赖于此时读到的权限</strong></p>
+</li>
+</ul>
+<p>TCP 连接收到请求后，必须要分配给一个线程专门与这个客户端的交互。所以还会有个线程池，去走后面的流程。每一个连接从线程池中获取线程，省去了创建和销毁线程的开销。</p>
+<h3 id="第2层：服务层"><a href="#第2层：服务层" class="headerlink" title="第2层：服务层"></a><strong>第2层：服务层</strong></h3><ul>
+<li><p><strong>SQL Interface: SQL接口</strong></p>
+<ul>
+<li>接收用户的SQL命令，并且返回用户需要查询的结果。比如SELECT … FROM就是调用SQL Interface </li>
+<li>MySQL支持DML（数据操作语言）、DDL（数据定义语言）、存储过程、视图、触发器、自定义函数等多种SQL语言接口</li>
+</ul>
+</li>
+<li><p><strong>Parser: 解析器</strong></p>
+<ul>
+<li>在解析器中对 SQL 语句进行语法分析、语义分析。将SQL语句分解成数据结构，并将这个结构传递到后续步骤，以后SQL语句的传递和处理就是基于这个结构的。如果在分解构成中遇到错误，那么就说明这个SQL语句是不合理的。</li>
+<li>在SQL命令传递到解析器的时候会被解析器验证和解析，并为其创建 语法树 ，并根据数据字典丰富查询语法树，会 验证该客户端是否具有执行该查询的权限 。创建好语法树后，MySQL还会对SQl查询进行语法上的优化，进行查询重写。</li>
+</ul>
+</li>
+<li><p><strong>Optimizer:</strong> <strong>查询优化器</strong></p>
+<ul>
+<li>SQL语句在语法解析之后、查询之前会使用查询优化器确定 SQL 语句的执行路径，生成一个执行计划 。</li>
+<li>这个执行计划表明应该 使用哪些索引 进行查询（全表检索还是使用索引检索），表之间的连接顺序如何，最后会按照执行计划中的步骤调用存储引擎提供的方法来真正的执行查询，并将查询结果返回给用户。</li>
+<li>它使用“ 选取-投影-连接 ”策略进行查询。例如：</li>
+</ul>
+</li>
+</ul>
+<p>​       </p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">SELECT id,name FROM student WHERE gender = &#x27;女&#x27;;</span><br></pre></td></tr></table></figure>
+
+<p>这个SELECT查询先根据WHERE语句进行 选取 ，而不是将表全部查询出来以后再进行gender过滤。 这个SELECT查询先根据id和name进行属性 投影 ，而不是将属性全部取出以后再进行过滤，将这两个查询条件 连接 起来生成最终查询结果。</p>
+<ul>
+<li><strong>Caches &amp; Buffers： 查询缓存组件</strong><ul>
+<li>MySQL内部维持着一些Cache和Buffer，比如Query Cache用来缓存一条SELECT语句的执行结果，如果能够在其中找到对应的查询结果，那么就不必再进行查询解析、优化和执行的整个过程了，直接将结果反馈给客户端</li>
+<li>这个缓存机制是由一系列小缓存组成的。比如表缓存，记录缓存，key缓存，权限缓存等 。</li>
+<li>这个查询缓存可以在 不同客户端之间共享 。</li>
+<li>从MySQL 5.7.20开始，不推荐使用查询缓存，并在 MySQL 8.0中删除 。 </li>
+</ul>
+</li>
+</ul>
+<h3 id="第3层：引擎层"><a href="#第3层：引擎层" class="headerlink" title="第3层：引擎层"></a><strong>第3层：引擎层</strong></h3><p>插件式存储引擎层（ Storage Engines），<strong>真正的负责了MySQL中数据的存储和提取，对物理服务器级别</strong>维护的底层数据执行操作，服务器通过API与存储引擎进行通信。不同的存储引擎具有的功能不同，这样我们可以根据自己的实际需要进行选取。</p>
+<p>MySQL 8.0.25默认支持的存储引擎如下：</p>
+<p><img src="https://nodeandimg.oss-cn-wulanchabu.aliyuncs.com/59XUUR45UEI_Z8.png"></p>
+<h3 id="存储层"><a href="#存储层" class="headerlink" title="存储层"></a><strong>存储层</strong></h3><p>所有的数据，数据库、表的定义，表的每一行的内容，索引，都是存在 文件系统 上，以 文件 的方式存在的，并完成与存储引擎的交互。当然有些存储引擎比如InnoDB，也支持不使用文件系统直接管理裸设备，但现代文件系统的实现使得这样做没有必要了。在文件系统之下，可以使用本地磁盘，可以使用DAS、NAS、SAN等各种存储系统。</p>
+<h3 id="小结"><a href="#小结" class="headerlink" title="小结"></a><strong>小结</strong></h3><p>MySQL架构图本节开篇所示。下面为了熟悉SQL执行流程方便，我们可以简化如下：</p>
+<p><img src="https://nodeandimg.oss-cn-wulanchabu.aliyuncs.com/QR_1IP4IS3L37NT7D27PH.png"></p>
+<p>简化为三层结构：</p>
+<ol>
+<li><p>连接层：客户端和服务器端建立连接，客户端发送 SQL 至服务器端；</p>
+</li>
+<li><p>SQL 层（服务层）：对 SQL 语句进行查询处理；与数据库文件的存储方式无关；</p>
+</li>
+<li><p>存储引擎层：与数据库文件打交道，负责数据的存储和读取。</p>
+</li>
+</ol>
+<h2 id="SQL执行流程"><a href="#SQL执行流程" class="headerlink" title="SQL执行流程"></a><strong>SQL执行流程</strong></h2><h3 id="MySQL-中的-SQL执行流程"><a href="#MySQL-中的-SQL执行流程" class="headerlink" title="MySQL 中的 SQL执行流程"></a><strong>MySQL</strong> <strong>中的</strong> <strong>SQL执行流程</strong></h3><p><img src="https://nodeandimg.oss-cn-wulanchabu.aliyuncs.com/qwesdfds.png"></p>
+<p><strong>MySQL的查询流程：</strong></p>
+<p><strong>1.</strong> <strong>查询缓存</strong>：Server 如果在查询缓存中发现了这条 SQL 语句，就会直接将结果返回给客户端；如果没有，就进入到解析器阶段。需要说明的是，因为查询缓存往往效率不高，所以在 MySQL8.0 之后就抛弃了这个功能。</p>
+<p><strong>大多数情况查询缓存就是个鸡肋，为什么呢？</strong></p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">SELECT employee_id,last_name FROM employees WHERE employee_id = 101;</span><br></pre></td></tr></table></figure>
+
+<p>查询缓存是提前把查询结果缓存起来，这样下次不需要执行就可以直接拿到结果。需要说明的是，在MySQL 中的查询缓存，不是缓存查询计划，而是查询对应的结果。这就意味着查询匹配的 鲁棒性大大降 低 ，只有 相同的查询操作才会命中查询缓存 。两个查询请求在任何字符上的不同（例如：空格、注释、大小写），都会导致缓存不会命中。因此 MySQL 的 查询缓存命中率不高 。</p>
+<p>同时，如果查询请求中包含某些系统函数、用户自定义变量和函数、一些系统表，如 mysql 、 information_schema、 performance_schema 数据库中的表，那这个请求就不会被缓存。以某些系统函数举例，可能同样的函数的两次调用会产生不一样的结果，比如函数 NOW ，每次调用都会产生最新的当前时间，如果在一个查询请求中调用了这个函数，那即使查询请求的文本信息都一样，那不同时间的两次查询也应该得到不同的结果，如果在第一次查询时就缓存了，那第二次查询的时候直接使用第一次查询的结果就是错误的！</p>
+<p>此外，既然是缓存，那就有它 缓存失效的时候 。MySQL的缓存系统会监测涉及到的每张表，只要该表的结构或者数据被修改，如对该表使用了 INSERT 、 UPDATE 、 DELETE 、 TRUNCATE TABLE 、 ALTER TABLE 、 DROP TABLE 或 DROP DATABASE 语句，那使用该表的所有高速缓存查询都将变为无效并从高速缓存中删除！对于 更新压力大的数据库 来说，查询缓存的命中率会非常低。</p>
+<p><strong>2.</strong> <strong>解析器</strong>：在解析器中对 SQL 语句进行语法分析、语义分析</p>
+<p><img src="https://nodeandimg.oss-cn-wulanchabu.aliyuncs.com/OIP6RMA8ZE1ZEFUO.png"></p>
+<p>分析器先做“ 词法分析 ”。你输入的是由多个字符串和空格组成的一条 SQL 语句，MySQL 需要识别出里面的字符串分别是什么，代表什么。 MySQL 从你输入的”select”这个关键字识别出来，这是一个查询语句。它也要把字符串“T”识别成“表名 T”，把字符串“ID”识别成“列 ID”。</p>
+<p>接着，要做“ 语法分析 ”。根据词法分析的结果，语法分析器（比如：Bison）会根据语法规则，判断你输入的这个 SQL 语句是否 满足 MySQL 语法 。 </p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">select department_id,job_id,avg(salary) from employees group by department_id;</span><br></pre></td></tr></table></figure>
+
+<p>如果SQL语句正确，则会生成一个这样的语法树：</p>
+<p><img src="https://nodeandimg.oss-cn-wulanchabu.aliyuncs.com/R123123W6UGUM4MK.png"></p>
+<p><strong>3.</strong> <strong>优化器</strong>：在优化器中会确定 SQL 语句的执行路径，比如是根据 全表检索 ，还是根据 索引检索 等。</p>
+<p>举例：如下语句是执行两个表的 join： </p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">select * from test1 join test2 using(ID) where test1.name=&#x27;zhangwei&#x27; and test2.name=&#x27;mysql高级课程&#x27;;</span><br></pre></td></tr></table></figure>
+
+<blockquote>
+<p>方案1：可以先从表 test1 里面取出 name=’zhangwei’的记录的 ID 值，再根据 ID 值关联到表 test2，再判 断 test2 里面 name的值是否等于 ‘mysql高级课程’。 </p>
+<p>方案2：可以先从表 test2 里面取出 name=’mysql高级课程’ 的记录的 ID 值，再根据 ID 值关联到 test1， 再判断 test1 里面 name的值是否等于 zhangwei。 </p>
+<p>这两种执行方法的逻辑结果是一样的，但是执行的效率会有不同，而优化器的作用就是决定选择使用哪一个方案。优化 器阶段完成后，这个语句的执行方案就确定下来了，然后进入执行器阶段。 </p>
+<p>如果你还有一些疑问，比如优化器是怎么选择索引的，有没有可能选择错等。后面讲到索引我们再谈。</p>
+</blockquote>
+<p>在查询优化器中，可以分为 逻辑查询 优化阶段和 物理查询 优化阶段。</p>
+<p><strong>4.</strong> <strong>执行器</strong>：</p>
+<p>截止到现在，还没有真正去读写真实的表，仅仅只是产出了一个执行计划。于是就进入了 执行器阶段 。</p>
+<p><img src="https://nodeandimg.oss-cn-wulanchabu.aliyuncs.com/17AGB9PDY8Q.png"></p>
+<p>在执行之前需要判断该用户是否 具备权限 。如果没有，就会返回权限错误。如果具备权限，就执行 SQL查询并返回结果。在 MySQL8.0 以下的版本，如果设置了查询缓存，这时会将查询结果进行缓存。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">select * from test where id=1;</span><br></pre></td></tr></table></figure>
+
+<p>比如：表 test 中，ID 字段没有索引，那么执行器的执行流程是这样的：</p>
+<blockquote>
+<p>调用 InnoDB 引擎接口取这个表的第一行，判断 ID 值是不是1，如果不是则跳过，如果是则将这行存在结果集中； 调用引擎接口取“下一行”，重复相同的判断逻辑，直到取到这个表的最后一行。 </p>
+<p>执行器将上述遍历过程中所有满足条件的行组成的记录集作为结果集返回给客户端。</p>
+</blockquote>
+<p>至此，这个语句就执行完成了。对于有索引的表，执行的逻辑也差不多。</p>
+<p>SQL 语句在 MySQL 中的流程是： SQL语句→查询缓存→解析器→优化器→执行器 。</p>
+<p><img src="https://nodeandimg.oss-cn-wulanchabu.aliyuncs.com/Y5126Q%600MXNSVW2R%60QBG7~D.png"></p>
+<h3 id="MySQL8中SQL执行原理"><a href="#MySQL8中SQL执行原理" class="headerlink" title="MySQL8中SQL执行原理"></a><strong>MySQL8中SQL执行原理</strong></h3><p><strong>1.</strong> <strong>确认profiling是否开启</strong> </p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">mysql&gt; select @@profiling; </span><br><span class="line"></span><br><span class="line"></span><br><span class="line">mysql&gt; show variables like &#x27;profiling&#x27;;</span><br></pre></td></tr></table></figure>
+
+<p><img src="https://nodeandimg.oss-cn-wulanchabu.aliyuncs.com/asdawraw55.png"></p>
+<p><img src="https://nodeandimg.oss-cn-wulanchabu.aliyuncs.com/TAEK474]4JGYM8J.png"></p>
+<p>profiling=0 代表关闭，我们需要把 profiling 打开，即设置为 1： </p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">mysql&gt; set profiling=1;</span><br></pre></td></tr></table></figure>
+
+<p><strong>2.</strong> <strong>多次执行相同SQL查询</strong></p>
+<p>然后我们执行一个 SQL 查询（你可以执行任何一个 SQL 查询）：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">mysql&gt; select * from employees;</span><br></pre></td></tr></table></figure>
+
+<p><strong>3.</strong> <strong>查看profiles</strong></p>
+<p>查看当前会话所产生的所有 profiles： </p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">mysql&gt; show profiles; # 显示最近的几次查询</span><br></pre></td></tr></table></figure>
+
+<p><img src="https://nodeandimg.oss-cn-wulanchabu.aliyuncs.com/86416541adwae.png"></p>
+<p><strong>4.</strong> <strong>查看profile</strong></p>
+<p>显示执行计划，查看程序的执行步骤：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">mysql&gt; show profile;</span><br></pre></td></tr></table></figure>
+
+<p><img src="https://nodeandimg.oss-cn-wulanchabu.aliyuncs.com/8FN6WFL1F5544QW.png"></p>
+<p>当然你也可以查询指定的 Query ID，比如：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">mysql&gt; show profile for query 7;</span><br></pre></td></tr></table></figure>
+
+<p>查询 SQL 的执行时间结果和上面是一样的。</p>
+<p>此外，还可以查询更丰富的内容：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">mysql&gt; show profile cpu,block io for query 6;</span><br></pre></td></tr></table></figure>
+
+<p><img src="https://nodeandimg.oss-cn-wulanchabu.aliyuncs.com/asdawr324234ss.png"></p>
+<p>继续</p>
+<figure class="highlight maxima"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">mysql&gt; <span class="built_in">show</span> profile cpu,<span class="built_in">block</span> io <span class="keyword">for</span> query <span class="number">7</span>;</span><br></pre></td></tr></table></figure>
+
+<p><img src="https://nodeandimg.oss-cn-wulanchabu.aliyuncs.com/85QAFXQ94KNLJB.png"></p>
+<h3 id="MySQL5-7中SQL执行原理"><a href="#MySQL5-7中SQL执行原理" class="headerlink" title="MySQL5.7中SQL执行原理"></a><strong>MySQL5.7中SQL执行原理</strong></h3><p><strong>1.</strong> <strong>配置文件中开启查询缓存</strong> </p>
+<p>在 /etc/my.cnf 中新增一行：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">query_cache_type=1</span><br></pre></td></tr></table></figure>
+
+<p><strong>2.</strong> <strong>重启mysql服务</strong> </p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">systemctl restart mysqld</span><br></pre></td></tr></table></figure>
+
+<p><strong>3.</strong> <strong>开启查询执行计划</strong></p>
+<p>由于重启过服务，需要重新执行如下指令，开启profiling。 </p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">mysql&gt; set profiling=1;</span><br></pre></td></tr></table></figure>
+
+<p><strong>4.</strong> <strong>执行语句两次：</strong></p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">mysql&gt; select * from locations; </span><br><span class="line"></span><br><span class="line">mysql&gt; select * from locations;</span><br></pre></td></tr></table></figure>
+
+<p>当 查看profile执行编号2时，比执行编号1时少了很多信息，可以看出查询语句直接从缓存中获取数据 这里就不演示了</p>
+<h3 id="SQL语法顺序"><a href="#SQL语法顺序" class="headerlink" title="SQL语法顺序"></a><strong>SQL语法顺序</strong></h3><p>随着Mysql版本的更新换代，其优化器也在不断的升级，优化器会分析不同执行顺序产生的性能消耗不同而动态调整执行顺序。</p>
+<p>需求：查询每个部门年龄高于20岁的人数且高于20岁人数不能少于2人，显示人数最多的第一名部门信息</p>
+<p>下面是经常出现的查询顺序：</p>
+<p><img src="https://nodeandimg.oss-cn-wulanchabu.aliyuncs.com/557sdgsdfsdf.png"></p>
+<h3 id="Oracle中的SQL执行流程-了解"><a href="#Oracle中的SQL执行流程-了解" class="headerlink" title="Oracle中的SQL执行流程(了解)"></a><strong>Oracle中的SQL执行流程(了解)</strong></h3><p>Oracle 中采用了 共享池 来判断 SQL 语句是否存在缓存和执行计划，通过这一步骤我们可以知道应该采用硬解析还是软解析。</p>
+<p>我们先来看下 SQL 在 Oracle 中的执行过程：</p>
+<p><img src="https://nodeandimg.oss-cn-wulanchabu.aliyuncs.com/PQPIUJA6QTO1DD5TK2XA.png"></p>
+<p>从上面这张图中可以看出，SQL 语句在 Oracle 中经历了以下的几个步骤。</p>
+<p><strong>1.语法检查</strong>：检查 SQL 拼写是否正确，如果不正确，Oracle 会报语法错误。</p>
+<p><strong>2.语义检查</strong>：检查 SQL 中的访问对象是否存在。比如我们在写 SELECT 语句的时候，列名写错了，系统就会提示错误。语法检查和语义检查的作用是保证 SQL 语句没有错误。</p>
+<p><strong>3.权限检查</strong>：看用户是否具备访问该数据的权限。</p>
+<p><strong>4.共享池检查</strong>：共享池（Shared Pool）是一块内存池，**最主要的作用是缓存 **SQL <strong>语句和该语句的执行计</strong>划。Oracle 通过检查共享池是否存在 SQL 语句的执行计划，来判断进行软解析，还是硬解析。那软解析和硬解析又该怎么理解呢？</p>
+<p>在共享池中，Oracle 首先对 SQL 语句进行 Hash 运算 ，然后根据 Hash 值在库缓存（Library Cache）中查找，如果 存在 SQL 语句的执行计划 ，就直接拿来执行，直接进入“执行器”的环节，这就是 软解析 。</p>
+<p>如果没有找到 SQL 语句和执行计划，Oracle 就需要创建解析树进行解析，生成执行计划，进入“优化器”这个步骤，这就是 硬解析 。</p>
+<p><strong>5.优化器</strong>：优化器中就是要进行硬解析，也就是决定怎么做，比如创建解析树，生成执行计划。</p>
+<p><strong>6.执行器</strong>：当有了解析树和执行计划之后，就知道了 SQL 该怎么被执行，这样就可以在执行器中执行语句了。</p>
+<p>共享池是 Oracle 中的术语，包括了库缓存，数据字典缓冲区等。我们上面已经讲到了库缓存区，它主要缓存 SQL 语句和执行计划。而 数据字典缓冲区 存储的是 Oracle 中的对象定义，比如表、视图、索引等对象。当对 SQL 语句进行解析的时候，如果需要相关的数据，会从数据字典缓冲区中提取。</p>
+<p>库缓存 这一个步骤，决定了 SQL 语句是否需要进行硬解析。为了提升 SQL 的执行效率，我们应该尽量避免硬解析，因为在 SQL 的执行过程中，创建解析树，生成执行计划是很消耗资源的。</p>
+<p>你可能会问，如何避免硬解析，尽量使用软解析呢？在 Oracle 中， 绑定变量 是它的一大特色。绑定变量就是在 SQL 语句中使用变量，通过不同的变量取值来改变 SQL 的执行结果。这样做的好处是能 提升软解 析的可能性 ，不足之处在于可能会导致生成的执行计划不够优化，因此是否需要绑定变量还需要视情况而定。</p>
+<p>举个例子，我们可以使用下面的查询语句：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">SQL&gt; select * from player where player_id = 10001;</span><br></pre></td></tr></table></figure>
+
+<p>你也可以使用绑定变量，如：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">SQL&gt; select * from player where player_id = :player_id;</span><br></pre></td></tr></table></figure>
+
+<p>这两个查询语句的效率在 Oracle 中是完全不同的。如果你在查询 player_id = 10001 之后，还会查询10002、10003 之类的数据，那么每一次查询都会创建一个新的查询解析。而第二种方式使用了绑定变量，那么在第一次查询之后，在共享池中就会存在这类查询的执行计划，也就是软解析。</p>
+<p>因此，<strong>我们可以通过使用绑定变量来减少硬解析，减少</strong> <strong>Oracle</strong> <strong>的解析工作量。</strong>但是这种方式也有缺点，使用动态 SQL 的方式，因为参数不同，会导致 SQL 的执行效率不同，同时 SQL 优化也会比较困难。</p>
+<p><strong>Oracle的架构图：</strong></p>
+<p><img src="https://nodeandimg.oss-cn-wulanchabu.aliyuncs.com/X1TZP9OCWRT29I0M.png"></p>
+<p><strong>简图：</strong></p>
+<p><img src="https://nodeandimg.oss-cn-wulanchabu.aliyuncs.com/LPFFHLBNWHKB65%60V1T15.png"></p>
+<p>小结：</p>
+<p>Oracle 和 MySQL 在进行 SQL 的查询上面有软件实现层面的差异。Oracle 提出了共享池的概念，通过共享池来判断是进行软解析，还是硬解析。</p>
+<h2 id="数据库缓冲池-buffer-pool"><a href="#数据库缓冲池-buffer-pool" class="headerlink" title="数据库缓冲池(buffer pool)"></a><strong>数据库缓冲池(buffer pool)</strong></h2><p>InnoDB 存储引擎是以页为单位来管理存储空间的，我们进行的增删改查操作其实本质上都是在访问页面（包括读页面、写页面、创建新页面等操作）。而磁盘 I/O 需要消耗的时间很多，而在内存中进行操作，效率则会高很多，为了能让数据表或者索引中的数据随时被我们所用，DBMS 会申请 占用内存来作为 数据缓冲池 ，在真正访问页面之前，需要把在磁盘上的页缓存到内存中的 Buffer Pool 之后才可以访问。</p>
+<p>这样做的好处是可以让磁盘活动最小化，从而 减少与磁盘直接进行 I/O 的时间 。要知道，这种策略对提升 SQL 语句的查询性能来说至关重要。如果索引的数据在缓冲池里，那么访问的成本就会降低很多。</p>
+<h3 id="缓冲池-vs-查询缓存"><a href="#缓冲池-vs-查询缓存" class="headerlink" title="缓冲池 vs 查询缓存"></a><strong>缓冲池</strong> <strong>vs</strong> <strong>查询缓存</strong></h3><p><strong>缓冲池和查询缓存是一个东西吗？不是。</strong></p>
+<p><strong>1.</strong> <strong>缓冲池（Buffer Pool）</strong></p>
+<p>首先我们需要了解在 InnoDB 存储引擎中，缓冲池都包括了哪些。</p>
+<p>在 InnoDB 存储引擎中有一部分数据会放到内存中，缓冲池则占了这部分内存的大部分，它用来存储各种</p>
+<p>数据的缓存，如下图所示：</p>
+<p><img src="https://nodeandimg.oss-cn-wulanchabu.aliyuncs.com/STTND03RFB44PGU.png"></p>
+<p>从图中，你能看到 InnoDB 缓冲池包括了数据页、索引页、插入缓冲、锁信息、自适应 Hash 和数据字典信息等。</p>
+<p><strong>缓存池的重要性：</strong></p>
+<p><strong>缓存原则：</strong></p>
+<p>“ 位置 * 频次 ”这个原则，可以帮我们对 I/O 访问效率进行优化。</p>
+<p>首先，位置决定效率，提供缓冲池就是为了在内存中可以直接访问数据。</p>
+<p>其次，频次决定优先级顺序。因为缓冲池的大小是有限的，比如磁盘有 200G，但是内存只有 16G，缓冲池大小只有 1G，就无法将所有数据都加载到缓冲池里，这时就涉及到优先级顺序，会 优先对使用频次高 的热数据进行加载 。</p>
+<p><strong>缓冲池的预读特性：</strong></p>
+<p><strong>2.</strong> <strong>查询缓存</strong></p>
+<p>那么什么是查询缓存呢？</p>
+<p>查询缓存是提前把 查询结果缓存 起来，这样下次不需要执行就可以直接拿到结果。需要说明的是，在MySQL 中的查询缓存，不是缓存查询计划，而是查询对应的结果。因为命中条件苛刻，而且只要数据表发生变化，查询缓存就会失效，因此命中率低。</p>
+<h3 id="缓冲池如何读取数据"><a href="#缓冲池如何读取数据" class="headerlink" title="缓冲池如何读取数据"></a><strong>缓冲池如何读取数据</strong></h3><p>缓冲池管理器会尽量将经常使用的数据保存起来，在数据库进行页面读操作的时候，首先会判断该页面是否在缓冲池中，如果存在就直接读取，如果不存在，就会通过内存或磁盘将页面存放到缓冲池中再进行读取。</p>
+<p>缓存在数据库中的结构和作用如下图所示：</p>
+<p><img src="https://nodeandimg.oss-cn-wulanchabu.aliyuncs.com/UGRKJJX14ZKTBQ6W4RA.png"></p>
+<p><strong>如果我们执行</strong> <strong>SQL</strong> <strong>语句的时候更新了缓存池中的数据，那么这些数据会马上同步到磁盘上吗？</strong> </p>
+<h3 id="查看-设置缓冲池的大小"><a href="#查看-设置缓冲池的大小" class="headerlink" title="查看/设置缓冲池的大小"></a><strong>查看/设置缓冲池的大小</strong></h3><p>如果你使用的是 InnoDB 存储引擎，可以通过查看 innodb_buffer_pool_size 变量来查看缓冲池的大小。命令如下：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">show variables like &#x27;innodb_buffer_pool_size&#x27;;</span><br></pre></td></tr></table></figure>
+
+<p><img src="https://nodeandimg.oss-cn-wulanchabu.aliyuncs.com/LAPCFBNOLKR5L1.png"></p>
+<p>你能看到此时 InnoDB 的缓冲池大小只有 134217728/1024/1024=128MB。我们可以修改缓冲池大小，比如改为256MB，方法如下：</p>
+<figure class="highlight applescript"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">set</span> <span class="keyword">global</span> innodb_buffer_pool_size = <span class="number">268435456</span>;</span><br></pre></td></tr></table></figure>
+
+<p>或者：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">[server] </span><br><span class="line">innodb_buffer_pool_size = 268435456</span><br></pre></td></tr></table></figure>
+
+<p>然后再来看下修改后的缓冲池大小，此时已成功修改成了 256 MB： </p>
+<p><img src="https://nodeandimg.oss-cn-wulanchabu.aliyuncs.com/12312czsdsa.png"></p>
+<h3 id="多个Buffer-Pool实例"><a href="#多个Buffer-Pool实例" class="headerlink" title="多个Buffer Pool实例"></a><strong>多个Buffer Pool实例</strong></h3><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">[server] </span><br><span class="line">innodb_buffer_pool_instances = 2</span><br></pre></td></tr></table></figure>
+
+<p>这样就表明我们要创建2个 Buffer Pool 实例。</p>
+<p>我们看下如何查看缓冲池的个数，使用命令：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">show variables like &#x27;innodb_buffer_pool_instances&#x27;;</span><br></pre></td></tr></table></figure>
+
+<p>那每个 Buffer Pool 实例实际占多少内存空间呢？其实使用这个公式算出来的：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">innodb_buffer_pool_size/innodb_buffer_pool_instances</span><br></pre></td></tr></table></figure>
+
+<p>也就是总共的大小除以实例的个数，结果就是每个 Buffer Pool 实例占用的大小。</p>
+<h3 id="引申问题"><a href="#引申问题" class="headerlink" title="引申问题"></a><strong>引申问题</strong></h3><p>Buffer Pool是MySQL内存结构中十分核心的一个组成，你可以先把它想象成一个黑盒子。</p>
+<p><strong>黑盒下的更新数据流程</strong></p>
+<p><img src="https://nodeandimg.oss-cn-wulanchabu.aliyuncs.com/12312dffsdfse.png"></p>
+<p>我更新到一半突然发生错误了，想要回滚到更新之前的版本，该怎么办？连数据持久化的保证、事务回滚都做不到还谈什么崩溃恢复？</p>
+<p>答案：<strong>Redo Log &amp; Undo Log</strong></p>
+<p>这份笔记是康师傅的笔记 不得不说康师傅讲的是真好 写这份笔记只是为了更好的复习<a target="_blank" rel="noopener" href="https://www.bilibili.com/video/BV1iq4y1u7vj?p=52&amp;spm_id_from=pageDriver%E8%A7%86%E9%A2%91%E5%9C%A8%E8%BF%99">https://www.bilibili.com/video/BV1iq4y1u7vj?p=52&amp;spm_id_from=pageDriver视频在这</a></p>
+
+      
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+</div>
+
+
+
 
     
 
@@ -1363,187 +1677,6 @@
 <p><strong>具体死锁的操作代码实列</strong><br>可理解背下来，大厂面试可考，死锁的简单案例</p>
 <figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">DeadLock</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="comment">//创建两个对象</span></span><br><span class="line">    <span class="keyword">static</span> Object a = <span class="keyword">new</span> Object();</span><br><span class="line">    <span class="keyword">static</span> Object b = <span class="keyword">new</span> Object();</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">new</span> Thread(()-&gt;&#123;</span><br><span class="line">            <span class="keyword">synchronized</span> (a) &#123;</span><br><span class="line">                System.out.println(Thread.currentThread().getName()+<span class="string">&quot; 持有锁a，试图获取锁b&quot;</span>);</span><br><span class="line">                <span class="keyword">try</span> &#123;</span><br><span class="line">                    TimeUnit.SECONDS.sleep(<span class="number">1</span>);</span><br><span class="line">                &#125; <span class="keyword">catch</span> (InterruptedException e) &#123;</span><br><span class="line">                    e.printStackTrace();</span><br><span class="line">                &#125;</span><br><span class="line">                <span class="keyword">synchronized</span> (b) &#123;</span><br><span class="line">                    System.out.println(Thread.currentThread().getName()+<span class="string">&quot; 获取锁b&quot;</span>);</span><br><span class="line">                &#125;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;,<span class="string">&quot;A&quot;</span>).start();</span><br><span class="line"></span><br><span class="line">        <span class="keyword">new</span> Thread(()-&gt;&#123;</span><br><span class="line">            <span class="keyword">synchronized</span> (b) &#123;</span><br><span class="line">                System.out.println(Thread.currentThread().getName()+<span class="string">&quot; 持有锁b，试图获取锁a&quot;</span>);</span><br><span class="line">                <span class="keyword">try</span> &#123;</span><br><span class="line">                    TimeUnit.SECONDS.sleep(<span class="number">1</span>);</span><br><span class="line">                &#125; <span class="keyword">catch</span> (InterruptedException e) &#123;</span><br><span class="line">                    e.printStackTrace();</span><br><span class="line">                &#125;</span><br><span class="line">                <span class="keyword">synchronized</span> (a) &#123;</span><br><span class="line">                    System.out.println(Thread.currentThread().getName()+<span class="string">&quot; 获取锁a&quot;</span>);</span><br><span class="line">                &#125;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;,<span class="string">&quot;B&quot;</span>).start();</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 
-
-      
-    </div>
-
-    
-    
-    
-
-    <footer class="post-footer">
-        <div class="post-eof"></div>
-      
-    </footer>
-  </article>
-</div>
-
-
-
-
-    
-
-
-<div class="post-block">
-  
-  
-
-  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="JUC">
-    <link itemprop="mainEntityOfPage" href="http://yoursite-url/JUC/JUC%E7%B3%BB%E5%88%97-%E7%AC%AC%E5%9B%9B%E7%AB%A0-%E9%9B%86%E5%90%88%E7%9A%84%E7%BA%BF%E7%A8%8B%E5%AE%89%E5%85%A8/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="https://nodeandimg.oss-cn-wulanchabu.aliyuncs.com/}VRZRM08TG_W9[WMAD}69[O.png">
-      <meta itemprop="name" content="Hao">
-      <meta itemprop="description" content="It's an IT blog...">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Study Node">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          <a href="/JUC/JUC%E7%B3%BB%E5%88%97-%E7%AC%AC%E5%9B%9B%E7%AB%A0-%E9%9B%86%E5%90%88%E7%9A%84%E7%BA%BF%E7%A8%8B%E5%AE%89%E5%85%A8/" class="post-title-link" itemprop="url">JUC系列-集合的线程安全</a>
-        </h2>
-
-        <div class="post-meta-container">
-          <div class="post-meta">
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-calendar"></i>
-      </span>
-      <span class="post-meta-item-text">Posted on</span>
-
-      <time title="Created: 2021-11-15 14:03:03" itemprop="dateCreated datePublished" datetime="2021-11-15T14:03:03+08:00">2021-11-15</time>
-    </span>
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-folder"></i>
-      </span>
-      <span class="post-meta-item-text">In</span>
-        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-          <a href="/categories/JUC/" itemprop="url" rel="index"><span itemprop="name">JUC</span></a>
-        </span>
-    </span>
-
-  
-</div>
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-          <h1 id="集合的线程安全"><a href="#集合的线程安全" class="headerlink" title="集合的线程安全"></a>集合的线程安全</h1><h2 id="集合操作-Demo"><a href="#集合操作-Demo" class="headerlink" title="集合操作 Demo"></a><strong>集合操作 Demo</strong></h2><p>NotSafeDemo</p>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">package</span> com.hao.lock;</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> java.util.ArrayList;</span><br><span class="line"><span class="keyword">import</span> java.util.List;</span><br><span class="line"><span class="keyword">import</span> java.util.UUID;</span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">NotSafeDemo</span> </span>&#123;</span><br><span class="line">    <span class="comment">/**</span></span><br><span class="line"><span class="comment">     * 多个线程同时对集合进行修改</span></span><br><span class="line"><span class="comment">     * <span class="doctag">@param</span> args</span></span><br><span class="line"><span class="comment">     */</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> </span>&#123;</span><br><span class="line">        List list = <span class="keyword">new</span> ArrayList();</span><br><span class="line">        <span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">0</span>; i &lt; <span class="number">100</span>; i++) &#123;</span><br><span class="line">            <span class="keyword">new</span> Thread(() -&gt;&#123;</span><br><span class="line">                list.add(UUID.randomUUID().toString());</span><br><span class="line">                System.out.println(list);</span><br><span class="line">            &#125;, <span class="string">&quot;线程&quot;</span> + i).start();</span><br><span class="line">        &#125;</span><br><span class="line">    &#125; </span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<p>异常内容</p>
-<p>java.util.ConcurrentModificationException</p>
-<p><strong>问题: 为什么会出现并发修改异常?</strong></p>
-<p>查看 ArrayList 的 add 方法源码</p>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment">* Appends the specified element to the end of this list.</span></span><br><span class="line"><span class="comment">*</span></span><br><span class="line"><span class="comment">* <span class="doctag">@param</span> e element to be appended to this list</span></span><br><span class="line"><span class="comment">* <span class="doctag">@return</span> &lt;tt&gt;true&lt;/tt&gt; (as specified by &#123;<span class="doctag">@link</span> Collection#add&#125;)</span></span><br><span class="line"><span class="comment">*/</span></span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">boolean</span> <span class="title">add</span><span class="params">(E e)</span> </span>&#123;</span><br><span class="line">	ensureCapacityInternal(size + <span class="number">1</span>); <span class="comment">// Increments modCount!!</span></span><br><span class="line">	elementData[size++] = e;</span><br><span class="line">	<span class="keyword">return</span> <span class="keyword">true</span>; </span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<p>==<strong>那么我们如何去解决 List 类型的线程安全问题?</strong>==</p>
-<h2 id="Vector"><a href="#Vector" class="headerlink" title="Vector"></a><strong>Vector</strong></h2><p>Vector 是<strong>矢量队列</strong>，它是 JDK1.0 版本添加的类。继承于 AbstractList，实现了 List, RandomAccess, Cloneable 这些接口。 Vector 继承了 AbstractList，实现了 List；所以，<strong>它是一个队列，支持相关的添加、删除、修改、遍历等功能</strong>。 Vector 实现了 RandmoAccess 接口，即<strong>提供了随机访问功能</strong>。</p>
-<p>RandmoAccess 是 java 中用来被 List 实现，为 List 提供快速访问功能的。在Vector 中，我们即可以通过元素的序号快速获取元素对象；这就是快速随机访问。 Vector 实现了 Cloneable 接口，即实现 clone()函数。它能被克隆。</p>
-<p><strong>==和 ArrayList 不同，Vector 中的操作是线程安全的。==</strong></p>
-<p>NotSafeDemo 代码修改</p>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">package</span> com.hao.lock;</span><br><span class="line"><span class="keyword">import</span> java.util.List;</span><br><span class="line"><span class="keyword">import</span> java.util.UUID;</span><br><span class="line"><span class="keyword">import</span> java.util.Vector;</span><br><span class="line"></span><br><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * 集合线程安全案例</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">NotSafeDemo</span> </span>&#123;</span><br><span class="line">    <span class="comment">/**</span></span><br><span class="line"><span class="comment">     * 多个线程同时对集合进行修改</span></span><br><span class="line"><span class="comment">     * <span class="doctag">@param</span> args</span></span><br><span class="line"><span class="comment">     */</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> </span>&#123;</span><br><span class="line">        List list = <span class="keyword">new</span> Vector();</span><br><span class="line">        <span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">0</span>; i &lt; <span class="number">100</span>; i++) &#123;</span><br><span class="line">            <span class="keyword">new</span> Thread(() -&gt;&#123;</span><br><span class="line">                list.add(UUID.randomUUID().toString());</span><br><span class="line">                System.out.println(list);</span><br><span class="line">            &#125;, <span class="string">&quot;线程&quot;</span> + i).start();</span><br><span class="line">        &#125; </span><br><span class="line">    &#125; </span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<p><strong>现在没有运行出现并发异常,为什么?</strong></p>
-<p>查看 Vector 的 add 方法</p>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment">* Appends the specified element to the end of this Vector.</span></span><br><span class="line"><span class="comment">*</span></span><br><span class="line"><span class="comment">* <span class="doctag">@param</span> e element to be appended to this Vector</span></span><br><span class="line"><span class="comment">* <span class="doctag">@return</span> &#123;<span class="doctag">@code</span> true&#125; (as specified by &#123;<span class="doctag">@link</span> Collection#add&#125;)</span></span><br><span class="line"><span class="comment">* <span class="doctag">@since</span> 1.2</span></span><br><span class="line"><span class="comment">*/</span></span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">synchronized</span> <span class="keyword">boolean</span> <span class="title">add</span><span class="params">(E e)</span> </span>&#123;</span><br><span class="line">	modCount++;</span><br><span class="line">	ensureCapacityHelper(elementCount + <span class="number">1</span>);</span><br><span class="line">	elementData[elementCount++] = e;</span><br><span class="line">	<span class="keyword">return</span> <span class="keyword">true</span>; </span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<p><strong>add 方法被 synchronized 同步修辞,线程安全!因此没有并发异常</strong></p>
-<h2 id="Collections"><a href="#Collections" class="headerlink" title="Collections"></a><strong>Collections</strong></h2><p>Collections 提供了方法 synchronizedList 保证 list 是同步线程安全的</p>
-<p>NotSafeDemo 代码修改</p>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">package</span> com.hao.lock;</span><br><span class="line"><span class="keyword">import</span> java.util.*;</span><br><span class="line"></span><br><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * 集合线程安全案例</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">NotSafeDemo</span> </span>&#123;</span><br><span class="line">    <span class="comment">/**</span></span><br><span class="line"><span class="comment">     * 多个线程同时对集合进行修改</span></span><br><span class="line"><span class="comment">     * <span class="doctag">@param</span> args</span></span><br><span class="line"><span class="comment">     */</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> </span>&#123;</span><br><span class="line">        List list = Collections.synchronizedList(<span class="keyword">new</span> ArrayList&lt;&gt;());</span><br><span class="line">        <span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">0</span>; i &lt; <span class="number">100</span>; i++) &#123;</span><br><span class="line">            <span class="keyword">new</span> Thread(() -&gt;&#123;</span><br><span class="line">                list.add(UUID.randomUUID().toString());</span><br><span class="line">                System.out.println(list);</span><br><span class="line">            &#125;, <span class="string">&quot;线程&quot;</span> + i).start();</span><br><span class="line">        &#125; </span><br><span class="line">    &#125; </span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<p>没有并发修改异常</p>
-<p>查看方法源码</p>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment">* Returns a synchronized (thread-safe) list backed by the specified</span></span><br><span class="line"><span class="comment">* list. In order to guarantee serial access, it is critical that</span></span><br><span class="line"><span class="comment">* &lt;strong&gt;all&lt;/strong&gt; access to the backing list is accomplished</span></span><br><span class="line"><span class="comment">* through the returned list.&lt;p&gt;</span></span><br><span class="line"><span class="comment">*</span></span><br><span class="line"><span class="comment">* It is imperative that the user manually synchronize on the returned</span></span><br><span class="line"><span class="comment">* list when iterating over it:</span></span><br><span class="line"><span class="comment">* &lt;pre&gt;</span></span><br><span class="line"><span class="comment">* List list = Collections.synchronizedList(new ArrayList());</span></span><br><span class="line"><span class="comment">* ...</span></span><br><span class="line"><span class="comment">* synchronized (list) &#123;</span></span><br><span class="line"><span class="comment">* Iterator i = list.iterator(); // Must be in synchronized block</span></span><br><span class="line"><span class="comment">* while (i.hasNext())</span></span><br><span class="line"><span class="comment">* foo(i.next());</span></span><br><span class="line"><span class="comment">* &#125;</span></span><br><span class="line"><span class="comment">* &lt;/pre&gt;</span></span><br><span class="line"><span class="comment">* Failure to follow this advice may result in non-deterministic behavior.</span></span><br><span class="line"><span class="comment">*</span></span><br><span class="line"><span class="comment">* &lt;p&gt;The returned list will be serializable if the specified list is</span></span><br><span class="line"><span class="comment">* serializable.</span></span><br><span class="line"><span class="comment">*</span></span><br><span class="line"><span class="comment">* <span class="doctag">@param</span> &lt;T&gt; the class of the objects in the list</span></span><br><span class="line"><span class="comment">* <span class="doctag">@param</span> list the list to be &quot;wrapped&quot; in a synchronized list.</span></span><br><span class="line"><span class="comment">* <span class="doctag">@return</span> a synchronized view of the specified list.</span></span><br><span class="line"><span class="comment">*/</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">static</span> &lt;T&gt; <span class="function">List&lt;T&gt; <span class="title">synchronizedList</span><span class="params">(List&lt;T&gt; list)</span> </span>&#123;</span><br><span class="line"><span class="keyword">return</span> (list <span class="keyword">instanceof</span> RandomAccess ?</span><br><span class="line"><span class="keyword">new</span> SynchronizedRandomAccessList&lt;&gt;(list) :</span><br><span class="line"><span class="keyword">new</span> SynchronizedList&lt;&gt;(list));</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-
-
-<h2 id="CopyOnWriteArrayList-重点"><a href="#CopyOnWriteArrayList-重点" class="headerlink" title="CopyOnWriteArrayList(重点)"></a><strong>CopyOnWriteArrayList(重点)</strong></h2><p>首先我们对 CopyOnWriteArrayList 进行学习,其特点如下:</p>
-<p>它相当于线程安全的 ArrayList。和 ArrayList 一样，它是个可变数组；但是和</p>
-<p>ArrayList 不同的时，它具有以下特性：</p>
-<ol>
-<li>它最适合于具有以下特征的应用程序：List 大小通常保持很小，只读操作远多</li>
-</ol>
-<p>于可变操作，需要在遍历期间防止线程间的冲突。</p>
-<ol start="2">
-<li><p>它是线程安全的。</p>
-</li>
-<li><p>因为通常需要复制整个基础数组，所以可变操作（add()、set() 和 remove() </p>
-</li>
-</ol>
-<p>等等）的开销很大。</p>
-<ol start="4">
-<li><p>迭代器支持 hasNext(), next()等不可变操作，但不支持可变 remove()等操作。</p>
-</li>
-<li><p>使用迭代器进行遍历的速度很快，并且不会与其他线程发生冲突。在构造迭代</p>
-</li>
-</ol>
-<p>器时，迭代器依赖于不变的数组快照。</p>
-<p><strong>1. 独占锁效率低：采用读写分离思想解决</strong></p>
-<p><strong>2. 写线程获取到锁，其他写线程阻塞</strong></p>
-<p><strong>3. 复制思想</strong></p>
-<p>当我们往一个容器添加元素的时候，不直接往当前容器添加，而是先将当前容器进行 Copy，复制出一个新的容器，然后新的容器里添加元素，添加完元素之后，再将原容器的引用指向新的容器。</p>
-<p><strong>这时候会抛出来一个新的问题，也就是数据不一致的问题。如果写线程还没来</strong></p>
-<p><strong>得及写会内存，其他的线程就会读到了脏数据。</strong></p>
-<p>==<strong>这就是 CopyOnWriteArrayList 的思想和原理。就是拷贝一份。</strong>==</p>
-<p>NotSafeDemo 代码修改</p>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">package</span> com.hao.lock;</span><br><span class="line"><span class="keyword">import</span> java.util.*;</span><br><span class="line"><span class="keyword">import</span> java.util.concurrent.CopyOnWriteArrayList;</span><br><span class="line"></span><br><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * 集合线程安全案例</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">NotSafeDemo</span> </span>&#123;</span><br><span class="line">    <span class="comment">/**</span></span><br><span class="line"><span class="comment">     * 多个线程同时对集合进行修改</span></span><br><span class="line"><span class="comment">     * <span class="doctag">@param</span> args</span></span><br><span class="line"><span class="comment">     */</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> </span>&#123;</span><br><span class="line">        List list = <span class="keyword">new</span> CopyOnWriteArrayList();</span><br><span class="line">        <span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">0</span>; i &lt; <span class="number">100</span>; i++) &#123;</span><br><span class="line">            <span class="keyword">new</span> Thread(() -&gt;&#123;</span><br><span class="line">                list.add(UUID.randomUUID().toString());</span><br><span class="line">                System.out.println(list);</span><br><span class="line">            &#125;, <span class="string">&quot;线程&quot;</span> + i).start();</span><br><span class="line">        &#125;</span><br><span class="line">    &#125; </span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<p>没有线程安全问题</p>
-<p><strong>原因分析</strong>(<strong>重点</strong>):==<strong>动态数组与线程安全</strong>==</p>
-<p>下面从“动态数组”和“线程安全”两个方面进一步对</p>
-<p>CopyOnWriteArrayList 的原理进行说明。</p>
-<p><strong>“动态数组”机制</strong></p>
-<ul>
-<li>它内部有个“volatile 数组”(array)来保持数据。在“添加/修改/删除”数据</li>
-</ul>
-<p>时，都会新建一个数组，并将更新后的数据拷贝到新建的数组中，最后再将该</p>
-<p>数组赋值给“volatile 数组”, 这就是它叫做 CopyOnWriteArrayList 的原因</p>
-<ul>
-<li><strong>由于它在“添加/修改/删除”数据时，都会新建数组，所以涉及到修改数据的</strong></li>
-</ul>
-<p><strong>操作，CopyOnWriteArrayList 效率很低；但是单单只是进行遍历查找的话，</strong></p>
-<p><strong>效率比较高。</strong></p>
-<p><strong>“线程安全”机制</strong></p>
-<ul>
-<li><p>通过 volatile 和互斥锁来实现的。</p>
-</li>
-<li><p>通过“volatile 数组”来保存数据的。一个线程读取 volatile 数组时，总能看</p>
-</li>
-</ul>
-<p>到其它线程对该 volatile 变量最后的写入；就这样，通过 volatile 提供了“读</p>
-<p>取到的数据总是最新的”这个机制的保证。</p>
-<ul>
-<li>通过互斥锁来保护数据。在“添加/修改/删除”数据时，会先“获取互斥锁”，</li>
-</ul>
-<p>再修改完毕之后，先将数据更新到“volatile 数组”中，然后再“释放互斥</p>
-<p>锁”，就达到了保护数据的目的。</p>
-<h2 id="CopyOnWriteArraySet"><a href="#CopyOnWriteArraySet" class="headerlink" title="CopyOnWriteArraySet"></a>CopyOnWriteArraySet</h2><p>该类是HashSet的实现类<br>同样使用HashSet类，也会出现线程不安全<br>java Set<String> set = new HashSet&lt;&gt;();<br>需要将上面的代码改为<br>Set<String> set = new CopyOnWriteArraySet&lt;&gt;();</p>
-<p>具体操作代码为</p>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">0</span>; i &lt;<span class="number">30</span>; i++) &#123;</span><br><span class="line">    <span class="keyword">new</span> Thread(()-&gt;&#123;</span><br><span class="line">        <span class="comment">//向集合添加内容</span></span><br><span class="line">        set.add(UUID.randomUUID().toString().substring(<span class="number">0</span>,<span class="number">8</span>));</span><br><span class="line">        <span class="comment">//从集合获取内容</span></span><br><span class="line">        System.out.println(set);</span><br><span class="line">    &#125;,String.valueOf(i)).start();</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<h2 id="ConcurrentHashMap"><a href="#ConcurrentHashMap" class="headerlink" title="ConcurrentHashMap"></a>ConcurrentHashMap</h2><p><code>ConcurrentHashMap</code>类是HashMap的实现类<br>先讲述其线程不安全实列</p>
-<p>HashMap不安全线程也同理<code>Map&lt;String,String&gt; map = new HashMap&lt;&gt;();</code><br>具体实现代码是</p>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">0</span>; i &lt;<span class="number">30</span>; i++) &#123;</span><br><span class="line">    String key = String.valueOf(i);</span><br><span class="line">    <span class="keyword">new</span> Thread(()-&gt;&#123;</span><br><span class="line">        <span class="comment">//向集合添加内容</span></span><br><span class="line">        map.put(key,UUID.randomUUID().toString().substring(<span class="number">0</span>,<span class="number">8</span>));</span><br><span class="line">        <span class="comment">//从集合获取内容</span></span><br><span class="line">        System.out.println(map);</span><br><span class="line">    &#125;,String.valueOf(i)).start();</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<p>将其代码修改为<br><code>Map&lt;String,String&gt; map = new ConcurrentHashMap&lt;&gt;();</code><br>通过这行代码可以编程线程安全</p>
-<h2 id="小结-重点"><a href="#小结-重点" class="headerlink" title="小结(重点)"></a><strong>小结(重点)</strong></h2><p><strong>1.线程安全与线程不安全集合</strong></p>
-<p>集合类型中存在线程安全与线程不安全的两种,常见例如:</p>
-<p>ArrayList —– Vector</p>
-<p>HashMap —–HashTable</p>
-<p>但是以上都是通过 synchronized 关键字实现,效率较低</p>
-<p><strong>2.Collections 构建的线程安全集合</strong></p>
-<p><strong>3.java.util.concurrent 并发包下</strong></p>
-<p>CopyOnWriteArrayList CopyOnWriteArraySet 类型,通过动态数组与线程安</p>
-<p>全个方面保证线程安全</p>
 
       
     </div>
