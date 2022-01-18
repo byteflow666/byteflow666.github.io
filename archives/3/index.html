@@ -133,7 +133,7 @@
   <nav class="site-state">
       <div class="site-state-item site-state-posts">
         <a href="/archives/">
-          <span class="site-state-item-count">33</span>
+          <span class="site-state-item-count">34</span>
           <span class="site-state-item-name">posts</span>
         </a>
       </div>
@@ -181,6 +181,161 @@
 
 
     <div class="main-inner index posts-expand">
+
+    
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="JVM">
+    <link itemprop="mainEntityOfPage" href="http://yoursite-url/JVM/JVM%E7%B3%BB%E5%88%97-%E7%AC%AC14%E7%AB%A0-%E5%9E%83%E5%9C%BE%E5%9B%9E%E6%94%B6%E6%A6%82%E8%BF%B0/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="https://nodeandimg.oss-cn-wulanchabu.aliyuncs.com/}VRZRM08TG_W9[WMAD}69[O.png">
+      <meta itemprop="name" content="Hao">
+      <meta itemprop="description" content="It's an IT blog...">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Study Node">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          <a href="/JVM/JVM%E7%B3%BB%E5%88%97-%E7%AC%AC14%E7%AB%A0-%E5%9E%83%E5%9C%BE%E5%9B%9E%E6%94%B6%E6%A6%82%E8%BF%B0/" class="post-title-link" itemprop="url">JVM系列-第14章-垃圾回收概述</a>
+        </h2>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">Posted on</span>
+
+      <time title="Created: 2021-10-27 21:38:42" itemprop="dateCreated datePublished" datetime="2021-10-27T21:38:42+08:00">2021-10-27</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">In</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/JVM/" itemprop="url" rel="index"><span itemprop="name">JVM</span></a>
+        </span>
+          , 
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/JVM/1-%E5%86%85%E5%AD%98%E4%B8%8E%E5%9E%83%E5%9C%BE%E5%9B%9E%E6%94%B6%E7%AF%87/" itemprop="url" rel="index"><span itemprop="name">1.内存与垃圾回收篇</span></a>
+        </span>
+    </span>
+
+  
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+          <h1 id="垃圾回收概述"><a href="#垃圾回收概述" class="headerlink" title="垃圾回收概述"></a>垃圾回收概述</h1><h2 id="概念"><a href="#概念" class="headerlink" title="概念"></a>概念</h2><p>这次我们主要关注的是黄色部分，内存的分配与回收</p>
+<p><img src="https://nodeandimg.oss-cn-wulanchabu.aliyuncs.com/VGY74FUW8LGNME.png"></p>
+<h2 id="什么是垃圾"><a href="#什么是垃圾" class="headerlink" title="什么是垃圾"></a>什么是垃圾</h2><p>在提到什么是垃圾之前，我们先看下面一张图</p>
+<p><img src="https://nodeandimg.oss-cn-wulanchabu.aliyuncs.com/3JZHJTBEECW3XAT7J6.png"></p>
+<p>从上图我们可以很明确的知道，Java 和 C++语言的区别，就在于垃圾收集技术和内存动态分配上，C语言没有垃圾收集技术，需要我们手动的收集。</p>
+<p>垃圾收集，不是Java语言的伴生产物。早在1960年，第一门开始使用内存动态分配和垃圾收集技术的Lisp语言诞生。 关于垃圾收集有三个经典问题：</p>
+<ul>
+<li>哪些内存需要回收？</li>
+<li>什么时候回收？</li>
+<li>如何回收？</li>
+</ul>
+<p>垃圾收集机制是Java的招牌能力，极大地提高了开发效率。如今，垃圾收集几乎成为现代语言的标配，即使经过如此长时间的发展，Java的垃圾收集机制仍然在不断的演进中，不同大小的设备、不同特征的应用场景，对垃圾收集提出了新的挑战，这当然也是面试的热点。</p>
+<h3 id="什么是垃圾？"><a href="#什么是垃圾？" class="headerlink" title="什么是垃圾？"></a>什么是垃圾？</h3><p>垃圾是指在运行程序中没有任何指针指向的对象，这个对象就是需要被回收的垃圾。</p>
+<p>如果不及时对内存中的垃圾进行清理，那么，这些垃圾对象所占的内存空间会一直保留到应用程序的结束，被保留的空间无法被其它对象使用，甚至可能导致内存溢出。</p>
+<h3 id="磁盘碎片整理"><a href="#磁盘碎片整理" class="headerlink" title="磁盘碎片整理"></a>磁盘碎片整理</h3><p>机械硬盘需要进行磁盘整理，同时还有坏道</p>
+<p><img src="https://nodeandimg.oss-cn-wulanchabu.aliyuncs.com/F8[E9X7[S0BKKW37B.png"></p>
+<h3 id="大厂面试题"><a href="#大厂面试题" class="headerlink" title="大厂面试题"></a>大厂面试题</h3><h4 id="蚂蚁金服"><a href="#蚂蚁金服" class="headerlink" title="蚂蚁金服"></a>蚂蚁金服</h4><ul>
+<li>你知道哪几种垃圾回收器，各自的优缺点，重点讲一下cms和G1？</li>
+<li>JVM GC算法有哪些，目前的JDK版本采用什么回收算法？</li>
+<li>G1回收器讲下回收过程GC是什么？为什么要有GC？</li>
+<li>GC的两种判定方法？CMS收集器与G1收集器的特点</li>
+</ul>
+<h4 id="百度"><a href="#百度" class="headerlink" title="百度"></a>百度</h4><ul>
+<li>说一下GC算法，分代回收说下</li>
+<li>垃圾收集策略和算法</li>
+</ul>
+<h4 id="天猫"><a href="#天猫" class="headerlink" title="天猫"></a>天猫</h4><ul>
+<li>JVM GC原理，JVM怎么回收内存</li>
+<li>CMS特点，垃圾回收算法有哪些？各自的优缺点，他们共同的缺点是什么？</li>
+</ul>
+<h4 id="滴滴"><a href="#滴滴" class="headerlink" title="滴滴"></a>滴滴</h4><p>Java的垃圾回收器都有哪些，说下g1的应用场景，平时你是如何搭配使用垃圾回收器的</p>
+<h4 id="京东"><a href="#京东" class="headerlink" title="京东"></a>京东</h4><ul>
+<li>你知道哪几种垃圾收集器，各自的优缺点，重点讲下cms和G1，</li>
+<li>包括原理，流程，优缺点。垃圾回收算法的实现原理</li>
+</ul>
+<h4 id="阿里"><a href="#阿里" class="headerlink" title="阿里"></a>阿里</h4><ul>
+<li>讲一讲垃圾回收算法。</li>
+<li>什么情况下触发垃圾回收？</li>
+<li>如何选择合适的垃圾收集算法？</li>
+<li>JVM有哪三种垃圾回收器？</li>
+</ul>
+<h4 id="字节跳动"><a href="#字节跳动" class="headerlink" title="字节跳动"></a>字节跳动</h4><ul>
+<li>常见的垃圾回收器算法有哪些，各有什么优劣？</li>
+<li>System.gc（）和Runtime.gc（）会做什么事情？</li>
+<li>Java GC机制？GC Roots有哪些？</li>
+<li>Java对象的回收方式，回收算法。</li>
+<li>CMS和G1了解么，CMS解决什么问题，说一下回收的过程。</li>
+<li>CMS回收停顿了几次，为什么要停顿两次?</li>
+</ul>
+<h2 id="为什么需要GC"><a href="#为什么需要GC" class="headerlink" title="为什么需要GC"></a>为什么需要GC</h2><p>对于高级语言来说，一个基本认知是如果不进行垃圾回收，内存迟早都会被消耗完，因为不断地分配内存空间而不进行回收，就好像不停地生产生活垃圾而从来不打扫一样。</p>
+<p>除了释放没用的对象，垃圾回收也可以清除内存里的记录碎片。碎片整理将所占用的堆内存移到堆的一端，以便JVM将整理出的内存分配给新的对象。</p>
+<p>随着应用程序所应付的业务越来越庞大、复杂，用户越来越多，没有GC就不能保证应用程序的正常进行。而经常造成STW的GC又跟不上实际的需求，所以才会不断地尝试对GC进行优化。</p>
+<h2 id="早期垃圾回收"><a href="#早期垃圾回收" class="headerlink" title="早期垃圾回收"></a>早期垃圾回收</h2><p>在早期的C/C++时代，垃圾回收基本上是手工进行的。开发人员可以使用new关键字进行内存申请，并使用delete关键字进行内存释放。比如以下代码：</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">MibBridge *pBridge= <span class="keyword">new</span> cmBaseGroupBridge（）；</span><br><span class="line"><span class="comment">//如果注册失败，使用Delete释放该对象所占内存区域</span></span><br><span class="line"><span class="keyword">if</span>（pBridge-&gt;Register（kDestroy）！=NO ERROR）</span><br><span class="line">	<span class="keyword">delete</span> pBridge；</span><br></pre></td></tr></table></figure>
+
+<p>这种方式可以灵活控制内存释放的时间，但是会给开发人员带来频繁申请和释放内存的管理负担。倘若有一处内存区间由于程序员编码的问题忘记被回收，那么就会产生内存泄漏，垃圾对象永远无法被清除，随着系统运行时间的不断增长，垃圾对象所耗内存可能持续上升，直到出现内存溢出并造成应用程序崩溃。</p>
+<p>有了垃圾回收机制后，上述代码极有可能变成这样</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">MibBridge *pBridge=<span class="keyword">new</span> <span class="built_in">cmBaseGroupBridge</span>(); </span><br><span class="line">pBridge-&gt;<span class="built_in">Register</span>(kDestroy);</span><br></pre></td></tr></table></figure>
+
+<p>现在，除了Java以外，C#、Python、Ruby等语言都使用了自动垃圾回收的思想，也是未来发展趋势，可以说这种自动化的内存分配和来及回收方式已经成为了线代开发语言必备的标准。</p>
+<h2 id="Java垃圾回收机制"><a href="#Java垃圾回收机制" class="headerlink" title="Java垃圾回收机制"></a>Java垃圾回收机制</h2><h3 id="优点"><a href="#优点" class="headerlink" title="优点"></a>优点</h3><p>自动内存管理，无需开发人员手动参与内存的分配与回收，这样降低内存泄漏和内存溢出的风险</p>
+<p>没有垃圾回收器，java也会和cpp一样，各种悬垂指针，野指针，泄露问题让你头疼不已。</p>
+<p>自动内存管理机制，将程序员从繁重的内存管理中释放出来，可以更专心地专注于业务开发</p>
+<p>oracle官网关于垃圾回收的介绍 <a target="_blank" rel="noopener" href="https://docs.oracle.com/javase/8/docs/technotes/guides/vm/gctuning/toc.html">https://docs.oracle.com/javase/8/docs/technotes/guides/vm/gctuning/toc.html</a></p>
+<h3 id="担忧"><a href="#担忧" class="headerlink" title="担忧"></a>担忧</h3><p>对于Java开发人员而言，自动内存管理就像是一个黑匣子，如果过度依赖于“自动”，那么这将会是一场灾难，最严重的就会弱化Java开发人员在程序出现内存溢出时定位问题和解决问题的能力。</p>
+<p>此时，了解JVM的自动内存分配和内存回收原理就显得非常重要，只有在真正了解JVM是如何管理内存后，我们才能够在遇见outofMemoryError时，快速地根据错误异常日志定位问题和解决问题。</p>
+<p>当需要排查各种内存溢出、内存泄漏问题时，当垃圾收集成为系统达到更高并发量的瓶颈时，我们就必须对这些“自动化”的技术实施必要的监控和调节。</p>
+<h3 id="GC主要关注的区域"><a href="#GC主要关注的区域" class="headerlink" title="GC主要关注的区域"></a>GC主要关注的区域</h3><p>GC主要关注于 方法区 和堆中的垃圾收集</p>
+<p><img src="https://nodeandimg.oss-cn-wulanchabu.aliyuncs.com/8B9QWEXKOWQNV%7BU17.png"></p>
+<p>垃圾收集器可以对年轻代回收，也可以对老年代回收，甚至是全栈和方法区的回收</p>
+<ul>
+<li>其中，Java堆是垃圾收集器的工作重点</li>
+</ul>
+<p>从次数上讲：</p>
+<ul>
+<li>频繁收集Young区</li>
+<li>较少收集Old区</li>
+<li>基本不收集Perm区（元空间）</li>
+</ul>
+
+      
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+</div>
+
+
+
 
     
 
@@ -2499,110 +2654,6 @@
 </ul>
 <figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * 面试题：</span></span><br><span class="line"><span class="comment"> * 方法中定义的局部变量是否线程安全？具体情况具体分析</span></span><br><span class="line"><span class="comment"> *</span></span><br><span class="line"><span class="comment"> *   何为线程安全？</span></span><br><span class="line"><span class="comment"> *      如果只有一个线程才可以操作此数据，则必是线程安全的。</span></span><br><span class="line"><span class="comment"> *      如果有多个线程操作此数据，则此数据是共享数据。如果不考虑同步机制的话，会存在线程安全问题。</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">StringBuilderTest</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">int</span> num = <span class="number">10</span>;</span><br><span class="line"></span><br><span class="line">    <span class="comment">//s1的声明方式是线程安全的（只在方法内部用了）</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">method1</span><span class="params">()</span></span>&#123;</span><br><span class="line">        <span class="comment">//StringBuilder:线程不安全</span></span><br><span class="line">        StringBuilder s1 = <span class="keyword">new</span> StringBuilder();</span><br><span class="line">        s1.append(<span class="string">&quot;a&quot;</span>);</span><br><span class="line">        s1.append(<span class="string">&quot;b&quot;</span>);</span><br><span class="line">        <span class="comment">//...</span></span><br><span class="line">    &#125;</span><br><span class="line">    <span class="comment">//sBuilder的操作过程：是线程不安全的（作为参数传进来，可能被其它线程操作）</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">method2</span><span class="params">(StringBuilder sBuilder)</span></span>&#123;</span><br><span class="line">        sBuilder.append(<span class="string">&quot;a&quot;</span>);</span><br><span class="line">        sBuilder.append(<span class="string">&quot;b&quot;</span>);</span><br><span class="line">        <span class="comment">//...</span></span><br><span class="line">    &#125;</span><br><span class="line">    <span class="comment">//s1的操作：是线程不安全的（有返回值，可能被其它线程操作）</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> StringBuilder <span class="title">method3</span><span class="params">()</span></span>&#123;</span><br><span class="line">        StringBuilder s1 = <span class="keyword">new</span> StringBuilder();</span><br><span class="line">        s1.append(<span class="string">&quot;a&quot;</span>);</span><br><span class="line">        s1.append(<span class="string">&quot;b&quot;</span>);</span><br><span class="line">        <span class="keyword">return</span> s1;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="comment">//s1的操作：是线程安全的（s1自己消亡了，最后返回的只是s1.toString的一个新对象）</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> String <span class="title">method4</span><span class="params">()</span></span>&#123;</span><br><span class="line">        StringBuilder s1 = <span class="keyword">new</span> StringBuilder();</span><br><span class="line">        s1.append(<span class="string">&quot;a&quot;</span>);</span><br><span class="line">        s1.append(<span class="string">&quot;b&quot;</span>);</span><br><span class="line">        <span class="keyword">return</span> s1.toString();</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> </span>&#123;</span><br><span class="line">        StringBuilder s = <span class="keyword">new</span> StringBuilder();</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">        <span class="keyword">new</span> Thread(() -&gt; &#123;</span><br><span class="line">            s.append(<span class="string">&quot;a&quot;</span>);</span><br><span class="line">            s.append(<span class="string">&quot;b&quot;</span>);</span><br><span class="line">        &#125;).start();</span><br><span class="line"></span><br><span class="line">        method2(s);</span><br><span class="line"></span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">&#125;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
 
-
-      
-    </div>
-
-    
-    
-    
-
-    <footer class="post-footer">
-        <div class="post-eof"></div>
-      
-    </footer>
-  </article>
-</div>
-
-
-
-
-    
-
-
-<div class="post-block">
-  
-  
-
-  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="JVM">
-    <link itemprop="mainEntityOfPage" href="http://yoursite-url/JVM/JVM%E7%B3%BB%E5%88%97-%E7%AC%AC4%E7%AB%A0-%E7%A8%8B%E5%BA%8F%E8%AE%A1%E6%95%B0%E5%99%A8/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="https://nodeandimg.oss-cn-wulanchabu.aliyuncs.com/}VRZRM08TG_W9[WMAD}69[O.png">
-      <meta itemprop="name" content="Hao">
-      <meta itemprop="description" content="It's an IT blog...">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Study Node">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          <a href="/JVM/JVM%E7%B3%BB%E5%88%97-%E7%AC%AC4%E7%AB%A0-%E7%A8%8B%E5%BA%8F%E8%AE%A1%E6%95%B0%E5%99%A8/" class="post-title-link" itemprop="url">JVM系列-第4章-程序计数器</a>
-        </h2>
-
-        <div class="post-meta-container">
-          <div class="post-meta">
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-calendar"></i>
-      </span>
-      <span class="post-meta-item-text">Posted on</span>
-
-      <time title="Created: 2021-10-12 10:38:42" itemprop="dateCreated datePublished" datetime="2021-10-12T10:38:42+08:00">2021-10-12</time>
-    </span>
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-folder"></i>
-      </span>
-      <span class="post-meta-item-text">In</span>
-        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-          <a href="/categories/JVM/" itemprop="url" rel="index"><span itemprop="name">JVM</span></a>
-        </span>
-          , 
-        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-          <a href="/categories/JVM/1-%E5%86%85%E5%AD%98%E4%B8%8E%E5%9E%83%E5%9C%BE%E5%9B%9E%E6%94%B6%E7%AF%87/" itemprop="url" rel="index"><span itemprop="name">1.内存与垃圾回收篇</span></a>
-        </span>
-    </span>
-
-  
-</div>
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-          <h1 id="程序计数器"><a href="#程序计数器" class="headerlink" title="程序计数器"></a>程序计数器</h1><h2 id="介绍"><a href="#介绍" class="headerlink" title="介绍"></a>介绍</h2><p>JVM中的程序计数寄存器（Program Counter Register）中，Register的命名源于CPU的寄存器，寄存器存储指令相关的现场信息。CPU只有把数据装载到寄存器才能够运行。这里，并非是广义上所指的物理寄存器，或许将其翻译为PC计数器（或指令计数器）会更加贴切（也称为程序钩子），并且也不容易引起一些不必要的误会。JVM中的PC寄存器是对物理PC寄存器的一种抽象模拟。</p>
-<p><img src="https://nodeandimg.oss-cn-wulanchabu.aliyuncs.com/rhszxccsdg.png"></p>
-<p>它是一块很小的内存空间，几乎可以忽略不记。也是运行速度最快的存储区域。</p>
-<p>在JVM规范中，每个线程都有它自己的程序计数器，是线程私有的，生命周期与线程的生命周期保持一致。</p>
-<p>任何时间一个线程都只有一个方法在执行，也就是所谓的当前方法。程序计数器会存储当前线程正在执行的Java方法的JVM指令地址；或者，如果是在执行native方法，则是未指定值（undefned）。</p>
-<p>它是程序控制流的指示器，分支、循环、跳转、异常处理、线程恢复等基础功能都需要依赖这个计数器来完成。字节码解释器工作时就是通过改变这个计数器的值来选取下一条需要执行的字节码指令。</p>
-<p>它是唯一一个在Java虚拟机规范中没有规定任何outotMemoryError情况的区域。</p>
-<h2 id="作用"><a href="#作用" class="headerlink" title="作用"></a>作用</h2><p>PC寄存器用来存储指向下一条指令的地址，也即将要执行的指令代码。由执行引擎读取下一条指令。</p>
-<p><img src="https://nodeandimg.oss-cn-wulanchabu.aliyuncs.com/12easda.png"></p>
-<h2 id="代码演示"><a href="#代码演示" class="headerlink" title="代码演示"></a>代码演示</h2><p>我们首先写一个简单的代码</p>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">PCRegisterTest</span> </span>&#123;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">int</span> i = <span class="number">10</span>;</span><br><span class="line">        <span class="keyword">int</span> j = <span class="number">20</span>;</span><br><span class="line">        <span class="keyword">int</span> k = i + j;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<p>然后将代码进行编译成字节码文件，我们再次查看 ，发现在字节码的左边有一个行号标识，它其实就是指令地址，用于指向当前执行到哪里。</p>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="number">0</span>: bipush        <span class="number">10</span></span><br><span class="line"><span class="number">2</span>: istore_1</span><br><span class="line"><span class="number">3</span>: bipush        <span class="number">20</span></span><br><span class="line"><span class="number">5</span>: istore_2</span><br><span class="line"><span class="number">6</span>: iload_1</span><br><span class="line"><span class="number">7</span>: iload_2</span><br><span class="line"><span class="number">8</span>: iadd</span><br><span class="line"><span class="number">9</span>: istore_3</span><br><span class="line"><span class="number">10</span>: <span class="keyword">return</span></span><br></pre></td></tr></table></figure>
-
-<p>通过PC寄存器，我们就可以知道当前程序执行到哪一步了</p>
-<p><img src="https://nodeandimg.oss-cn-wulanchabu.aliyuncs.com/dfzdfzdfzfzs.png"></p>
-<h2 id="使用PC寄存器存储字节码指令地址有什么用呢？"><a href="#使用PC寄存器存储字节码指令地址有什么用呢？" class="headerlink" title="使用PC寄存器存储字节码指令地址有什么用呢？"></a>使用PC寄存器存储字节码指令地址有什么用呢？</h2><p>因为CPU需要不停的切换各个线程，这时候切换回来以后，就得知道接着从哪开始继续执行。</p>
-<p>JVM的字节码解释器就需要通过改变PC寄存器的值来明确下一条应该执行什么样的字节码指令。</p>
-<p><img src="https://nodeandimg.oss-cn-wulanchabu.aliyuncs.com/DN5W4MONE6.png"></p>
-<h2 id="PC寄存器为什么被设定为私有的？"><a href="#PC寄存器为什么被设定为私有的？" class="headerlink" title="PC寄存器为什么被设定为私有的？"></a>PC寄存器为什么被设定为私有的？</h2><p>我们都知道所谓的多线程在一个特定的时间段内只会执行其中某一个线程的方法，CPU会不停地做任务切换，这样必然导致经常中断或恢复，如何保证分毫无差呢？为了能够准确地记录各个线程正在执行的当前字节码指令地址，最好的办法自然是为每一个线程都分配一个PC寄存器，这样一来各个线程之间便可以进行独立计算，从而不会出现相互干扰的情况。</p>
-<p>由于CPU时间片轮限制，众多线程在并发执行过程中，任何一个确定的时刻，一个处理器或者多核处理器中的一个内核，只会执行某个线程中的一条指令。</p>
-<p>这样必然导致经常中断或恢复，如何保证分毫无差呢？每个线程在创建后，都会产生自己的程序计数器和栈帧，程序计数器在各个线程之间互不影响。</p>
-<p><img src="https://nodeandimg.oss-cn-wulanchabu.aliyuncs.com/N%7D@M%$%60TT9G7XXLHS%7DN]%7BQL.png"></p>
-<h2 id="CPU时间片"><a href="#CPU时间片" class="headerlink" title="CPU时间片"></a>CPU时间片</h2><p>CPU时间片即CPU分配给各个程序的时间，每个线程被分配一个时间段，称作它的时间片。</p>
-<p>在宏观上：俄们可以同时打开多个应用程序，每个程序并行不悖，同时运行。</p>
-<p>但在微观上：由于只有一个CPU，一次只能处理程序要求的一部分，如何处理公平，一种方法就是引入时间片，每个程序轮流执行。</p>
-<p><img src="https://nodeandimg.oss-cn-wulanchabu.aliyuncs.com/M87S]0E52IM.png"></p>
 
       
     </div>

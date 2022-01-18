@@ -133,7 +133,7 @@
   <nav class="site-state">
       <div class="site-state-item site-state-posts">
         <a href="/archives/">
-          <span class="site-state-item-count">33</span>
+          <span class="site-state-item-count">34</span>
           <span class="site-state-item-name">posts</span>
         </a>
       </div>
@@ -181,6 +181,137 @@
 
 
     <div class="main-inner index posts-expand">
+
+    
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="JUC">
+    <link itemprop="mainEntityOfPage" href="http://yoursite-url/JUC/JUC%E7%B3%BB%E5%88%97-%E7%AC%AC%E5%85%AD%E7%AB%A0-Callable-Future-%E6%8E%A5%E5%8F%A3/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="https://nodeandimg.oss-cn-wulanchabu.aliyuncs.com/}VRZRM08TG_W9[WMAD}69[O.png">
+      <meta itemprop="name" content="Hao">
+      <meta itemprop="description" content="It's an IT blog...">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Study Node">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          <a href="/JUC/JUC%E7%B3%BB%E5%88%97-%E7%AC%AC%E5%85%AD%E7%AB%A0-Callable-Future-%E6%8E%A5%E5%8F%A3/" class="post-title-link" itemprop="url">JUC系列-Callable&Future 接口</a>
+        </h2>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">Posted on</span>
+
+      <time title="Created: 2021-11-16 17:03:03" itemprop="dateCreated datePublished" datetime="2021-11-16T17:03:03+08:00">2021-11-16</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">In</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/JUC/" itemprop="url" rel="index"><span itemprop="name">JUC</span></a>
+        </span>
+    </span>
+
+  
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+          <h1 id="Callable-amp-Future-接口"><a href="#Callable-amp-Future-接口" class="headerlink" title="Callable&amp;Future 接口"></a><strong>Callable&amp;Future 接口</strong></h1><h2 id="Callable-接口"><a href="#Callable-接口" class="headerlink" title="Callable 接口"></a><strong>Callable 接口</strong></h2><p>目前我们学习了有两种创建线程的方法-一种是通过创建 Thread 类，另一种是通过使用 Runnable 创建线程。但是，Runnable 缺少的一项功能是，当线程终止时（即 run（）完成时），我们无法使线程返回结果。为了支持此功能，</p>
+<p>Java 中提供了 Callable 接口。</p>
+<p>==<strong>现在我们学习的是创建线程的第三种方案—Callable 接口</strong>==</p>
+<p><strong>Callable 接口的特点如下(重点)</strong> </p>
+<ul>
+<li>为了实现 Runnable，需要实现不返回任何内容的 run（）方法，而对于</li>
+</ul>
+<p>Callable，需要实现在完成时返回结果的 call（）方法。</p>
+<ul>
+<li><p> call（）方法可以引发异常，而 run（）则不能。</p>
+</li>
+<li><p>为实现 Callable 而必须重写 call 方法</p>
+</li>
+<li><p>不能直接替换 runnable,因为 Thread 类的构造方法根本没有 Callable</p>
+</li>
+</ul>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line">创建新类 MyThread1 实现 runnable 接口</span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">MyThread1</span> <span class="keyword">implements</span> <span class="title">Runnable</span></span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">run</span><span class="params">()</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"><span class="comment">//实现Callable接口</span></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">MyThread2</span> <span class="keyword">implements</span> <span class="title">Callable</span></span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> Integer <span class="title">call</span><span class="params">()</span> <span class="keyword">throws</span> Exception </span>&#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="number">200</span>;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h2 id="Future-接口"><a href="#Future-接口" class="headerlink" title="Future 接口"></a><strong>Future 接口</strong></h2><p>当 call（）方法完成时，结果必须存储在主线程已知的对象中，以便主线程可以知道该线程返回的结果。为此，可以使用 Future 对象。</p>
+<p>将 Future 视为保存结果的对象–它可能暂时不保存结果，但将来会保存（一旦Callable 返回）。Future 基本上是主线程可以跟踪进度以及其他线程的结果的一种方式。要实现此接口，必须重写 5 种方法，这里列出了重要的方法,如下: </p>
+<p>• <strong>public boolean cancel（boolean mayInterrupt）：</strong>用于停止任务。</p>
+<p>==如果尚未启动，它将停止任务。如果已启动，则仅在 mayInterrupt 为 true时才会中断任务。==</p>
+<p>• <strong>public Object get（）抛出 InterruptedException，ExecutionException：</strong>用于获取任务的结果。</p>
+<p>==如果任务完成，它将立即返回结果，否则将等待任务完成，然后返回结果。</p>
+<p>==</p>
+<p>• <strong>public boolean isDone（）：</strong>如果任务完成，则返回 true，否则返回 false可以看到 Callable 和 Future 做两件事-Callable 与 Runnable 类似，因为它封装了要在另一个线程上运行的任务，而 Future 用于存储从另一个线程获得的结果。实际上，future 也可以与 Runnable 一起使用。</p>
+<p>要创建线程，需要 Runnable。为了获得结果，需要 future。 </p>
+<h2 id="FutureTask"><a href="#FutureTask" class="headerlink" title="FutureTask"></a><strong>FutureTask</strong></h2><p>Java 库具有具体的 FutureTask 类型，该类型实现 Runnable 和 Future，并方便地将两种功能组合在一起。 可以通过为其构造函数提供 Callable 来创建FutureTask。然后，将 FutureTask 对象提供给 Thread 的构造函数以创建Thread 对象。因此，间接地使用 Callable 创建线程。</p>
+<p><img src="https://nodeandimg.oss-cn-wulanchabu.aliyuncs.com/06-futureTask.png"></p>
+<p><strong>核心原理:(重点)</strong></p>
+<p>在主线程中需要执行比较耗时的操作时，但又不想阻塞主线程时，可以把这些作业交给 Future 对象在后台完成</p>
+<ul>
+<li><p>当主线程将来需要时，就可以通过 Future 对象获得后台作业的计算结果或者执行状态</p>
+</li>
+<li><p> 一般 FutureTask 多用于耗时的计算，主线程可以在完成自己的任务后，再去获取结果。</p>
+</li>
+<li><p>仅在计算完成时才能检索结果；如果计算尚未完成，则阻塞 get 方法</p>
+</li>
+<li><p>一旦计算完成，就不能再重新开始或取消计算</p>
+</li>
+<li><p>get 方法而获取结果只有在计算完成时获取，否则会一直阻塞直到任务转入完成状态，然后会返回结果或者抛出异常</p>
+</li>
+<li><p>get 只计算一次,因此 get 方法放到最后</p>
+</li>
+</ul>
+<p><strong>demo 案例</strong></p>
+<h2 id="使用-Callable-和-Future"><a href="#使用-Callable-和-Future" class="headerlink" title="使用 Callable 和 Future"></a><strong>使用 Callable 和 Future</strong></h2><p>CallableDemo 案例</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">package</span> com.hao.callable;</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> java.util.concurrent.Callable;</span><br><span class="line"><span class="keyword">import</span> java.util.concurrent.ExecutionException;</span><br><span class="line"><span class="keyword">import</span> java.util.concurrent.FutureTask;</span><br><span class="line"></span><br><span class="line"><span class="comment">//比较两个接口</span></span><br><span class="line"><span class="comment">//实现Runnable接口</span></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">MyThread1</span> <span class="keyword">implements</span> <span class="title">Runnable</span></span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">run</span><span class="params">()</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"><span class="comment">//实现Callable接口</span></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">MyThread2</span> <span class="keyword">implements</span> <span class="title">Callable</span></span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> Integer <span class="title">call</span><span class="params">()</span> <span class="keyword">throws</span> Exception </span>&#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="number">200</span>;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">Demo1</span> </span>&#123;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> <span class="keyword">throws</span> ExecutionException, InterruptedException </span>&#123;</span><br><span class="line">        <span class="comment">//Runnable接口创建线程</span></span><br><span class="line">        <span class="keyword">new</span> Thread(<span class="keyword">new</span> MyThread1(),<span class="string">&quot;AA&quot;</span>).start();</span><br><span class="line"></span><br><span class="line">        <span class="comment">//Callable接口创建线程</span></span><br><span class="line">        <span class="comment">//new Thread(new MyThread2(),&quot;BB&quot;).start();</span></span><br><span class="line"></span><br><span class="line">        <span class="comment">//FutureTask</span></span><br><span class="line">        FutureTask&lt;Integer&gt; futureTask1 = <span class="keyword">new</span> FutureTask&lt;&gt;(<span class="keyword">new</span> MyThread2());</span><br><span class="line"></span><br><span class="line">        <span class="comment">//lam表达式</span></span><br><span class="line">        FutureTask&lt;Integer&gt; futureTask2 = <span class="keyword">new</span> FutureTask&lt;&gt;(() -&gt;&#123;</span><br><span class="line">            System.out.println(Thread.currentThread().getName() + <span class="string">&quot;come in callable&quot;</span>);</span><br><span class="line">            <span class="keyword">return</span> <span class="number">1024</span>;</span><br><span class="line">        &#125;);</span><br><span class="line"></span><br><span class="line">        <span class="comment">//创建一个线程</span></span><br><span class="line">        <span class="keyword">new</span> Thread(futureTask2,<span class="string">&quot;luck&quot;</span>).start();</span><br><span class="line"></span><br><span class="line">        <span class="keyword">while</span> (!futureTask2.isDone())&#123;</span><br><span class="line">            System.out.println(<span class="string">&quot;wait.....&quot;</span>);</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="comment">//调用FutureTask的get方法</span></span><br><span class="line">        System.out.println(futureTask2.get());</span><br><span class="line"></span><br><span class="line">        System.out.println(Thread.currentThread().getName()+ <span class="string">&quot;come over&quot;</span>);</span><br><span class="line">        <span class="comment">//FutureTask原理  未来任务</span></span><br><span class="line">        <span class="comment">/**</span></span><br><span class="line"><span class="comment">         * 1.老师来了,口渴了,去买水不合适,讲课线程继续</span></span><br><span class="line"><span class="comment">         * 单开启线程找班上班长帮我买水,把水买回来,需要时直接get</span></span><br><span class="line"><span class="comment">         *</span></span><br><span class="line"><span class="comment">         * 2.4个同学, 1同学 1+2...5 , 2同学 10+11+12...50 3同学 60+61+62， 4同学 100+200</span></span><br><span class="line"><span class="comment">         *  第二个同学计算量比较大,</span></span><br><span class="line"><span class="comment">         *  FutureTask单开启线程给2同学计算,先汇总 1 3 4, 最后等2同学计算位完成,统一汇总</span></span><br><span class="line"><span class="comment">         *</span></span><br><span class="line"><span class="comment">         * 3.考试, 做会做的题目,最后看不会做的题目</span></span><br><span class="line"><span class="comment">         *</span></span><br><span class="line"><span class="comment">         * 汇总一次</span></span><br><span class="line"><span class="comment">         */</span></span><br><span class="line"></span><br><span class="line"></span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<h2 id="小结-重点"><a href="#小结-重点" class="headerlink" title="小结(重点)"></a><strong>小结(重点)</strong></h2><ul>
+<li><p>在主线程中需要执行比较耗时的操作时，但又不想阻塞主线程时，可以把这些作业交给 Future 对象在后台完成, 当主线程将来需要时，就可以通过 Future对象获得后台作业的计算结果或者执行状态</p>
+</li>
+<li><p>  一般 FutureTask 多用于耗时的计算，主线程可以在完成自己的任务后，再去获取结果</p>
+</li>
+<li><p>仅在计算完成时才能检索结果；如果计算尚未完成，则阻塞 get 方法。一旦计算完成，就不能再重新开始或取消计算。get 方法而获取结果只有在计算完成时获取，否则会一直阻塞直到任务转入完成状态，然后会返回结果或者抛出异常。</p>
+</li>
+<li><p> 只计算一次</p>
+</li>
+</ul>
+
+      
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+</div>
+
+
+
 
     
 
@@ -2116,161 +2247,6 @@
 <h2 id="分区算法"><a href="#分区算法" class="headerlink" title="分区算法"></a>分区算法</h2><p>一般来说，在相同条件下，堆空间越大，一次Gc时所需要的时间就越长，有关GC产生的停顿也越长。为了更好地控制GC产生的停顿时间，将一块大的内存区域分割成多个小块，根据目标的停顿时间，每次合理地回收若干个小区间，而不是整个堆空间，从而减少一次GC所产生的停顿。</p>
 <p>分代算法将按照对象的生命周期长短划分成两个部分，分区算法将整个堆空间划分成连续的不同小区间。 每一个小区间都独立使用，独立回收。这种算法的好处是可以控制一次回收多少个小区间。</p>
 <p><img src="https://nodeandimg.oss-cn-wulanchabu.aliyuncs.com/30Q%60UV5PSE%7DP4LLVB.png"></p>
-
-      
-    </div>
-
-    
-    
-    
-
-    <footer class="post-footer">
-        <div class="post-eof"></div>
-      
-    </footer>
-  </article>
-</div>
-
-
-
-
-    
-
-
-<div class="post-block">
-  
-  
-
-  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="JVM">
-    <link itemprop="mainEntityOfPage" href="http://yoursite-url/JVM/JVM%E7%B3%BB%E5%88%97-%E7%AC%AC14%E7%AB%A0-%E5%9E%83%E5%9C%BE%E5%9B%9E%E6%94%B6%E6%A6%82%E8%BF%B0/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="https://nodeandimg.oss-cn-wulanchabu.aliyuncs.com/}VRZRM08TG_W9[WMAD}69[O.png">
-      <meta itemprop="name" content="Hao">
-      <meta itemprop="description" content="It's an IT blog...">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Study Node">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          <a href="/JVM/JVM%E7%B3%BB%E5%88%97-%E7%AC%AC14%E7%AB%A0-%E5%9E%83%E5%9C%BE%E5%9B%9E%E6%94%B6%E6%A6%82%E8%BF%B0/" class="post-title-link" itemprop="url">JVM系列-第14章-垃圾回收概述</a>
-        </h2>
-
-        <div class="post-meta-container">
-          <div class="post-meta">
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-calendar"></i>
-      </span>
-      <span class="post-meta-item-text">Posted on</span>
-
-      <time title="Created: 2021-10-27 21:38:42" itemprop="dateCreated datePublished" datetime="2021-10-27T21:38:42+08:00">2021-10-27</time>
-    </span>
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-folder"></i>
-      </span>
-      <span class="post-meta-item-text">In</span>
-        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-          <a href="/categories/JVM/" itemprop="url" rel="index"><span itemprop="name">JVM</span></a>
-        </span>
-          , 
-        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-          <a href="/categories/JVM/1-%E5%86%85%E5%AD%98%E4%B8%8E%E5%9E%83%E5%9C%BE%E5%9B%9E%E6%94%B6%E7%AF%87/" itemprop="url" rel="index"><span itemprop="name">1.内存与垃圾回收篇</span></a>
-        </span>
-    </span>
-
-  
-</div>
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-          <h1 id="垃圾回收概述"><a href="#垃圾回收概述" class="headerlink" title="垃圾回收概述"></a>垃圾回收概述</h1><h2 id="概念"><a href="#概念" class="headerlink" title="概念"></a>概念</h2><p>这次我们主要关注的是黄色部分，内存的分配与回收</p>
-<p><img src="https://nodeandimg.oss-cn-wulanchabu.aliyuncs.com/VGY74FUW8LGNME.png"></p>
-<h2 id="什么是垃圾"><a href="#什么是垃圾" class="headerlink" title="什么是垃圾"></a>什么是垃圾</h2><p>在提到什么是垃圾之前，我们先看下面一张图</p>
-<p><img src="https://nodeandimg.oss-cn-wulanchabu.aliyuncs.com/3JZHJTBEECW3XAT7J6.png"></p>
-<p>从上图我们可以很明确的知道，Java 和 C++语言的区别，就在于垃圾收集技术和内存动态分配上，C语言没有垃圾收集技术，需要我们手动的收集。</p>
-<p>垃圾收集，不是Java语言的伴生产物。早在1960年，第一门开始使用内存动态分配和垃圾收集技术的Lisp语言诞生。 关于垃圾收集有三个经典问题：</p>
-<ul>
-<li>哪些内存需要回收？</li>
-<li>什么时候回收？</li>
-<li>如何回收？</li>
-</ul>
-<p>垃圾收集机制是Java的招牌能力，极大地提高了开发效率。如今，垃圾收集几乎成为现代语言的标配，即使经过如此长时间的发展，Java的垃圾收集机制仍然在不断的演进中，不同大小的设备、不同特征的应用场景，对垃圾收集提出了新的挑战，这当然也是面试的热点。</p>
-<h3 id="什么是垃圾？"><a href="#什么是垃圾？" class="headerlink" title="什么是垃圾？"></a>什么是垃圾？</h3><p>垃圾是指在运行程序中没有任何指针指向的对象，这个对象就是需要被回收的垃圾。</p>
-<p>如果不及时对内存中的垃圾进行清理，那么，这些垃圾对象所占的内存空间会一直保留到应用程序的结束，被保留的空间无法被其它对象使用，甚至可能导致内存溢出。</p>
-<h3 id="磁盘碎片整理"><a href="#磁盘碎片整理" class="headerlink" title="磁盘碎片整理"></a>磁盘碎片整理</h3><p>机械硬盘需要进行磁盘整理，同时还有坏道</p>
-<p><img src="https://nodeandimg.oss-cn-wulanchabu.aliyuncs.com/F8[E9X7[S0BKKW37B.png"></p>
-<h3 id="大厂面试题"><a href="#大厂面试题" class="headerlink" title="大厂面试题"></a>大厂面试题</h3><h4 id="蚂蚁金服"><a href="#蚂蚁金服" class="headerlink" title="蚂蚁金服"></a>蚂蚁金服</h4><ul>
-<li>你知道哪几种垃圾回收器，各自的优缺点，重点讲一下cms和G1？</li>
-<li>JVM GC算法有哪些，目前的JDK版本采用什么回收算法？</li>
-<li>G1回收器讲下回收过程GC是什么？为什么要有GC？</li>
-<li>GC的两种判定方法？CMS收集器与G1收集器的特点</li>
-</ul>
-<h4 id="百度"><a href="#百度" class="headerlink" title="百度"></a>百度</h4><ul>
-<li>说一下GC算法，分代回收说下</li>
-<li>垃圾收集策略和算法</li>
-</ul>
-<h4 id="天猫"><a href="#天猫" class="headerlink" title="天猫"></a>天猫</h4><ul>
-<li>JVM GC原理，JVM怎么回收内存</li>
-<li>CMS特点，垃圾回收算法有哪些？各自的优缺点，他们共同的缺点是什么？</li>
-</ul>
-<h4 id="滴滴"><a href="#滴滴" class="headerlink" title="滴滴"></a>滴滴</h4><p>Java的垃圾回收器都有哪些，说下g1的应用场景，平时你是如何搭配使用垃圾回收器的</p>
-<h4 id="京东"><a href="#京东" class="headerlink" title="京东"></a>京东</h4><ul>
-<li>你知道哪几种垃圾收集器，各自的优缺点，重点讲下cms和G1，</li>
-<li>包括原理，流程，优缺点。垃圾回收算法的实现原理</li>
-</ul>
-<h4 id="阿里"><a href="#阿里" class="headerlink" title="阿里"></a>阿里</h4><ul>
-<li>讲一讲垃圾回收算法。</li>
-<li>什么情况下触发垃圾回收？</li>
-<li>如何选择合适的垃圾收集算法？</li>
-<li>JVM有哪三种垃圾回收器？</li>
-</ul>
-<h4 id="字节跳动"><a href="#字节跳动" class="headerlink" title="字节跳动"></a>字节跳动</h4><ul>
-<li>常见的垃圾回收器算法有哪些，各有什么优劣？</li>
-<li>System.gc（）和Runtime.gc（）会做什么事情？</li>
-<li>Java GC机制？GC Roots有哪些？</li>
-<li>Java对象的回收方式，回收算法。</li>
-<li>CMS和G1了解么，CMS解决什么问题，说一下回收的过程。</li>
-<li>CMS回收停顿了几次，为什么要停顿两次?</li>
-</ul>
-<h2 id="为什么需要GC"><a href="#为什么需要GC" class="headerlink" title="为什么需要GC"></a>为什么需要GC</h2><p>对于高级语言来说，一个基本认知是如果不进行垃圾回收，内存迟早都会被消耗完，因为不断地分配内存空间而不进行回收，就好像不停地生产生活垃圾而从来不打扫一样。</p>
-<p>除了释放没用的对象，垃圾回收也可以清除内存里的记录碎片。碎片整理将所占用的堆内存移到堆的一端，以便JVM将整理出的内存分配给新的对象。</p>
-<p>随着应用程序所应付的业务越来越庞大、复杂，用户越来越多，没有GC就不能保证应用程序的正常进行。而经常造成STW的GC又跟不上实际的需求，所以才会不断地尝试对GC进行优化。</p>
-<h2 id="早期垃圾回收"><a href="#早期垃圾回收" class="headerlink" title="早期垃圾回收"></a>早期垃圾回收</h2><p>在早期的C/C++时代，垃圾回收基本上是手工进行的。开发人员可以使用new关键字进行内存申请，并使用delete关键字进行内存释放。比如以下代码：</p>
-<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">MibBridge *pBridge= <span class="keyword">new</span> cmBaseGroupBridge（）；</span><br><span class="line"><span class="comment">//如果注册失败，使用Delete释放该对象所占内存区域</span></span><br><span class="line"><span class="keyword">if</span>（pBridge-&gt;Register（kDestroy）！=NO ERROR）</span><br><span class="line">	<span class="keyword">delete</span> pBridge；</span><br></pre></td></tr></table></figure>
-
-<p>这种方式可以灵活控制内存释放的时间，但是会给开发人员带来频繁申请和释放内存的管理负担。倘若有一处内存区间由于程序员编码的问题忘记被回收，那么就会产生内存泄漏，垃圾对象永远无法被清除，随着系统运行时间的不断增长，垃圾对象所耗内存可能持续上升，直到出现内存溢出并造成应用程序崩溃。</p>
-<p>有了垃圾回收机制后，上述代码极有可能变成这样</p>
-<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">MibBridge *pBridge=<span class="keyword">new</span> <span class="built_in">cmBaseGroupBridge</span>(); </span><br><span class="line">pBridge-&gt;<span class="built_in">Register</span>(kDestroy);</span><br></pre></td></tr></table></figure>
-
-<p>现在，除了Java以外，C#、Python、Ruby等语言都使用了自动垃圾回收的思想，也是未来发展趋势，可以说这种自动化的内存分配和来及回收方式已经成为了线代开发语言必备的标准。</p>
-<h2 id="Java垃圾回收机制"><a href="#Java垃圾回收机制" class="headerlink" title="Java垃圾回收机制"></a>Java垃圾回收机制</h2><h3 id="优点"><a href="#优点" class="headerlink" title="优点"></a>优点</h3><p>自动内存管理，无需开发人员手动参与内存的分配与回收，这样降低内存泄漏和内存溢出的风险</p>
-<p>没有垃圾回收器，java也会和cpp一样，各种悬垂指针，野指针，泄露问题让你头疼不已。</p>
-<p>自动内存管理机制，将程序员从繁重的内存管理中释放出来，可以更专心地专注于业务开发</p>
-<p>oracle官网关于垃圾回收的介绍 <a target="_blank" rel="noopener" href="https://docs.oracle.com/javase/8/docs/technotes/guides/vm/gctuning/toc.html">https://docs.oracle.com/javase/8/docs/technotes/guides/vm/gctuning/toc.html</a></p>
-<h3 id="担忧"><a href="#担忧" class="headerlink" title="担忧"></a>担忧</h3><p>对于Java开发人员而言，自动内存管理就像是一个黑匣子，如果过度依赖于“自动”，那么这将会是一场灾难，最严重的就会弱化Java开发人员在程序出现内存溢出时定位问题和解决问题的能力。</p>
-<p>此时，了解JVM的自动内存分配和内存回收原理就显得非常重要，只有在真正了解JVM是如何管理内存后，我们才能够在遇见outofMemoryError时，快速地根据错误异常日志定位问题和解决问题。</p>
-<p>当需要排查各种内存溢出、内存泄漏问题时，当垃圾收集成为系统达到更高并发量的瓶颈时，我们就必须对这些“自动化”的技术实施必要的监控和调节。</p>
-<h3 id="GC主要关注的区域"><a href="#GC主要关注的区域" class="headerlink" title="GC主要关注的区域"></a>GC主要关注的区域</h3><p>GC主要关注于 方法区 和堆中的垃圾收集</p>
-<p><img src="https://nodeandimg.oss-cn-wulanchabu.aliyuncs.com/8B9QWEXKOWQNV%7BU17.png"></p>
-<p>垃圾收集器可以对年轻代回收，也可以对老年代回收，甚至是全栈和方法区的回收</p>
-<ul>
-<li>其中，Java堆是垃圾收集器的工作重点</li>
-</ul>
-<p>从次数上讲：</p>
-<ul>
-<li>频繁收集Young区</li>
-<li>较少收集Old区</li>
-<li>基本不收集Perm区（元空间）</li>
-</ul>
 
       
     </div>

@@ -133,7 +133,7 @@
   <nav class="site-state">
       <div class="site-state-item site-state-posts">
         <a href="/archives/">
-          <span class="site-state-item-count">33</span>
+          <span class="site-state-item-count">34</span>
           <span class="site-state-item-name">posts</span>
         </a>
       </div>
@@ -181,6 +181,89 @@
 
 
     <div class="main-inner index posts-expand">
+
+    
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="MySQL">
+    <link itemprop="mainEntityOfPage" href="http://yoursite-url/MySQL/%E7%B4%A2%E5%BC%95%E7%9A%84%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="https://nodeandimg.oss-cn-wulanchabu.aliyuncs.com/}VRZRM08TG_W9[WMAD}69[O.png">
+      <meta itemprop="name" content="Hao">
+      <meta itemprop="description" content="It's an IT blog...">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Study Node">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          <a href="/MySQL/%E7%B4%A2%E5%BC%95%E7%9A%84%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84/" class="post-title-link" itemprop="url">索引的数据结构</a>
+        </h2>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">Posted on</span>
+
+      <time title="Created: 2022-01-18 23:32:05" itemprop="dateCreated datePublished" datetime="2022-01-18T23:32:05+08:00">2022-01-18</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">In</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/MySQL%E9%AB%98%E7%BA%A7/" itemprop="url" rel="index"><span itemprop="name">MySQL高级</span></a>
+        </span>
+          , 
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/MySQL%E9%AB%98%E7%BA%A7/%E6%95%B0%E6%8D%AE%E5%BA%93/" itemprop="url" rel="index"><span itemprop="name">数据库</span></a>
+        </span>
+    </span>
+
+  
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+          <h1 id="索引的数据结构"><a href="#索引的数据结构" class="headerlink" title="索引的数据结构"></a><strong>索引的数据结构</strong></h1><h2 id="为什么使用索引"><a href="#为什么使用索引" class="headerlink" title="为什么使用索引"></a><strong>为什么使用索引</strong></h2><p><img src="https://nodeandimg.oss-cn-wulanchabu.aliyuncs.com/123123dfsfd.png"></p>
+<p>假如给数据使用 二叉树 这样的数据结构进行存储，如下图所示</p>
+<p><img src="https://nodeandimg.oss-cn-wulanchabu.aliyuncs.com/3WDAHAK5VN0HPBE.png"></p>
+<h2 id="索引及其优缺点"><a href="#索引及其优缺点" class="headerlink" title="索引及其优缺点"></a><strong>索引及其优缺点</strong></h2><h3 id="索引概述"><a href="#索引概述" class="headerlink" title="索引概述"></a><strong>索引概述</strong></h3><p>MySQL官方对索引的定义为：<strong>索引（Index）是帮助MySQL高效获取数据的数据结构</strong>。</p>
+<p><strong>索引的本质：</strong>索引是数据结构。你可以简单理解为“排好序的快速查找数据结构”，满足特定查找算法。这些数据结构以某种方式指向数据， 这样就可以在这些数据结构的基础上实现 高级查找算法 。 </p>
+<h3 id="优点"><a href="#优点" class="headerlink" title="优点"></a><strong>优点</strong></h3><p>（1）类似大学图书馆建书目索引，提高数据检索的效率，降低 数据库的IO成本 ，这也是创建索引最主要的原因。 （2）通过创建唯一索引，可以保证数据库表中每一行 数据的唯一性 。 （3）在实现数据的参考完整性方面，可以 加速表和表之间的连接 。换句话说，对于有依赖关系的子表和父表联合查询时，可以提高查询速度。 （4）在使用分组和排序子句进行数据查询时，可以显著 减少查询中分组和排序的时 间 ，降低了CPU的消耗。</p>
+<h3 id="缺点"><a href="#缺点" class="headerlink" title="缺点"></a><strong>缺点</strong></h3><p>增加索引也有许多不利的方面，主要表现在如下几个方面： （1）创建索引和维护索引要 耗费时间 ，并且随着数据量的增加，所耗费的时间也会增加。 （2）索引需要占 磁盘空间 ，除了数据表占数据空间之外，每一个索引还要占一定的物理空间， 存储在磁盘上 ，如果有大量的索引，索引文件就可能比数据文件更快达到最大文件尺寸。 （3）虽然索引大大提高了查询速度，同时却会 降低更新表的速度 。当对表中的数据进行增加、删除和修改的时候，索引也要动态地维护，这样就降低了数据的维护速度。因此，选择使用索引时，需要综合考虑索引的优点和缺点。</p>
+<h2 id="InnoDB中索引的推演"><a href="#InnoDB中索引的推演" class="headerlink" title="InnoDB中索引的推演"></a>InnoDB中索引的推演</h2>
+      
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+</div>
+
+
+
 
     
 
@@ -1894,137 +1977,6 @@
 <p>SemaphoreDemo</p>
 <figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">package</span> com.hao.juc;</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> java.util.Random;</span><br><span class="line"><span class="keyword">import</span> java.util.concurrent.Semaphore;</span><br><span class="line"><span class="keyword">import</span> java.util.concurrent.TimeUnit;</span><br><span class="line"></span><br><span class="line"><span class="comment">//六辆汽车,停三个停车位</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">SemaphoreDemo</span> </span>&#123;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> </span>&#123;</span><br><span class="line">        <span class="comment">//创建Semaphore,设置许可数量</span></span><br><span class="line">        Semaphore semaphore = <span class="keyword">new</span> Semaphore(<span class="number">3</span>);</span><br><span class="line"></span><br><span class="line">        <span class="comment">//模拟六辆汽车</span></span><br><span class="line">        <span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">0</span>; i &lt; <span class="number">6</span>; i++) &#123;</span><br><span class="line">           <span class="keyword">new</span> Thread(() -&gt;&#123;</span><br><span class="line">               <span class="keyword">try</span> &#123;</span><br><span class="line">                   <span class="comment">//抢占</span></span><br><span class="line">                   semaphore.acquire();</span><br><span class="line">                   System.out.println(Thread.currentThread().getName() + <span class="string">&quot;抢到了车位&quot;</span>);</span><br><span class="line">                   <span class="comment">//设置随机停车时间</span></span><br><span class="line">                   TimeUnit.SECONDS.sleep(<span class="keyword">new</span> Random().nextInt(<span class="number">5</span>));</span><br><span class="line"></span><br><span class="line">                   System.out.println(Thread.currentThread().getName() + <span class="string">&quot;------离开了车位&quot;</span>);</span><br><span class="line">               &#125; <span class="keyword">catch</span> (InterruptedException e) &#123;</span><br><span class="line">                   e.printStackTrace();</span><br><span class="line">               &#125;<span class="keyword">finally</span> &#123;</span><br><span class="line">                   <span class="comment">//释放</span></span><br><span class="line">                   semaphore.release();</span><br><span class="line">               &#125;</span><br><span class="line">           &#125;,String.valueOf(i)).start();</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 
-
-      
-    </div>
-
-    
-    
-    
-
-    <footer class="post-footer">
-        <div class="post-eof"></div>
-      
-    </footer>
-  </article>
-</div>
-
-
-
-
-    
-
-
-<div class="post-block">
-  
-  
-
-  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="JUC">
-    <link itemprop="mainEntityOfPage" href="http://yoursite-url/JUC/JUC%E7%B3%BB%E5%88%97-%E7%AC%AC%E5%85%AD%E7%AB%A0-Callable-Future-%E6%8E%A5%E5%8F%A3/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="https://nodeandimg.oss-cn-wulanchabu.aliyuncs.com/}VRZRM08TG_W9[WMAD}69[O.png">
-      <meta itemprop="name" content="Hao">
-      <meta itemprop="description" content="It's an IT blog...">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Study Node">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          <a href="/JUC/JUC%E7%B3%BB%E5%88%97-%E7%AC%AC%E5%85%AD%E7%AB%A0-Callable-Future-%E6%8E%A5%E5%8F%A3/" class="post-title-link" itemprop="url">JUC系列-Callable&Future 接口</a>
-        </h2>
-
-        <div class="post-meta-container">
-          <div class="post-meta">
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-calendar"></i>
-      </span>
-      <span class="post-meta-item-text">Posted on</span>
-
-      <time title="Created: 2021-11-16 17:03:03" itemprop="dateCreated datePublished" datetime="2021-11-16T17:03:03+08:00">2021-11-16</time>
-    </span>
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-folder"></i>
-      </span>
-      <span class="post-meta-item-text">In</span>
-        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-          <a href="/categories/JUC/" itemprop="url" rel="index"><span itemprop="name">JUC</span></a>
-        </span>
-    </span>
-
-  
-</div>
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-          <h1 id="Callable-amp-Future-接口"><a href="#Callable-amp-Future-接口" class="headerlink" title="Callable&amp;Future 接口"></a><strong>Callable&amp;Future 接口</strong></h1><h2 id="Callable-接口"><a href="#Callable-接口" class="headerlink" title="Callable 接口"></a><strong>Callable 接口</strong></h2><p>目前我们学习了有两种创建线程的方法-一种是通过创建 Thread 类，另一种是通过使用 Runnable 创建线程。但是，Runnable 缺少的一项功能是，当线程终止时（即 run（）完成时），我们无法使线程返回结果。为了支持此功能，</p>
-<p>Java 中提供了 Callable 接口。</p>
-<p>==<strong>现在我们学习的是创建线程的第三种方案—Callable 接口</strong>==</p>
-<p><strong>Callable 接口的特点如下(重点)</strong> </p>
-<ul>
-<li>为了实现 Runnable，需要实现不返回任何内容的 run（）方法，而对于</li>
-</ul>
-<p>Callable，需要实现在完成时返回结果的 call（）方法。</p>
-<ul>
-<li><p> call（）方法可以引发异常，而 run（）则不能。</p>
-</li>
-<li><p>为实现 Callable 而必须重写 call 方法</p>
-</li>
-<li><p>不能直接替换 runnable,因为 Thread 类的构造方法根本没有 Callable</p>
-</li>
-</ul>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line">创建新类 MyThread1 实现 runnable 接口</span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">MyThread1</span> <span class="keyword">implements</span> <span class="title">Runnable</span></span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">run</span><span class="params">()</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"><span class="comment">//实现Callable接口</span></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">MyThread2</span> <span class="keyword">implements</span> <span class="title">Callable</span></span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> Integer <span class="title">call</span><span class="params">()</span> <span class="keyword">throws</span> Exception </span>&#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="number">200</span>;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<h2 id="Future-接口"><a href="#Future-接口" class="headerlink" title="Future 接口"></a><strong>Future 接口</strong></h2><p>当 call（）方法完成时，结果必须存储在主线程已知的对象中，以便主线程可以知道该线程返回的结果。为此，可以使用 Future 对象。</p>
-<p>将 Future 视为保存结果的对象–它可能暂时不保存结果，但将来会保存（一旦Callable 返回）。Future 基本上是主线程可以跟踪进度以及其他线程的结果的一种方式。要实现此接口，必须重写 5 种方法，这里列出了重要的方法,如下: </p>
-<p>• <strong>public boolean cancel（boolean mayInterrupt）：</strong>用于停止任务。</p>
-<p>==如果尚未启动，它将停止任务。如果已启动，则仅在 mayInterrupt 为 true时才会中断任务。==</p>
-<p>• <strong>public Object get（）抛出 InterruptedException，ExecutionException：</strong>用于获取任务的结果。</p>
-<p>==如果任务完成，它将立即返回结果，否则将等待任务完成，然后返回结果。</p>
-<p>==</p>
-<p>• <strong>public boolean isDone（）：</strong>如果任务完成，则返回 true，否则返回 false可以看到 Callable 和 Future 做两件事-Callable 与 Runnable 类似，因为它封装了要在另一个线程上运行的任务，而 Future 用于存储从另一个线程获得的结果。实际上，future 也可以与 Runnable 一起使用。</p>
-<p>要创建线程，需要 Runnable。为了获得结果，需要 future。 </p>
-<h2 id="FutureTask"><a href="#FutureTask" class="headerlink" title="FutureTask"></a><strong>FutureTask</strong></h2><p>Java 库具有具体的 FutureTask 类型，该类型实现 Runnable 和 Future，并方便地将两种功能组合在一起。 可以通过为其构造函数提供 Callable 来创建FutureTask。然后，将 FutureTask 对象提供给 Thread 的构造函数以创建Thread 对象。因此，间接地使用 Callable 创建线程。</p>
-<p><img src="https://nodeandimg.oss-cn-wulanchabu.aliyuncs.com/06-futureTask.png"></p>
-<p><strong>核心原理:(重点)</strong></p>
-<p>在主线程中需要执行比较耗时的操作时，但又不想阻塞主线程时，可以把这些作业交给 Future 对象在后台完成</p>
-<ul>
-<li><p>当主线程将来需要时，就可以通过 Future 对象获得后台作业的计算结果或者执行状态</p>
-</li>
-<li><p> 一般 FutureTask 多用于耗时的计算，主线程可以在完成自己的任务后，再去获取结果。</p>
-</li>
-<li><p>仅在计算完成时才能检索结果；如果计算尚未完成，则阻塞 get 方法</p>
-</li>
-<li><p>一旦计算完成，就不能再重新开始或取消计算</p>
-</li>
-<li><p>get 方法而获取结果只有在计算完成时获取，否则会一直阻塞直到任务转入完成状态，然后会返回结果或者抛出异常</p>
-</li>
-<li><p>get 只计算一次,因此 get 方法放到最后</p>
-</li>
-</ul>
-<p><strong>demo 案例</strong></p>
-<h2 id="使用-Callable-和-Future"><a href="#使用-Callable-和-Future" class="headerlink" title="使用 Callable 和 Future"></a><strong>使用 Callable 和 Future</strong></h2><p>CallableDemo 案例</p>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">package</span> com.hao.callable;</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> java.util.concurrent.Callable;</span><br><span class="line"><span class="keyword">import</span> java.util.concurrent.ExecutionException;</span><br><span class="line"><span class="keyword">import</span> java.util.concurrent.FutureTask;</span><br><span class="line"></span><br><span class="line"><span class="comment">//比较两个接口</span></span><br><span class="line"><span class="comment">//实现Runnable接口</span></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">MyThread1</span> <span class="keyword">implements</span> <span class="title">Runnable</span></span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">run</span><span class="params">()</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"><span class="comment">//实现Callable接口</span></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">MyThread2</span> <span class="keyword">implements</span> <span class="title">Callable</span></span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> Integer <span class="title">call</span><span class="params">()</span> <span class="keyword">throws</span> Exception </span>&#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="number">200</span>;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">Demo1</span> </span>&#123;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> <span class="keyword">throws</span> ExecutionException, InterruptedException </span>&#123;</span><br><span class="line">        <span class="comment">//Runnable接口创建线程</span></span><br><span class="line">        <span class="keyword">new</span> Thread(<span class="keyword">new</span> MyThread1(),<span class="string">&quot;AA&quot;</span>).start();</span><br><span class="line"></span><br><span class="line">        <span class="comment">//Callable接口创建线程</span></span><br><span class="line">        <span class="comment">//new Thread(new MyThread2(),&quot;BB&quot;).start();</span></span><br><span class="line"></span><br><span class="line">        <span class="comment">//FutureTask</span></span><br><span class="line">        FutureTask&lt;Integer&gt; futureTask1 = <span class="keyword">new</span> FutureTask&lt;&gt;(<span class="keyword">new</span> MyThread2());</span><br><span class="line"></span><br><span class="line">        <span class="comment">//lam表达式</span></span><br><span class="line">        FutureTask&lt;Integer&gt; futureTask2 = <span class="keyword">new</span> FutureTask&lt;&gt;(() -&gt;&#123;</span><br><span class="line">            System.out.println(Thread.currentThread().getName() + <span class="string">&quot;come in callable&quot;</span>);</span><br><span class="line">            <span class="keyword">return</span> <span class="number">1024</span>;</span><br><span class="line">        &#125;);</span><br><span class="line"></span><br><span class="line">        <span class="comment">//创建一个线程</span></span><br><span class="line">        <span class="keyword">new</span> Thread(futureTask2,<span class="string">&quot;luck&quot;</span>).start();</span><br><span class="line"></span><br><span class="line">        <span class="keyword">while</span> (!futureTask2.isDone())&#123;</span><br><span class="line">            System.out.println(<span class="string">&quot;wait.....&quot;</span>);</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="comment">//调用FutureTask的get方法</span></span><br><span class="line">        System.out.println(futureTask2.get());</span><br><span class="line"></span><br><span class="line">        System.out.println(Thread.currentThread().getName()+ <span class="string">&quot;come over&quot;</span>);</span><br><span class="line">        <span class="comment">//FutureTask原理  未来任务</span></span><br><span class="line">        <span class="comment">/**</span></span><br><span class="line"><span class="comment">         * 1.老师来了,口渴了,去买水不合适,讲课线程继续</span></span><br><span class="line"><span class="comment">         * 单开启线程找班上班长帮我买水,把水买回来,需要时直接get</span></span><br><span class="line"><span class="comment">         *</span></span><br><span class="line"><span class="comment">         * 2.4个同学, 1同学 1+2...5 , 2同学 10+11+12...50 3同学 60+61+62， 4同学 100+200</span></span><br><span class="line"><span class="comment">         *  第二个同学计算量比较大,</span></span><br><span class="line"><span class="comment">         *  FutureTask单开启线程给2同学计算,先汇总 1 3 4, 最后等2同学计算位完成,统一汇总</span></span><br><span class="line"><span class="comment">         *</span></span><br><span class="line"><span class="comment">         * 3.考试, 做会做的题目,最后看不会做的题目</span></span><br><span class="line"><span class="comment">         *</span></span><br><span class="line"><span class="comment">         * 汇总一次</span></span><br><span class="line"><span class="comment">         */</span></span><br><span class="line"></span><br><span class="line"></span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
-
-<h2 id="小结-重点"><a href="#小结-重点" class="headerlink" title="小结(重点)"></a><strong>小结(重点)</strong></h2><ul>
-<li><p>在主线程中需要执行比较耗时的操作时，但又不想阻塞主线程时，可以把这些作业交给 Future 对象在后台完成, 当主线程将来需要时，就可以通过 Future对象获得后台作业的计算结果或者执行状态</p>
-</li>
-<li><p>  一般 FutureTask 多用于耗时的计算，主线程可以在完成自己的任务后，再去获取结果</p>
-</li>
-<li><p>仅在计算完成时才能检索结果；如果计算尚未完成，则阻塞 get 方法。一旦计算完成，就不能再重新开始或取消计算。get 方法而获取结果只有在计算完成时获取，否则会一直阻塞直到任务转入完成状态，然后会返回结果或者抛出异常。</p>
-</li>
-<li><p> 只计算一次</p>
-</li>
-</ul>
 
       
     </div>
