@@ -473,7 +473,57 @@
 <p>我们可以通过 innodb_adaptive_hash_index 变量来查看是否开启了自适应 Hash，比如：</p>
 <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">mysql&gt; show variables like &#x27;%adaptive_hash_index&#x27;;</span><br></pre></td></tr></table></figure>
 
-<h3 id="B-Tree"><a href="#B-Tree" class="headerlink" title="B-Tree"></a>B-Tree</h3><p>B 树的结构如下图所示：</p>
+<h3 id="AVL树"><a href="#AVL树" class="headerlink" title="AVL树"></a><strong>AVL树</strong></h3><p><img src="https://nodeandimg.oss-cn-wulanchabu.aliyuncs.com/sdadwe234234.png"></p>
+<p>针对同样的数据，如果我们把二叉树改成 M 叉树 （M&gt;2）呢？当 M=3 时，同样的 31 个节点可以由下面的三叉树来进行存储：</p>
+<p><img src="https://nodeandimg.oss-cn-wulanchabu.aliyuncs.com/40MMX8UPXYEO.png"></p>
+<h3 id="B-Tree"><a href="#B-Tree" class="headerlink" title="B-Tree"></a><strong>B-Tree</strong></h3><p>B 树的结构如下图所示：</p>
+<p><img src="https://nodeandimg.oss-cn-wulanchabu.aliyuncs.com/PH]50RKFKTA32.png"></p>
+<p>一个 M 阶的 B 树（M&gt;2）有以下的特性：</p>
+<ol>
+<li><p>根节点的儿子数的范围是 [2,M]。 </p>
+</li>
+<li><p>每个中间节点包含 k-1 个关键字和 k 个孩子，孩子的数量 = 关键字的数量 +1，k 的取值范围为[ceil(M/2), M]。 </p>
+</li>
+<li><p>叶子节点包括 k-1 个关键字（叶子节点没有孩子），k 的取值范围为 [ceil(M/2), M]。 </p>
+</li>
+<li><p>假设中间节点节点的关键字为：Key[1], Key[2], …, Key[k-1]，且关键字按照升序排序，即 Key[i] &lt;Key[i+1]。此时 k-1 个关键字相当于划分了 k 个范围，也就是对应着 k 个指针，即为：P[1], P[2], …,P[k]，其中 P[1] 指向关键字小于 Key[1] 的子树，P[i] 指向关键字属于 (Key[i-1], Key[i]) 的子树，P[k]指向关键字大于 Key[k-1] 的子树。</p>
+</li>
+<li><p>所有叶子节点位于同一层。</p>
+</li>
+</ol>
+<p>上面那张图所表示的 B 树就是一棵 3 阶的 B 树。我们可以看下磁盘块 2，里面的关键字为（8，12），它有 3 个孩子 (3，5)，(9，10) 和 (13，15)，你能看到 (3，5) 小于 8，(9，10) 在 8 和 12 之间，而 (13，15)大于 12，刚好符合刚才我们给出的特征。</p>
+<p>然后我们来看下如何用 B 树进行查找。假设我们想要 查找的关键字是 9 ，那么步骤可以分为以下几步：</p>
+<ol>
+<li><p>我们与根节点的关键字 (17，35）进行比较，9 小于 17 那么得到指针 P1； </p>
+</li>
+<li><p>按照指针 P1 找到磁盘块 2，关键字为（8，12），因为 9 在 8 和 12 之间，所以我们得到指针 P2； </p>
+</li>
+<li><p>按照指针 P2 找到磁盘块 6，关键字为（9，10），然后我们找到了关键字 9。</p>
+</li>
+</ol>
+<p>你能看出来在 B 树的搜索过程中，我们比较的次数并不少，但如果把数据读取出来然后在内存中进行比较，这个时间就是可以忽略不计的。而读取磁盘块本身需要进行 I/O 操作，消耗的时间比在内存中进行比较所需要的时间要多，是数据查找用时的重要因素。 <strong>B 树相比于平衡二叉树来说磁盘 I/O 操作要少</strong> ，在数据查询中比平衡二叉树效率要高。所以<strong>只要树的高度足够低，IO次数足够少，就可以提高查询性能</strong> 。</p>
+<p><strong>再举例1：</strong> </p>
+<p><img src="https://nodeandimg.oss-cn-wulanchabu.aliyuncs.com/QVIL4F7HWIQ.png"></p>
+<h3 id="B-Tree-1"><a href="#B-Tree-1" class="headerlink" title="B+Tree"></a><strong>B+Tree</strong></h3><p><strong>B+</strong> <strong>树和</strong> <strong>B</strong> <strong>树的差异：</strong></p>
+<ol>
+<li><p>有 k 个孩子的节点就有 k 个关键字。也就是孩子数量 = 关键字数，而 B 树中，孩子数量 = 关键字数+1。</p>
+</li>
+<li><p>非叶子节点的关键字也会同时存在在子节点中，并且是在子节点中所有关键字的最大（或最小）。</p>
+</li>
+<li><p>非叶子节点仅用于索引，不保存数据记录，跟记录有关的信息都放在叶子节点中。而 B 树中， 非<strong>叶子节点既保存索引，也保存数据记录</strong> 。 </p>
+</li>
+<li><p>所有关键字都在叶子节点出现，叶子节点构成一个有序链表，而且叶子节点本身按照关键字的大小从小到大顺序链接。</p>
+</li>
+</ol>
+<blockquote>
+<p>B 树和 B+ 树都可以作为索引的数据结构，在 MySQL 中采用的是 B+ 树。</p>
+<p>但B树和B+树各有自己的应用场景，不能说B+树完全比B树好，反之亦然。</p>
+</blockquote>
+<p><strong>思考题：为了减少IO，索引树会一次性加载吗？</strong></p>
+<p><strong>思考题：B+树的存储能力如何？为何说一般查找行记录，最多只需1~3次磁盘IO</strong></p>
+<p><strong>思考题：为什么说B+树比B-树更适合实际应用中操作系统的文件索引和数据库索引？</strong></p>
+<p><strong>思考题：Hash索引与</strong> <strong>B+</strong> <strong>树索引的区别</strong></p>
+<p><strong>思考题：Hash索引与</strong> <strong>B+</strong> <strong>树索引是在建索引的时候手动指定的吗？</strong></p>
 
       
     </div>
