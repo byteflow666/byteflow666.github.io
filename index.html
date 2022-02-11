@@ -133,7 +133,7 @@
   <nav class="site-state">
       <div class="site-state-item site-state-posts">
         <a href="/archives/">
-          <span class="site-state-item-count">35</span>
+          <span class="site-state-item-count">36</span>
           <span class="site-state-item-name">posts</span>
         </a>
       </div>
@@ -181,6 +181,158 @@
 
 
     <div class="main-inner index posts-expand">
+
+    
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="MySQL">
+    <link itemprop="mainEntityOfPage" href="http://yoursite-url/MySQL/%E7%B4%A2%E5%BC%95%E4%BC%98%E5%8C%96%E4%B8%8E%E6%9F%A5%E8%AF%A2%E4%BC%98%E5%8C%96/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="https://nodeandimg.oss-cn-wulanchabu.aliyuncs.com/}VRZRM08TG_W9[WMAD}69[O.png">
+      <meta itemprop="name" content="Hao">
+      <meta itemprop="description" content="It's an IT blog...">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Study Node">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          <a href="/MySQL/%E7%B4%A2%E5%BC%95%E4%BC%98%E5%8C%96%E4%B8%8E%E6%9F%A5%E8%AF%A2%E4%BC%98%E5%8C%96/" class="post-title-link" itemprop="url">索引优化与查询优化</a>
+        </h2>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">Posted on</span>
+
+      <time title="Created: 2022-02-11 23:29:07" itemprop="dateCreated datePublished" datetime="2022-02-11T23:29:07+08:00">2022-02-11</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">In</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/MySQL%E9%AB%98%E7%BA%A7/" itemprop="url" rel="index"><span itemprop="name">MySQL高级</span></a>
+        </span>
+          , 
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/MySQL%E9%AB%98%E7%BA%A7/%E6%95%B0%E6%8D%AE%E5%BA%93/" itemprop="url" rel="index"><span itemprop="name">数据库</span></a>
+        </span>
+    </span>
+
+  
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+          <blockquote>
+<p>这里都是康师傅的MySQL笔记 写这些只是方便复习 不得不说康师傅讲的真好</p>
+</blockquote>
+<h1 id="索引失效案例"><a href="#索引失效案例" class="headerlink" title="索引失效案例"></a><strong>索引失效案例</strong></h1><h2 id="全值匹配我最爱"><a href="#全值匹配我最爱" class="headerlink" title="全值匹配我最爱"></a><strong>全值匹配我最爱</strong></h2><h2 id="最佳左前缀法则"><a href="#最佳左前缀法则" class="headerlink" title="最佳左前缀法则"></a><strong>最佳左前缀法则</strong></h2><blockquote>
+<p><strong>拓展：Alibaba《Java开发手册》</strong></p>
+<p>索引文件具有 B-Tree 的最左前缀匹配特性，如果左边的值未确定，那么无法使用此索引。</p>
+</blockquote>
+<h2 id="主键插入顺序"><a href="#主键插入顺序" class="headerlink" title="主键插入顺序"></a><strong>主键插入顺序</strong></h2><p><img src="https://nodeandimg.oss-cn-wulanchabu.aliyuncs.com/FRB7EL0M6T77KS.png"></p>
+<p>如果此时再插入一条主键值为 9 的记录，那它插入的位置就如下图：</p>
+<p><img src="https://nodeandimg.oss-cn-wulanchabu.aliyuncs.com/QT8MP2RAFMPNI2.png"></p>
+<p>可这个数据页已经满了，再插进来咋办呢？我们需要把当前 页面分裂 成两个页面，把本页中的一些记录移动到新创建的这个页中。页面分裂和记录移位意味着什么？意味着： 性能损耗 ！所以如果我们想尽量避免这样无谓的性能损耗，最好让插入的记录的 主键值依次递增 ，这样就不会发生这样的性能损耗了。所以我们建议：让主键具有AUTO_INCREMENT ，让存储引擎自己为表生成主键，而不是我们手动插入 ，比如： person_info 表：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">CREATE TABLE person_info( </span><br><span class="line">id INT UNSIGNED NOT NULL AUTO_INCREMENT, </span><br><span class="line">name VARCHAR(100) NOT NULL, </span><br><span class="line">birthday DATE NOT NULL, </span><br><span class="line">phone_number CHAR(11) NOT NULL, </span><br><span class="line">country varchar(100) NOT NULL, </span><br><span class="line">PRIMARY KEY (id), </span><br><span class="line">KEY idx_name_birthday_phone_number (name(10), birthday, phone_number) </span><br><span class="line">);</span><br></pre></td></tr></table></figure>
+
+<p>我们自定义的主键列 id 拥有 AUTO_INCREMENT 属性，在插入记录时存储引擎会自动为我们填入自增的主键值。这样的主键占用空间小，顺序写入，减少页分裂。</p>
+<h2 id="计算、函数、类型转换-自动或手动-导致索引失效"><a href="#计算、函数、类型转换-自动或手动-导致索引失效" class="headerlink" title="计算、函数、类型转换(自动或手动)导致索引失效"></a><strong>计算、函数、类型转换(自动或手动)导致索引失效</strong></h2><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">EXPLAIN SELECT SQL_NO_CACHE * FROM student WHERE student.name LIKE &#x27;abc%&#x27;; </span><br></pre></td></tr></table></figure>
+
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">EXPLAIN SELECT SQL_NO_CACHE * FROM student WHERE LEFT(student.name,3) = &#x27;abc&#x27;; </span><br></pre></td></tr></table></figure>
+
+<p>创建索引</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">CREATE INDEX idx_name ON student(NAME);</span><br></pre></td></tr></table></figure>
+
+<p>第一种：索引优化生效</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">mysql&gt; EXPLAIN SELECT SQL_NO_CACHE * FROM student WHERE student.name LIKE &#x27;abc%&#x27;;</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br></pre></td><td class="code"><pre><span class="line">mysql&gt; SELECT SQL_NO_CACHE * FROM student WHERE student.name LIKE &#x27;abc%&#x27;; </span><br><span class="line">+---------+---------+--------+------+---------+ </span><br><span class="line">| id | stuno | name | age | classId | </span><br><span class="line">+---------+---------+--------+------+---------+ </span><br><span class="line">| 5301379 | 1233401 | AbCHEa | 164 | 259 | </span><br><span class="line">| 7170042 | 3102064 | ABcHeB | 199 | 161 | </span><br><span class="line">| 1901614 | 1833636 | ABcHeC | 226 | 275 | </span><br><span class="line">| 5195021 | 1127043 | abchEC | 486 | 72 | </span><br><span class="line">| 4047089 | 3810031 | AbCHFd | 268 | 210 | </span><br><span class="line">| 4917074 | 849096 | ABcHfD | 264 | 442 | </span><br><span class="line">| 1540859 | 141979 | abchFF | 119 | 140 | </span><br><span class="line">| 5121801 | 1053823 | AbCHFg | 412 | 327 | </span><br><span class="line">| 2441254 | 2373276 | abchFJ | 170 | 362 | </span><br><span class="line">| 7039146 | 2971168 | ABcHgI | 502 | 465 | </span><br><span class="line">| 1636826 | 1580286 | ABcHgK | 71 | 262 | </span><br><span class="line">| 374344 | 474345 | abchHL | 367 | 212 | </span><br><span class="line">| 1596534 | 169191 | AbCHHl | 102 | 146 | </span><br><span class="line">... </span><br><span class="line">| 5266837 | 1198859 | abclXe | 292 | 298 | </span><br><span class="line">| 8126968 | 4058990 | aBClxE | 316 | 150 | </span><br><span class="line">| 4298305 | 399962 | AbCLXF | 72 | 423 | </span><br><span class="line">| 5813628 | 1745650 | aBClxF | 356 | 323 | </span><br><span class="line">| 6980448 | 2912470 | AbCLXF | 107 | 78 | </span><br><span class="line">| 7881979 | 3814001 | AbCLXF | 89 | 497 | </span><br><span class="line">| 4955576 | 887598 | ABcLxg | 121 | 385 | </span><br><span class="line">| 3653460 | 3585482 | AbCLXJ | 130 | 174 | </span><br><span class="line">| 1231990 | 1283439 | AbCLYH | 189 | 429 | </span><br><span class="line">| 6110615 | 2042637 | ABcLyh | 157 | 40 | </span><br><span class="line">+---------+---------+--------+------+---------+ </span><br><span class="line">401 rows in set, 1 warning (0.01 sec) </span><br></pre></td></tr></table></figure>
+
+<p>第二种：索引优化失效</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">mysql&gt; EXPLAIN SELECT SQL_NO_CACHE * FROM student WHERE LEFT(student.name,3) = &#x27;abc&#x27;;</span><br></pre></td></tr></table></figure>
+
+<p><img src="https://nodeandimg.oss-cn-wulanchabu.aliyuncs.com/7XD26AYKGDKWT4X9W.png"></p>
+<p>type为“ALL”，表示没有使用到索引，查询时间为 3.62 秒，查询效率较之前低很多。</p>
+<p><strong>再举例：</strong></p>
+<ul>
+<li>student表的字段stuno上设置有索引</li>
+</ul>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">CREATE INDEX idx_sno ON student(stuno);</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">EXPLAIN SELECT SQL_NO_CACHE id, stuno, NAME FROM student WHERE stuno+1 = 900001;</span><br></pre></td></tr></table></figure>
+
+<p>运行结果：</p>
+<p><img src="https://nodeandimg.oss-cn-wulanchabu.aliyuncs.com/7XD26AYKGDKWT4X9W.png"></p>
+<ul>
+<li>索引优化生效</li>
+</ul>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">EXPLAIN SELECT SQL_NO_CACHE id, stuno, NAME FROM student WHERE stuno = 900000;</span><br></pre></td></tr></table></figure>
+
+<h2 id="类型转换导致索引失效"><a href="#类型转换导致索引失效" class="headerlink" title="类型转换导致索引失效"></a><strong>类型转换导致索引失效</strong></h2><p>下列哪个sql语句可以用到索引。（假设name字段上设置有索引）</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"># 未使用到索引 </span><br><span class="line">EXPLAIN SELECT SQL_NO_CACHE * FROM student WHERE name=123;</span><br></pre></td></tr></table></figure>
+
+<p><img src="https://nodeandimg.oss-cn-wulanchabu.aliyuncs.com/7A87IQMI0V.png"></p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"># 使用到索引 EXPLAIN SELECT SQL_NO_CACHE * FROM student WHERE name=&#x27;123&#x27;;</span><br></pre></td></tr></table></figure>
+
+<p><img src="https://nodeandimg.oss-cn-wulanchabu.aliyuncs.com/14YGTINIVHB5TV.png"></p>
+<ul>
+<li>name=123发生类型转换，索引失效。</li>
+</ul>
+<h2 id="范围条件右边的列索引失效"><a href="#范围条件右边的列索引失效" class="headerlink" title="范围条件右边的列索引失效"></a><strong>范围条件右边的列索引失效</strong></h2><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">ALTER TABLE student DROP INDEX idx_name; </span><br><span class="line">ALTER TABLE student DROP INDEX idx_age; </span><br><span class="line">ALTER TABLE student DROP INDEX idx_age_classid; </span><br><span class="line"></span><br><span class="line">EXPLAIN SELECT SQL_NO_CACHE * FROM student </span><br><span class="line">WHERE student.age=30 AND student.classId&gt;20 AND  student.name = &#x27;abc&#x27; ; </span><br></pre></td></tr></table></figure>
+
+<p><img src="https://nodeandimg.oss-cn-wulanchabu.aliyuncs.com/PZ7DUR6OGZH.png"></p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">create index idx_age_name_classid on student(age,name,classid);</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>将范围查询条件放置语句最后：</li>
+</ul>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">EXPLAIN SELECT SQL_NO_CACHE * FROM student WHERE student.age=30 AND student.name = &#x27;abc&#x27; AND student.classId&gt;20 ;</span><br></pre></td></tr></table></figure>
+
+<p><img src="https://nodeandimg.oss-cn-wulanchabu.aliyuncs.com/QVBZEGZFUG]IE6S5FJSF.png"></p>
+<h2 id="不等于-或者-lt-gt-索引失效"><a href="#不等于-或者-lt-gt-索引失效" class="headerlink" title="**不等于(!= **或者&lt;&gt;)索引失效"></a>**不等于(!= **或者&lt;&gt;)索引失效</h2><h2 id="is-null可以使用索引，is-not-null无法使用索引"><a href="#is-null可以使用索引，is-not-null无法使用索引" class="headerlink" title="is null可以使用索引，is not null无法使用索引"></a><strong>is null可以使用索引，is not null无法使用索引</strong></h2><h2 id="like以通配符-开头索引失效"><a href="#like以通配符-开头索引失效" class="headerlink" title="like以通配符%开头索引失效"></a><strong>like以通配符%开头索引失效</strong></h2><blockquote>
+<p><strong>拓展：Alibaba《Java开发手册》</strong></p>
+<p>【强制】页面搜索严禁左模糊或者全模糊，如果需要请走搜索引擎来解决。</p>
+</blockquote>
+<h2 id="OR-前后存在非索引的列，索引失效"><a href="#OR-前后存在非索引的列，索引失效" class="headerlink" title="OR 前后存在非索引的列，索引失效"></a><strong>OR</strong> <strong>前后存在非索引的列，索引失效</strong></h2><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"># 未使用到索引</span><br><span class="line">EXPLAIN SELECT SQL_NO_CACHE * FROM student WHERE age = 10 OR classid = 100;</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">#使用到索引</span><br><span class="line">EXPLAIN SELECT SQL_NO_CACHE * FROM student WHERE age = 10 OR name = &#x27;Abel&#x27;;</span><br></pre></td></tr></table></figure>
+
+<h2 id="数据库和表的字符集统一使用utf8mb4"><a href="#数据库和表的字符集统一使用utf8mb4" class="headerlink" title="数据库和表的字符集统一使用utf8mb4"></a><strong>数据库和表的字符集统一使用utf8mb4</strong></h2><p>统一使用utf8mb4( 5.5.3版本以上支持)兼容性更好，统一字符集可以避免由于字符集转换产生的乱码。不同的 字符集 进行比较前需要进行 转换 会造成索引失效。</p>
+
+      
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+</div>
+
+
+
 
     
 
@@ -2425,126 +2577,6 @@
 <p><strong>一句话总结: 由链表组成的双向阻塞队列</strong></p>
 <h3 id="小结"><a href="#小结" class="headerlink" title="小结"></a><strong>小结</strong></h3><p><strong>1. 在多线程领域：所谓阻塞，在某些情况下会挂起线程（即阻塞），一旦条件满足，被挂起的线程又会自动被唤起</strong></p>
 <p><strong>2. 为什么需要 BlockingQueue?</strong> 在 concurrent 包发布以前，在多线程环境下，我们每个程序员都必须去自己控制这些细节，尤其还要兼顾效率和线程安全，而这会给我们的程序带来不小的复杂度。使用后我们不需要关心什么时候需要阻塞线程，什么时候需要唤醒线程，因为这一切 BlockingQueue 都给你一手包办了</p>
-
-      
-    </div>
-
-    
-    
-    
-
-    <footer class="post-footer">
-        <div class="post-eof"></div>
-      
-    </footer>
-  </article>
-</div>
-
-
-
-
-    
-
-
-<div class="post-block">
-  
-  
-
-  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="JUC">
-    <link itemprop="mainEntityOfPage" href="http://yoursite-url/JUC/JUC%E7%B3%BB%E5%88%97-%E7%AC%AC%E5%85%AB%E7%AB%A0-%E8%AF%BB%E5%86%99%E9%94%81/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="https://nodeandimg.oss-cn-wulanchabu.aliyuncs.com/}VRZRM08TG_W9[WMAD}69[O.png">
-      <meta itemprop="name" content="Hao">
-      <meta itemprop="description" content="It's an IT blog...">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Study Node">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          <a href="/JUC/JUC%E7%B3%BB%E5%88%97-%E7%AC%AC%E5%85%AB%E7%AB%A0-%E8%AF%BB%E5%86%99%E9%94%81/" class="post-title-link" itemprop="url">JUC系列-读写锁</a>
-        </h2>
-
-        <div class="post-meta-container">
-          <div class="post-meta">
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-calendar"></i>
-      </span>
-      <span class="post-meta-item-text">Posted on</span>
-
-      <time title="Created: 2021-11-16 22:09:03" itemprop="dateCreated datePublished" datetime="2021-11-16T22:09:03+08:00">2021-11-16</time>
-    </span>
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-folder"></i>
-      </span>
-      <span class="post-meta-item-text">In</span>
-        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-          <a href="/categories/JUC/" itemprop="url" rel="index"><span itemprop="name">JUC</span></a>
-        </span>
-    </span>
-
-  
-</div>
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-          <h1 id="读写锁"><a href="#读写锁" class="headerlink" title="读写锁"></a><strong>读写锁</strong></h1><h2 id="回顾"><a href="#回顾" class="headerlink" title="回顾"></a>回顾</h2><p><strong>回顾悲观锁和乐观锁的概念</strong><br><strong>悲观锁</strong>：单独每个人完成事情的时候，执行上锁解锁。解决并发中的问题，不支持并发操作，只能一个一个操作，效率低<br><strong>乐观锁</strong>：每执行一件事情，都会比较数据版本号，谁先提交，谁先提交版本号</p>
-<p><img src="https://nodeandimg.oss-cn-wulanchabu.aliyuncs.com/05-%E4%B9%90%E8%A7%82%E9%94%81%E5%92%8C%E6%82%B2%E8%A7%82%E9%94%81.png"></p>
-<p>新概念：<br>表锁：整个表操作，不会发生死锁<br>行锁：每个表中的单独一行进行加锁，会发生死锁<br>读锁：共享锁（可以有多个人读），会发生死锁<br>写锁：独占锁（只能有一个人写），会发生死锁</p>
-<p>读写锁：一个资源可以被多个读线程访问，也可以被一个写线程访问，但不能同时存在读写线程，读写互斥，读读共享</p>
-<p>读写锁ReentrantReadWriteLock<br>读锁为ReentrantReadWriteLock.ReadLock，readLock()方法<br>写锁为ReentrantReadWriteLock.WriteLock，writeLock()方法</p>
-<p>创建读写锁对象private ReadWriteLock rwLock = new ReentrantReadWriteLock();<br>写锁 加锁 rwLock.writeLock().lock();，解锁为rwLock.writeLock().unlock();<br>读锁 加锁rwLock.readLock().lock();，解锁为rwLock.readLock().unlock();</p>
-<p><img src="https://nodeandimg.oss-cn-wulanchabu.aliyuncs.com/08-%E8%AF%BB%E5%86%99%E9%94%81.png"></p>
-<h2 id="读写锁介绍"><a href="#读写锁介绍" class="headerlink" title="读写锁介绍"></a><strong>读写锁介绍</strong></h2><p>现实中有这样一种场景：对共享资源有读和写的操作，且写操作没有读操作那么频繁。在没有写操作的时候，多个线程同时读一个资源没有任何问题，所以应该允许多个线程同时读取共享资源；但是如果一个线程想去写这些共享资源，就不应该允许其他线程对该资源进行读和写的操作了。</p>
-<p>针对这种场景，<strong>JAVA 的并发包提供了读写锁 ReentrantReadWriteLock，它表示两个锁，一个是读操作相关的锁，称为共享锁；一个是写相关的锁，称为排他锁</strong></p>
-<ol>
-<li>线程进入读锁的前提条件：</li>
-</ol>
-<ul>
-<li><p>没有其他线程的写锁</p>
-</li>
-<li><p>没有写请求, 或者==有写请求，但调用线程和持有锁的线程是同一个(可重入锁)。</p>
-</li>
-</ul>
-<ol start="2">
-<li>线程进入写锁的前提条件：</li>
-</ol>
-<ul>
-<li><p>没有其他线程的读锁</p>
-</li>
-<li><p>没有其他线程的写锁</p>
-</li>
-</ul>
-<p>而读写锁有以下三个重要的特性：</p>
-<p>（1）公平选择性：支持非公平（默认）和公平的锁获取方式，吞吐量还是非公</p>
-<p>平优于公平。</p>
-<p>（2）重进入：读锁和写锁都支持线程重进入。</p>
-<p>（3）锁降级：遵循获取写锁、获取读锁再释放写锁的次序，写锁能够降级成为</p>
-<p>读锁。</p>
-<h2 id="ReentrantReadWriteLock"><a href="#ReentrantReadWriteLock" class="headerlink" title="ReentrantReadWriteLock"></a><strong>ReentrantReadWriteLock</strong></h2><p>ReentrantReadWriteLock 类的整体结构</p>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> java.util.concurrent.locks.AbstractQueuedSynchronizer;</span><br><span class="line"><span class="keyword">import</span> java.util.concurrent.locks.ReadWriteLock;</span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">ReentrantReadWriteLock</span> <span class="keyword">implements</span> <span class="title">ReadWriteLock</span>,</span></span><br><span class="line"><span class="class">        <span class="title">java</span>.<span class="title">io</span>.<span class="title">Serializable</span> </span>&#123;</span><br><span class="line">    <span class="comment">/** 读锁 */</span></span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">final</span> ReentrantReadWriteLock.ReadLock readerLock;</span><br><span class="line">    <span class="comment">/** 写锁 */</span></span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">final</span> ReentrantReadWriteLock.WriteLock writerLock;</span><br><span class="line">    <span class="keyword">final</span> Sync sync;</span><br><span class="line"></span><br><span class="line">    <span class="comment">/** 使用默认（非公平）的排序属性创建一个新的</span></span><br><span class="line"><span class="comment">     ReentrantReadWriteLock */</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="title">ReentrantReadWriteLock</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        <span class="keyword">this</span>(<span class="keyword">false</span>);</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="comment">/** 使用给定的公平策略创建一个新的 ReentrantReadWriteLock */</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="title">ReentrantReadWriteLock</span><span class="params">(<span class="keyword">boolean</span> fair)</span> </span>&#123;</span><br><span class="line">        sync = fair ? <span class="keyword">new</span> FairSync() : <span class="keyword">new</span> NonfairSync();</span><br><span class="line">        readerLock = <span class="keyword">new</span> ReadLock(<span class="keyword">this</span>);</span><br><span class="line">        writerLock = <span class="keyword">new</span> WriteLock(<span class="keyword">this</span>);</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="comment">/** 返回用于写入操作的锁 */</span></span><br><span class="line">    <span class="keyword">public</span> ReentrantReadWriteLock.<span class="function">WriteLock <span class="title">writeLock</span><span class="params">()</span> </span>&#123; <span class="keyword">return</span></span><br><span class="line">            writerLock; &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">/** 返回用于读取操作的锁 */</span></span><br><span class="line">    <span class="keyword">public</span> ReentrantReadWriteLock.<span class="function">ReadLock <span class="title">readLock</span><span class="params">()</span> </span>&#123; <span class="keyword">return</span></span><br><span class="line">            readerLock; &#125;</span><br><span class="line">    <span class="keyword">abstract</span> <span class="keyword">static</span> <span class="class"><span class="keyword">class</span> <span class="title">Sync</span> <span class="keyword">extends</span> <span class="title">AbstractQueuedSynchronizer</span> </span>&#123;&#125;</span><br><span class="line">    <span class="keyword">static</span> <span class="keyword">final</span> <span class="class"><span class="keyword">class</span> <span class="title">NonfairSync</span> <span class="keyword">extends</span> <span class="title">Sync</span> </span>&#123;&#125;</span><br><span class="line">    <span class="keyword">static</span> <span class="keyword">final</span> <span class="class"><span class="keyword">class</span> <span class="title">FairSync</span> <span class="keyword">extends</span> <span class="title">Sync</span> </span>&#123;&#125;</span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">static</span> <span class="class"><span class="keyword">class</span> <span class="title">ReadLock</span> <span class="keyword">implements</span> <span class="title">Lock</span>, <span class="title">java</span>.<span class="title">io</span>.<span class="title">Serializable</span> </span>&#123;&#125;</span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">static</span> <span class="class"><span class="keyword">class</span> <span class="title">WriteLock</span> <span class="keyword">implements</span> <span class="title">Lock</span>, <span class="title">java</span>.<span class="title">io</span>.<span class="title">Serializable</span> </span>&#123;&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<p>可以看到，ReentrantReadWriteLock 实现了 ReadWriteLock 接口，ReadWriteLock 接口定义了获取读锁和写锁的规范，具体需要实现类去实现；同时其还实现了 Serializable 接口，表示可以进行序列化，在源代码中可以看到 ReentrantReadWriteLock 实现了自己的序列化逻辑。</p>
-<h2 id="入门案例"><a href="#入门案例" class="headerlink" title="入门案例"></a><strong>入门案例</strong></h2><p><strong>场景: 使用 ReentrantReadWriteLock 对一个 hashmap 进行读和写操作</strong></p>
-<p>实现案例</p>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">package</span> com.hao.readwrite;</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> java.util.HashMap;</span><br><span class="line"><span class="keyword">import</span> java.util.Map;</span><br><span class="line"><span class="keyword">import</span> java.util.concurrent.TimeUnit;</span><br><span class="line"><span class="keyword">import</span> java.util.concurrent.locks.ReadWriteLock;</span><br><span class="line"><span class="keyword">import</span> java.util.concurrent.locks.ReentrantReadWriteLock;</span><br><span class="line"></span><br><span class="line"><span class="comment">//资源类</span></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">MyCache</span></span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="comment">//创建map集合</span></span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">volatile</span> Map&lt;String,Object&gt; map = <span class="keyword">new</span> HashMap&lt;&gt;();</span><br><span class="line"></span><br><span class="line">    <span class="comment">//创建读写锁的对象</span></span><br><span class="line">    <span class="keyword">private</span> ReadWriteLock rwLock = <span class="keyword">new</span> ReentrantReadWriteLock();</span><br><span class="line"></span><br><span class="line">    <span class="comment">//放数据</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">put</span><span class="params">(String key,Object value)</span></span>&#123;</span><br><span class="line">        <span class="comment">//添加写锁</span></span><br><span class="line">        rwLock.writeLock().lock();</span><br><span class="line">        System.out.println(Thread.currentThread().getName()+ <span class="string">&quot;正在写操作&quot;</span> + key);</span><br><span class="line"></span><br><span class="line">        <span class="comment">//暂停一会</span></span><br><span class="line">        <span class="keyword">try</span> &#123;</span><br><span class="line">            TimeUnit.MILLISECONDS.sleep(<span class="number">300</span>);</span><br><span class="line">            <span class="comment">//放数据</span></span><br><span class="line">            map.put(key,value);</span><br><span class="line">            System.out.println(Thread.currentThread().getName() + <span class="string">&quot;写完了&quot;</span> + key);</span><br><span class="line">        &#125; <span class="keyword">catch</span> (InterruptedException e) &#123;</span><br><span class="line">            e.printStackTrace();</span><br><span class="line">        &#125;<span class="keyword">finally</span> &#123;</span><br><span class="line">            rwLock.writeLock().unlock();</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">//取数据</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> Object <span class="title">get</span><span class="params">(String key)</span></span>&#123;</span><br><span class="line">        <span class="comment">//添加读锁</span></span><br><span class="line">        rwLock.readLock().lock();</span><br><span class="line">        Object result = <span class="keyword">null</span>;</span><br><span class="line">        System.out.println(Thread.currentThread().getName() + <span class="string">&quot;正在取操作&quot;</span>);</span><br><span class="line">        <span class="comment">//暂停一会</span></span><br><span class="line">        <span class="keyword">try</span> &#123;</span><br><span class="line">            TimeUnit.MILLISECONDS.sleep(<span class="number">300</span>);</span><br><span class="line">            result = map.get(key);</span><br><span class="line">            System.out.println(Thread.currentThread().getName() + <span class="string">&quot;取完 &quot;</span> + key);</span><br><span class="line">        &#125; <span class="keyword">catch</span> (InterruptedException e) &#123;</span><br><span class="line">            e.printStackTrace();</span><br><span class="line">        &#125;<span class="keyword">finally</span> &#123;</span><br><span class="line">            <span class="comment">//释放读锁</span></span><br><span class="line">            rwLock.readLock().unlock();</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        <span class="keyword">return</span> result;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">ReadWriteDemo</span> </span>&#123;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> </span>&#123;</span><br><span class="line">        MyCache myCache = <span class="keyword">new</span> MyCache();</span><br><span class="line">        <span class="comment">//创建线程放数据</span></span><br><span class="line">        <span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">1</span>; i &lt;= <span class="number">5</span>; i++) &#123;</span><br><span class="line">            <span class="keyword">final</span> <span class="keyword">int</span> num = <span class="number">1</span>;</span><br><span class="line">            <span class="keyword">new</span> Thread(() -&gt;&#123;</span><br><span class="line">                myCache.put(num+<span class="string">&quot;&quot;</span>,num+<span class="string">&quot;&quot;</span>);</span><br><span class="line">            &#125;,String.valueOf(i)).start();</span><br><span class="line">        &#125;</span><br><span class="line">        </span><br><span class="line">        <span class="comment">//创建线程取数据</span></span><br><span class="line">        <span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">1</span>; i &lt;= <span class="number">5</span>; i++) &#123;</span><br><span class="line">            <span class="keyword">final</span> <span class="keyword">int</span> num = <span class="number">1</span>;</span><br><span class="line">            <span class="keyword">new</span> Thread(() -&gt;&#123;</span><br><span class="line">                myCache.get(num+<span class="string">&quot;&quot;</span>);</span><br><span class="line">            &#125;,String.valueOf(i)).start();</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<h2 id="小结-重要"><a href="#小结-重要" class="headerlink" title="小结(重要)"></a><strong>小结(重要)</strong></h2><ul>
-<li><p>在线程持有读锁的情况下，该线程不能取得写锁(因为获取写锁的时候，如果发现当前的读锁被占用，就马上获取失败，不管读锁是不是被当前线程持有)。 </p>
-</li>
-<li><p>在线程持有写锁的情况下，该线程可以继续获取读锁（获取读锁时如果发现写锁被占用，只有写锁没有被当前线程占用的情况才会获取失败）。</p>
-</li>
-</ul>
-<p>原因: 当线程获取读锁的时候，可能有其他线程同时也在持有读锁，因此不能把获取读锁的线程“升级”为写锁；而对于获得写锁的线程，它一定独占了读写锁，因此可以继续让它获取读锁，当它同时获取了写锁和读锁后，还可以先释放写锁继续持有读锁，这样一个写锁就“降级”为了读锁。</p>
 
       
     </div>
