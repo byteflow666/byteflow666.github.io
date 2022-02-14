@@ -1,0 +1,547 @@
+<!DOCTYPE html>
+<html lang="MySQL">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 5.4.0">
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5.15.4/css/all.min.css" integrity="sha256-mUZM63G8m73Mcidfrv5E+Y61y7a12O5mW4ezU3bxqW4=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/animate.css@3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/pace-js@1.2.4/themes/blue/pace-theme-minimal.css">
+  <script src="https://cdn.jsdelivr.net/npm/pace-js@1.2.4/pace.min.js" integrity="sha256-gqd7YTjg/BtfqWSwsJOvndl0Bxc8gFImLEkXQT8+qj0=" crossorigin="anonymous"></script>
+
+<script class="next-config" data-name="main" type="application/json">{"hostname":"yoursite-url","root":"/","images":"/images","scheme":"Gemini","darkmode":false,"version":"8.8.1","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12},"copycode":false,"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"Searching...","empty":"We didn't find any results for the search: ${query}","hits_time":"${hits} results found in ${time} ms","hits":"${hits} results found"}}</script><script src="/js/config.js"></script>
+<meta name="description" content="数据库事务概述存储引擎支持情况SHOW ENGINES 命令来查看当前 MySQL 支持的存储引擎都有哪些，以及这些存储引擎是否支持事务。  能看出在 MySQL 中，只有InnoDB 是支持事务的。 基本概念事务：一组逻辑操作单元，使数据从一种状态变换到另一种状态。 事务处理的原则：保证所有事务都作为 一个工作单元 来执行，即使出现了故障，都不能改变这种执行方式。当在一个事务中执行多个操作时，要">
+<meta property="og:type" content="article">
+<meta property="og:title" content="事务基础知识">
+<meta property="og:url" content="http://yoursite-url/MySQL/%E4%BA%8B%E5%8A%A1%E5%9F%BA%E7%A1%80%E7%9F%A5%E8%AF%86/index.html">
+<meta property="og:site_name" content="Study Node">
+<meta property="og:description" content="数据库事务概述存储引擎支持情况SHOW ENGINES 命令来查看当前 MySQL 支持的存储引擎都有哪些，以及这些存储引擎是否支持事务。  能看出在 MySQL 中，只有InnoDB 是支持事务的。 基本概念事务：一组逻辑操作单元，使数据从一种状态变换到另一种状态。 事务处理的原则：保证所有事务都作为 一个工作单元 来执行，即使出现了故障，都不能改变这种执行方式。当在一个事务中执行多个操作时，要">
+<meta property="og:locale">
+<meta property="og:image" content="https://nodeandimg.oss-cn-wulanchabu.aliyuncs.com/H6M0A87YKH2RPZ08R.png">
+<meta property="og:image" content="https://nodeandimg.oss-cn-wulanchabu.aliyuncs.com/DT9IY232IZ7HQ3K.png">
+<meta property="og:image" content="https://nodeandimg.oss-cn-wulanchabu.aliyuncs.com/VE5S6KDEN0PGN.png">
+<meta property="og:image" content="https://nodeandimg.oss-cn-wulanchabu.aliyuncs.com/HDLHAGIXDR15Y1L.png">
+<meta property="og:image" content="https://nodeandimg.oss-cn-wulanchabu.aliyuncs.com/QO8WRD4C81335JOV]O.png">
+<meta property="og:image" content="https://nodeandimg.oss-cn-wulanchabu.aliyuncs.com/8PHKF6QB1NKZQNHPLE.png">
+<meta property="og:image" content="https://nodeandimg.oss-cn-wulanchabu.aliyuncs.com/JGFEG1J9AMRYBZP.png">
+<meta property="og:image" content="https://nodeandimg.oss-cn-wulanchabu.aliyuncs.com/CPZ0N088HIVH[8.png">
+<meta property="og:image" content="https://nodeandimg.oss-cn-wulanchabu.aliyuncs.com/J2R0CSDO26MK5R3JXU07.png">
+<meta property="og:image" content="https://nodeandimg.oss-cn-wulanchabu.aliyuncs.com/51LMQUR7Z5ILW4Y2.png">
+<meta property="article:published_time" content="2022-02-14T04:38:10.000Z">
+<meta property="article:modified_time" content="2022-02-14T04:38:10.000Z">
+<meta property="article:author" content="Hao">
+<meta property="article:tag" content="MySQL">
+<meta property="article:tag" content="数据库">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://nodeandimg.oss-cn-wulanchabu.aliyuncs.com/H6M0A87YKH2RPZ08R.png">
+
+
+<link rel="canonical" href="http://yoursite-url/MySQL/%E4%BA%8B%E5%8A%A1%E5%9F%BA%E7%A1%80%E7%9F%A5%E8%AF%86/">
+
+
+
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"MySQL","comments":true,"permalink":"http://yoursite-url/MySQL/%E4%BA%8B%E5%8A%A1%E5%9F%BA%E7%A1%80%E7%9F%A5%E8%AF%86/","path":"MySQL/事务基础知识/","title":"事务基础知识"}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title>事务基础知识 | Study Node</title>
+  
+
+
+
+
+  <noscript>
+    <link rel="stylesheet" href="/css/noscript.css">
+  </noscript>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="Toggle navigation bar" role="button">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <h1 class="site-title">Study Node</h1>
+      <i class="logo-line"></i>
+    </a>
+      <p class="site-subtitle" itemprop="description">True mastery of any skill takes a lifetime</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu">
+        <li class="menu-item menu-item-home"><a href="/" rel="section"><i class="fa fa-home fa-fw"></i>Home</a></li>
+        <li class="menu-item menu-item-tags"><a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>Tags</a></li>
+        <li class="menu-item menu-item-categories"><a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>Categories</a></li>
+        <li class="menu-item menu-item-archives"><a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>Archives</a></li>
+  </ul>
+</nav>
+
+
+
+
+</div>
+        
+  
+  <div class="toggle sidebar-toggle" role="button">
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+  </div>
+
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          Table of Contents
+        </li>
+        <li class="sidebar-nav-overview">
+          Overview
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#%E6%95%B0%E6%8D%AE%E5%BA%93%E4%BA%8B%E5%8A%A1%E6%A6%82%E8%BF%B0"><span class="nav-number">1.</span> <span class="nav-text">数据库事务概述</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%AD%98%E5%82%A8%E5%BC%95%E6%93%8E%E6%94%AF%E6%8C%81%E6%83%85%E5%86%B5"><span class="nav-number">1.1.</span> <span class="nav-text">存储引擎支持情况</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%9F%BA%E6%9C%AC%E6%A6%82%E5%BF%B5"><span class="nav-number">1.2.</span> <span class="nav-text">基本概念</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%BA%8B%E5%8A%A1%E7%9A%84ACID%E7%89%B9%E6%80%A7"><span class="nav-number">1.3.</span> <span class="nav-text">事务的ACID特性</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%BA%8B%E5%8A%A1%E7%9A%84%E7%8A%B6%E6%80%81"><span class="nav-number">1.4.</span> <span class="nav-text">事务的状态</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E5%A6%82%E4%BD%95%E4%BD%BF%E7%94%A8%E4%BA%8B%E5%8A%A1"><span class="nav-number">2.</span> <span class="nav-text">如何使用事务</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%98%BE%E5%BC%8F%E4%BA%8B%E5%8A%A1"><span class="nav-number">2.1.</span> <span class="nav-text">显式事务</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E9%9A%90%E5%BC%8F%E4%BA%8B%E5%8A%A1"><span class="nav-number">2.2.</span> <span class="nav-text">隐式事务</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E9%9A%90%E5%BC%8F%E6%8F%90%E4%BA%A4%E6%95%B0%E6%8D%AE%E7%9A%84%E6%83%85%E5%86%B5"><span class="nav-number">2.3.</span> <span class="nav-text">隐式提交数据的情况</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E4%BA%8B%E5%8A%A1%E9%9A%94%E7%A6%BB%E7%BA%A7%E5%88%AB"><span class="nav-number">3.</span> <span class="nav-text">事务隔离级别</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%95%B0%E6%8D%AE%E5%87%86%E5%A4%87"><span class="nav-number">3.1.</span> <span class="nav-text">数据准备</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%95%B0%E6%8D%AE%E5%B9%B6%E5%8F%91%E9%97%AE%E9%A2%98"><span class="nav-number">3.2.</span> <span class="nav-text">数据并发问题</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#SQL%E4%B8%AD%E7%9A%84%E5%9B%9B%E7%A7%8D%E9%9A%94%E7%A6%BB%E7%BA%A7%E5%88%AB"><span class="nav-number">3.3.</span> <span class="nav-text">SQL中的四种隔离级别</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#MySQL%E6%94%AF%E6%8C%81%E7%9A%84%E5%9B%9B%E7%A7%8D%E9%9A%94%E7%A6%BB%E7%BA%A7%E5%88%AB"><span class="nav-number">3.4.</span> <span class="nav-text">MySQL支持的四种隔离级别</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%A6%82%E4%BD%95%E8%AE%BE%E7%BD%AE%E4%BA%8B%E5%8A%A1%E7%9A%84%E9%9A%94%E7%A6%BB%E7%BA%A7%E5%88%AB"><span class="nav-number">3.5.</span> <span class="nav-text">如何设置事务的隔离级别</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%B8%8D%E5%90%8C%E9%9A%94%E7%A6%BB%E7%BA%A7%E5%88%AB%E4%B8%BE%E4%BE%8B"><span class="nav-number">3.6.</span> <span class="nav-text">不同隔离级别举例</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E4%BA%8B%E5%8A%A1%E7%9A%84%E5%B8%B8%E8%A7%81%E5%88%86%E7%B1%BB"><span class="nav-number">4.</span> <span class="nav-text">事务的常见分类</span></a></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-author site-overview-item animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="Hao"
+      src="https://nodeandimg.oss-cn-wulanchabu.aliyuncs.com/}VRZRM08TG_W9[WMAD}69[O.png">
+  <p class="site-author-name" itemprop="name">Hao</p>
+  <div class="site-description" itemprop="description">It's an IT blog...</div>
+</div>
+<div class="site-state-wrap site-overview-item animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        <a href="/archives/">
+          <span class="site-state-item-count">38</span>
+          <span class="site-state-item-name">posts</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+          <a href="/categories/">
+        <span class="site-state-item-count">8</span>
+        <span class="site-state-item-name">categories</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+          <a href="/tags/">
+        <span class="site-state-item-count">7</span>
+        <span class="site-state-item-name">tags</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author site-overview-item animated">
+      <span class="links-of-author-item">
+        <a href="https://github.com/byteflow666" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;byteflow666" rel="noopener" target="_blank">GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="https://mail.qq.com/cgi-bin/frame_html?sid=1aPXzaqY4yWqbjhZ&r=98902ddef6ed390980f08fe54374e19b" title="E-Mail → https:&#x2F;&#x2F;mail.qq.com&#x2F;cgi-bin&#x2F;frame_html?sid&#x3D;1aPXzaqY4yWqbjhZ&amp;r&#x3D;98902ddef6ed390980f08fe54374e19b" rel="noopener" target="_blank">E-Mail</a>
+      </span>
+  </div>
+
+
+
+        </div>
+      </div>
+    </div>
+  </aside>
+  <div class="sidebar-dimmer"></div>
+
+
+    </header>
+
+    
+  <div class="back-to-top" role="button" aria-label="Back to top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="MySQL">
+    <link itemprop="mainEntityOfPage" href="http://yoursite-url/MySQL/%E4%BA%8B%E5%8A%A1%E5%9F%BA%E7%A1%80%E7%9F%A5%E8%AF%86/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="https://nodeandimg.oss-cn-wulanchabu.aliyuncs.com/}VRZRM08TG_W9[WMAD}69[O.png">
+      <meta itemprop="name" content="Hao">
+      <meta itemprop="description" content="It's an IT blog...">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Study Node">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          事务基础知识
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">Posted on</span>
+
+      <time title="Created: 2022-02-14 12:38:10" itemprop="dateCreated datePublished" datetime="2022-02-14T12:38:10+08:00">2022-02-14</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">In</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/MySQL%E9%AB%98%E7%BA%A7/" itemprop="url" rel="index"><span itemprop="name">MySQL高级</span></a>
+        </span>
+          , 
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/MySQL%E9%AB%98%E7%BA%A7/%E6%95%B0%E6%8D%AE%E5%BA%93/" itemprop="url" rel="index"><span itemprop="name">数据库</span></a>
+        </span>
+    </span>
+
+  
+    <span class="post-meta-item" title="Views" id="busuanzi_container_page_pv">
+      <span class="post-meta-item-icon">
+        <i class="far fa-eye"></i>
+      </span>
+      <span class="post-meta-item-text">Views: </span>
+      <span id="busuanzi_value_page_pv"></span>
+    </span>
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+        <h1 id="数据库事务概述"><a href="#数据库事务概述" class="headerlink" title="数据库事务概述"></a><strong>数据库事务概述</strong></h1><h2 id="存储引擎支持情况"><a href="#存储引擎支持情况" class="headerlink" title="存储引擎支持情况"></a><strong>存储引擎支持情况</strong></h2><p><strong>SHOW ENGINES</strong> 命令来查看当前 MySQL 支持的存储引擎都有哪些，以及这些存储引擎是否支持事务。</p>
+<p><img src="https://nodeandimg.oss-cn-wulanchabu.aliyuncs.com/H6M0A87YKH2RPZ08R.png"></p>
+<p>能看出在 MySQL 中，只有InnoDB 是支持事务的。</p>
+<h2 id="基本概念"><a href="#基本概念" class="headerlink" title="基本概念"></a><strong>基本概念</strong></h2><p><strong>事务：</strong>一组逻辑操作单元，使数据从一种状态变换到另一种状态。</p>
+<p><strong>事务处理的原则：</strong>保证所有事务都作为 <strong>一个工作单元</strong> 来执行，即使出现了故障，都不能改变这种执行方式。当在一个事务中执行多个操作时，要么所有的事务都被提交( <strong>commit <strong>)，那么这些修改就</strong>永久</strong> 地保存下来；要么数据库管理系统将<strong>放弃</strong>所作的所有<strong>修改</strong> ，整个事务回滚( **rollback **)到最初状态。</p>
+<h2 id="事务的ACID特性"><a href="#事务的ACID特性" class="headerlink" title="事务的ACID特性"></a><strong>事务的ACID特性</strong></h2><ul>
+<li><p><strong>原子性（atomicity）：</strong></p>
+<p>原子性是指事务是一个不可分割的工作单位，要么全部提交，要么全部失败回滚。</p>
+</li>
+<li><p><strong>一致性（consistency）：</strong></p>
+<p>根据定义，一致性是指事务执行前后，数据从一个<strong>合法性状态</strong>变换到另外一个<strong>合法性状态</strong>。这种状态是<strong>语义上</strong> 的而不是语法上的，跟具体的业务有关。</p>
+<p>那什么是合法的数据状态呢？满足 预定的约束 的状态就叫做合法的状态。通俗一点，这状态是由你自己来定义的（比如满足现实世界中的约束）。满足这个状态，数据就是一致的，不满足这个状态，数据就是不一致的！如果事务中的某个操作失败了，系统就会自动撤销当前正在执行的事务，返回到事务操作之前的状态。</p>
+</li>
+<li><p><strong>隔离型（isolation）：</strong></p>
+<p>事务的隔离性是指一个事务的执行 不能被其他事务干扰 ，即一个事务内部的操作及使用的数据对 并发 的其他事务是隔离的，并发执行的各个事务之间不能互相干扰。</p>
+<p>如果无法保证隔离性会怎么样？假设A账户有200元，B账户0元。A账户往B账户转账两次，每次金额为50元，分别在两个事务中执行。如果无法保证隔离性，会出现下面的情形：</p>
+</li>
+</ul>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">UPDATE accounts SET money = money - 50 WHERE NAME = &#x27;AA&#x27;; </span><br><span class="line"></span><br><span class="line">UPDATE accounts SET money = money + 50 WHERE NAME = &#x27;BB&#x27;;</span><br></pre></td></tr></table></figure>
+
+<p><img src="https://nodeandimg.oss-cn-wulanchabu.aliyuncs.com/DT9IY232IZ7HQ3K.png"></p>
+<ul>
+<li><p><strong>持久性（durability）：</strong></p>
+<p>持久性是指一个事务一旦被提交，它对数据库中数据的改变就是<strong>永久性的</strong> ，接下来的其他操作和数据库故障不应该对其有任何影响。</p>
+<p>持久性是通过<strong>事务日志</strong>来保证的。日志包括了<strong>重做日志</strong>和<strong>回滚日志</strong> 。当我们通过事务对数据进行修改的时候，首先会将数据库的变化信息记录到重做日志中，然后再对数据库中对应的行进行修改。这样做的好处是，即使数据库系统崩溃，数据库重启后也能找到没有更新到数据库系统中的重做日志，重新执行，从而使事务具有持久性。</p>
+</li>
+</ul>
+<h2 id="事务的状态"><a href="#事务的状态" class="headerlink" title="事务的状态"></a><strong>事务的状态</strong></h2><p>我们现在知道<strong>事务</strong>是一个抽象的概念，它其实对应着一个或多个数据库操作，MySQL根据这些操作所执行的不同阶段把<strong>事务</strong>大致划分成几个状态：</p>
+<ul>
+<li><p><strong>活动的（active）</strong></p>
+<p>事务对应的数据库操作正在执行过程中时，我们就说该事务处在<strong>活动的</strong>状态。</p>
+</li>
+<li><p><strong>部分提交的（partially committed）</strong></p>
+<p>当事务中的最后一个操作执行完成，但由于操作都在内存中执行，所造成的影响并 没有刷新到磁盘时，我们就说该事务处在<strong>部分提交的</strong>状态。</p>
+</li>
+<li><p><strong>失败的（failed）</strong></p>
+<p>当事务处在<strong>活动的</strong>或者<strong>部分提交的</strong>状态时，可能遇到了某些错误（数据库自身的错误、操作系统错误或者直接断电等）而无法继续执行，或者人为的停止当前事务的执行，我们就说该事务处在<strong>失败的</strong>状态。</p>
+</li>
+<li><p><strong>中止的（aborted）</strong></p>
+<p>如果事务执行了一部分而变为<strong>失败的</strong>状态，那么就需要把已经修改的事务中的操作还原到事务执行前的状态。换句话说，就是要撤销失败事务对当前数据库造成的影响。我们把这个撤销的过程称之为<strong>回滚</strong> 。当<strong>回滚</strong>操作执行完毕时，也就是数据库恢复到了执行事务之前的状态，我们就说该事务处在了<strong>中止的</strong>状态。</p>
+</li>
+<li><p><strong>提交的（committed）</strong></p>
+<p>当一个处在<strong>部分提交的</strong>状态的事务将修改过的数据都<strong>同步到磁盘</strong>上之后，我们就可以说该事务处在了<strong>提交的</strong>状态。</p>
+</li>
+</ul>
+<p>一个基本的状态转换图如下所示：</p>
+<p><img src="https://nodeandimg.oss-cn-wulanchabu.aliyuncs.com/VE5S6KDEN0PGN.png"></p>
+<h1 id="如何使用事务"><a href="#如何使用事务" class="headerlink" title="如何使用事务"></a><strong>如何使用事务</strong></h1><p>使用事务有两种方式，分别为<strong>显式事务</strong>和<strong>隐式事务</strong>。</p>
+<h2 id="显式事务"><a href="#显式事务" class="headerlink" title="显式事务"></a><strong>显式事务</strong></h2><p><strong>步骤1：START TRANSACTION</strong> 或者 <strong>BEGIN</strong> ，作用是显式开启一个事务。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">mysql&gt; BEGIN; </span><br><span class="line">#或者 </span><br><span class="line">mysql&gt; START TRANSACTION;</span><br></pre></td></tr></table></figure>
+
+<p><strong>START TRANSACTION</strong> 语句相较于<strong>BEGIN</strong>特别之处在于，后边能跟随几个 修饰符 ： </p>
+<p>① <strong>READ ONLY</strong> ：标识当前事务是一个<strong>只读事务</strong> ，也就是属于该事务的数据库操作只能读取数据，而不能修改数据。</p>
+<p>② <strong>READ WRITE</strong> ：标识当前事务是一个<strong>读写事务</strong> ，也就是属于该事务的数据库操作既可以读取数据，也可以修改数据。</p>
+<p>③ <strong>WITH CONSISTENT SNAPSHOT</strong>：启动一致性读。</p>
+<p><strong>步骤2：</strong>一系列事务中的操作（主要是DML，不含DDL）</p>
+<p><strong>步骤3：</strong>提交事务 或 中止事务（即回滚事务）</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"># 提交事务。当提交事务后，对数据库的修改是永久性的。</span><br><span class="line">mysql&gt; COMMIT;</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"># 回滚事务。即撤销正在进行的所有没有提交的修改 </span><br><span class="line">mysql&gt; ROLLBACK; </span><br><span class="line"># 将事务回滚到某个保存点。 </span><br><span class="line">mysql&gt; ROLLBACK TO [SAVEPOINT] </span><br></pre></td></tr></table></figure>
+
+<h2 id="隐式事务"><a href="#隐式事务" class="headerlink" title="隐式事务"></a><strong>隐式事务</strong></h2><p>MySQL中有一个系统变量 autocommit ：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">mysql&gt; SHOW VARIABLES LIKE &#x27;autocommit&#x27;; </span><br><span class="line">+---------------+-------+ </span><br><span class="line">| Variable_name | Value | </span><br><span class="line">+---------------+-------+ </span><br><span class="line">| autocommit | ON | </span><br><span class="line">+---------------+-------+ </span><br><span class="line">1 row in set (0.01 sec) </span><br></pre></td></tr></table></figure>
+
+<p>当然，如果我们想关闭这种<strong>自动提交</strong>的功能，可以使用下边两种方法之一：</p>
+<ul>
+<li><p>显式的的使用 <strong>START TRANSACTION</strong>或者 <strong>BEGIN</strong>语句开启一个事务。这样在本次事务提交或者回滚前会暂时关闭掉自动提交的功能。</p>
+</li>
+<li><p>把系统变量 <strong>autocommit</strong> 的值设置为<strong>OFF</strong> ，就像这样：</p>
+</li>
+</ul>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">SET autocommit = OFF; </span><br><span class="line">#或</span><br><span class="line">SET autocommit = 0;</span><br></pre></td></tr></table></figure>
+
+<h2 id="隐式提交数据的情况"><a href="#隐式提交数据的情况" class="headerlink" title="隐式提交数据的情况"></a><strong>隐式提交数据的情况</strong></h2><ul>
+<li><strong>数据定义语言（Data definition language，缩写为：DDL）</strong></li>
+<li><strong>隐式使用或修改mysql数据库中的表</strong></li>
+<li><strong>事务控制或关于锁定的语句</strong></li>
+</ul>
+<p>① 当我们在一个事务还没提交或者回滚时就又使用<strong>START TRANSACTION <strong>或者 <strong>BEGIN</strong> 语句开启了另一个事务时，会</strong>隐式的提交 上一个事务</strong>。即：</p>
+<p>② 当前的<strong>autocommit</strong>系统变量的值为<strong>OFF</strong>，我们手动把它调为<strong>ON</strong>时，也会<strong>隐式的提交</strong>前边语句所属的事务。</p>
+<p>③ 使用<strong>LOCK TABLES</strong>、<strong>UNLOCK TABLES</strong> 等关于锁定的语句也会 隐式的提交 前边语句所属的事务</p>
+<ul>
+<li><p><strong>加载数据的语句</strong></p>
+</li>
+<li><p><strong>关于MySQL复制的一些语句</strong></p>
+</li>
+<li><p><strong>其它的一些语句</strong></p>
+</li>
+</ul>
+<blockquote>
+<p> 当我们设置 autocommit=0 时，不论是否采用 START TRANSACTION 或者 BEGIN 的方式来开启事务，都需要用 COMMIT 进行提交，让事务生效，使用 ROLLBACK 对事务进行回滚。当我们设置 autocommit=1 时，每条 SQL 语句都会自动进行提交。 不过这时，如果你采用 START TRANSACTION 或者 BEGIN 的方式来显式地开启事务，那么这个事务只有在 COMMIT 时才会生效，在 ROLLBACK 时才会回滚。</p>
+</blockquote>
+<h1 id="事务隔离级别"><a href="#事务隔离级别" class="headerlink" title="事务隔离级别"></a><strong>事务隔离级别</strong></h1><p>MySQL是一个<strong>客户端／服务器</strong>架构的软件，对于同一个服务器来说，可以有若干个客户端与之连接，每个客户端与服务器连接上之后，就可以称为一个会话（<strong>Session</strong>）。每个客户端都可以在自己的会话中向服务器发出请求语句，一个请求语句可能是某个事务的一部分，也就是对于服务器来说可能同时处理多个事务。事务有<strong>隔离性</strong>的特性，理论上在某个事务<strong>对某个数据进行访问</strong>时，其他事务应该进行<strong>排 队</strong> ，当该事务提交之后，其他事务才可以继续访问这个数据。但是这样对<strong>性能影响太大</strong>，我们既想保持事务的隔离性，又想让服务器在处理访问同一数据的多个事务时<strong>性能尽量高些</strong>，那就看二者如何权衡取舍了。</p>
+<h2 id="数据准备"><a href="#数据准备" class="headerlink" title="数据准备"></a><strong>数据准备</strong></h2><p>我们需要创建一个表：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">CREATE TABLE student ( </span><br><span class="line">studentno INT, </span><br><span class="line">name VARCHAR(20), </span><br><span class="line">class varchar(20), </span><br><span class="line">PRIMARY KEY (studentno) </span><br><span class="line">) Engine=InnoDB CHARSET=utf8; </span><br></pre></td></tr></table></figure>
+
+<p>然后向这个表里插入一条数据：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">INSERT INTO student VALUES(1, &#x27;小谷&#x27;, &#x27;1班&#x27;);</span><br></pre></td></tr></table></figure>
+
+<p>现在表里的数据就是这样的：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">mysql&gt; select * from student; </span><br><span class="line">+-----------+--------+-------+ </span><br><span class="line">| studentno | name | class | </span><br><span class="line">+-----------+--------+-------+ </span><br><span class="line">| 1 | 小谷 | 1班 | </span><br><span class="line">+-----------+--------+-------+ </span><br><span class="line">1 row in set (0.00 sec)</span><br></pre></td></tr></table></figure>
+
+<h2 id="数据并发问题"><a href="#数据并发问题" class="headerlink" title="数据并发问题"></a><strong>数据并发问题</strong></h2><p>针对事务的隔离性和并发性，我们怎么做取舍呢？先看一下访问相同数据的事务在<strong>不保证串行执行</strong>（也就是执行完一个再执行另一个）的情况下可能会出现哪些问题：</p>
+<p><strong>1.</strong> <strong>脏写（ Dirty Write ）</strong></p>
+<p>对于两个事务 Session A、Session B，如果事务Session A<strong>修改了</strong>另一个<strong>未提交</strong>事务Session B<strong>修改过</strong>的数据，那就意味着发生了**脏写 **</p>
+<p><strong>2.</strong> <strong>脏读（</strong> Dirty Read <strong>）</strong></p>
+<p>对于两个事务 Session A、Session B，Session A<strong>读取</strong>了已经被 Session B<strong>更新</strong>但还 没有被提交 的字段。之后若 Session B 回滚 ，Session A<strong>读取</strong>的内容就是<strong>临时且无效</strong>的。</p>
+<p>Session A和Session B各开启了一个事务，Session B中的事务先将studentno列为1的记录的name列更新为’张三’，然后Session A中的事务再去查询这条studentno为1的记录，如果读到列name的值为’张三’，而Session B中的事务稍后进行了回滚，那么Session A中的事务相当于读到了一个不存在的数据，这种现象就称之为<strong>脏读</strong> 。 </p>
+<p><strong>3.</strong> <strong>不可重复读（ Non</strong>-<strong>Repeatable Read ）</strong></p>
+<p>对于两个事务Session A、Session B，Session A<strong>读取</strong>了一个字段，然后 Session B<strong>更新</strong>了该字段。 之后Session A<strong>再次读取</strong>同一个字段， 值就不同 了。那就意味着发生了<strong>不可重复读</strong>。</p>
+<p>我们在Session B中提交了几个<strong>隐式事务</strong>（注意是隐式事务，意味着语句结束事务就提交了），这些事务都修改了studentno列为1的记录的列name的值，每次事务提交之后，如果Session A中的事务都可以查看到最新的值，这种现象也被称之为 不可重复读 。 </p>
+<p><strong>4.</strong> <strong>幻读（ Phantom ）</strong></p>
+<p>对于两个事务Session A、Session B, Session A 从一个表中<strong>读取</strong>了一个字段, 然后 Session B 在该表中 插 入 了一些新的行。 之后, 如果 Session A <strong>再次读取</strong>同一个表, 就会多出几行。那就意味着发生了幻读。</p>
+<p>Session A中的事务先根据条件 studentno &gt; 0这个条件查询表student，得到了name列值为’张三’的记录；之后Session B中提交了一个<strong>隐式事务</strong>，该事务向表student中插入了一条新记录；之后Session A中的事务再根据相同的条件 studentno &gt; 0查询表student，得到的结果集中包含Session B中的事务新插入的那条记录，这种现象也被称之为<strong>幻读</strong>。我们把新插入的那些记录称之为<strong>幻影记录</strong>。 </p>
+<h2 id="SQL中的四种隔离级别"><a href="#SQL中的四种隔离级别" class="headerlink" title="SQL中的四种隔离级别"></a><strong>SQL中的四种隔离级别</strong></h2><p>上面介绍了几种并发事务执行过程中可能遇到的一些问题，这些问题有轻重缓急之分，我们给这些问题按照严重性来排一下序：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">脏写 &gt; 脏读 &gt; 不可重复读 &gt; 幻读</span><br></pre></td></tr></table></figure>
+
+<p>我们愿意舍弃一部分隔离性来换取一部分性能在这里就体现在：设立一些隔离级别，隔离级别越低，并发问题发生的就越多。<strong>SQL标准</strong>中设立了4个 <strong>隔离级别</strong>： </p>
+<ul>
+<li><strong>READ UNCOMMITTED</strong>：读未提交，在该隔离级别，所有事务都可以看到其他未提交事务的执行结果。不能避免脏读、不可重复读、幻读。</li>
+<li><strong>READ COMMITTED</strong>：读已提交，它满足了隔离的简单定义：一个事务只能看见已经提交事务所做的改变。这是大多数数据库系统的默认隔离级别（但不是MySQL默认的）。可以避免脏读，但不可重复读、幻读问题仍然存在。</li>
+<li><strong>REPEATABLE READ</strong>：可重复读，事务A在读到一条数据之后，此时事务B对该数据进行了修改并提交，那么事务A再读该数据，读到的还是原来的内容。可以避免脏读、不可重复读，但幻读问题仍然存在。这是MySQL的默认隔离级别。</li>
+<li><strong>SERIALIZABLE</strong>：可串行化，确保事务可以从一个表中读取相同的行。在这个事务持续期间，禁止其他事务对该表执行插入、更新和删除操作。所有的并发问题都可以避免，但性能十分低下。能避免脏读、不可重复读和幻读。</li>
+</ul>
+<p><strong>SQL标准</strong>中规定，针对不同的隔离级别，并发事务可以发生不同严重程度的问题，具体情况如下：</p>
+<p><img src="https://nodeandimg.oss-cn-wulanchabu.aliyuncs.com/HDLHAGIXDR15Y1L.png"></p>
+<p><strong>脏写</strong>怎么没涉及到？因为脏写这个问题太严重了，不论是哪种隔离级别，都不允许脏写的情况发生。</p>
+<p>不同的隔离级别有不同的现象，并有不同的锁和并发机制，隔离级别越高，数据库的并发性能就越差，4种事务隔离级别与并发性能的关系如下：</p>
+<p><img src="https://nodeandimg.oss-cn-wulanchabu.aliyuncs.com/QO8WRD4C81335JOV]O.png"></p>
+<h2 id="MySQL支持的四种隔离级别"><a href="#MySQL支持的四种隔离级别" class="headerlink" title="MySQL支持的四种隔离级别"></a><strong>MySQL支持的四种隔离级别</strong></h2><p>MySQL的默认隔离级别为REPEATABLE READ，我们可以手动修改一下事务的隔离级别。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line"># 查看隔离级别，MySQL 5.7.20的版本之前： </span><br><span class="line">mysql&gt; SHOW VARIABLES LIKE &#x27;tx_isolation&#x27;; </span><br><span class="line">+---------------+-----------------+ </span><br><span class="line">| Variable_name | Value | </span><br><span class="line">+---------------+-----------------+ </span><br><span class="line">| tx_isolation | REPEATABLE-READ | </span><br><span class="line">+---------------+-----------------+ </span><br><span class="line">1 row in set (0.00 sec) </span><br><span class="line"># MySQL 5.7.20版本之后，引入transaction_isolation来替换tx_isolation </span><br><span class="line"># 查看隔离级别，MySQL 5.7.20的版本及之后： </span><br><span class="line">mysql&gt; SHOW VARIABLES LIKE &#x27;transaction_isolation&#x27;; </span><br><span class="line">+-----------------------+-----------------+ </span><br><span class="line">| Variable_name | Value | </span><br><span class="line">+-----------------------+-----------------+</span><br><span class="line">| transaction_isolation | REPEATABLE-READ | </span><br><span class="line">+-----------------------+-----------------+ </span><br><span class="line">1 row in set (0.02 sec) </span><br><span class="line">#或者不同MySQL版本中都可以使用的： </span><br><span class="line">SELECT @@transaction_isolation; </span><br></pre></td></tr></table></figure>
+
+<h2 id="如何设置事务的隔离级别"><a href="#如何设置事务的隔离级别" class="headerlink" title="如何设置事务的隔离级别"></a><strong>如何设置事务的隔离级别</strong></h2><p><strong>通过下面的语句修改事务的隔离级别：</strong></p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">SET [GLOBAL|SESSION] TRANSACTION ISOLATION LEVEL 隔离级别; </span><br><span class="line">#其中，隔离级别格式： </span><br><span class="line">&gt; READ UNCOMMITTED </span><br><span class="line">&gt; READ COMMITTED </span><br><span class="line">&gt; REPEATABLE READ </span><br><span class="line">&gt; SERIALIZABLE </span><br></pre></td></tr></table></figure>
+
+<p>或者：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">SET [GLOBAL|SESSION] TRANSACTION_ISOLATION = &#x27;隔离级别&#x27; </span><br><span class="line">#其中，隔离级别格式： </span><br><span class="line">&gt; READ-UNCOMMITTED </span><br><span class="line">&gt; READ-COMMITTED </span><br><span class="line">&gt; REPEATABLE-READ </span><br><span class="line">&gt; SERIALIZABLE </span><br></pre></td></tr></table></figure>
+
+<p><strong>关于设置时使用GLOBAL或SESSION的影响：</strong></p>
+<ul>
+<li><p>使用 <strong>GLOBAL 关键字</strong>（在全局范围影响）：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">SET GLOBAL TRANSACTION ISOLATION LEVEL SERIALIZABLE;</span><br><span class="line">#或</span><br><span class="line">SET GLOBAL TRANSACTION_ISOLATION = &#x27;SERIALIZABLE&#x27;;</span><br></pre></td></tr></table></figure>
+
+<p>则:</p>
+<ul>
+<li>当前已经存在的会话无效</li>
+<li>只对执行完该语句之后产生的会话起作用</li>
+</ul>
+</li>
+<li><p>使用<strong>SESSION</strong>关键字（在会话范围影响）：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">SET SESSION TRANSACTION ISOLATION LEVEL SERIALIZABLE;</span><br><span class="line">#或</span><br><span class="line">SET SESSION TRANSACTION_ISOLATION = &#x27;SERIALIZABLE&#x27;;</span><br></pre></td></tr></table></figure>
+
+<p>则：</p>
+<ul>
+<li><p>对当前会话的所有后续的事务有效</p>
+</li>
+<li><p>如果在事务之间执行，则对后续的事务有效</p>
+</li>
+<li><p>该语句可以在已经开启的事务中间执行，但不会影响当前正在执行的事务</p>
+</li>
+</ul>
+</li>
+</ul>
+<blockquote>
+<p> 小结：</p>
+<p>数据库规定了多种事务隔离级别，不同隔离级别对应不同的干扰程度，隔离级别越高，数据一致性就越好，但并发性越弱。</p>
+</blockquote>
+<h2 id="不同隔离级别举例"><a href="#不同隔离级别举例" class="headerlink" title="不同隔离级别举例"></a><strong>不同隔离级别举例</strong></h2><p><strong>演示1. 读未提交之脏读</strong></p>
+<p>设置隔离级别为未提交读：</p>
+<p><img src="https://nodeandimg.oss-cn-wulanchabu.aliyuncs.com/8PHKF6QB1NKZQNHPLE.png"></p>
+<p>事务1和事务2的执行流程如下：</p>
+<p><img src="https://nodeandimg.oss-cn-wulanchabu.aliyuncs.com/JGFEG1J9AMRYBZP.png"></p>
+<p><strong>演示2：读已提交</strong></p>
+<p><img src="https://nodeandimg.oss-cn-wulanchabu.aliyuncs.com/CPZ0N088HIVH[8.png"></p>
+<p>设置隔离级别为可重复读，事务的执行流程如下：</p>
+<p><img src="https://nodeandimg.oss-cn-wulanchabu.aliyuncs.com/J2R0CSDO26MK5R3JXU07.png"></p>
+<p><strong>演示4：幻读</strong></p>
+<p><img src="https://nodeandimg.oss-cn-wulanchabu.aliyuncs.com/51LMQUR7Z5ILW4Y2.png"></p>
+<h1 id="事务的常见分类"><a href="#事务的常见分类" class="headerlink" title="事务的常见分类"></a><strong>事务的常见分类</strong></h1><p>从事务理论的角度来看，可以把事务分为以下几种类型：</p>
+<p><strong>扁平事务（Flat Transactions）</strong></p>
+<p>扁平事务是事务类型中最简单的一种，但是在实际生产环境中，这可能是使用最频繁的事务，在扁平事务中，所有操作都处于同一层次，其由BEGIN WORK开始，由COMMIT WORK或ROLLBACKWORK结束，其间的操作是原子的，要么都执行，要么都回滚，因此，扁平事务是应用程序成为原子操作的基本组成模块。扁平事务虽然简单，但是在实际环境中使用最为频繁，也正因为其简单，使用频繁，故每个数据库系统都实现了对扁平事务的支持。扁平事务的主要限制是不能提交或者回滚事务的某一部分，或分几个步骤提交。<br>扁平事务一般有三种不同的结果:①事务成功完成。在平常应用中约占所有事务的96%。②应用程序要求停止事务。比如应用程序在捕获到异常时会回滚事务，约占事务的3%。③外界因素强制终止事务。如连接超时或连接断开，约占所有事务的1%。</p>
+<p><strong>带有保存点的扁平事务（Flat Transactions with Savepoints）</strong></p>
+<p>带有保存点的扁平事务除了支持扁平事务支持的操作外，还允许在事务执行过程中回滚到同一事务中较早的一个状态。这是因为某些事务可能在执行过程中出现的错误并不会导致所有的操作都无效，放弃整个事务不合乎要求，开销太大。<br>保存点(Savepoint)用来通知事务系统应该记住事务当前的状态，以便当之后发生错误时，事务能回到保存点当时的状态。对于扁平的事务来说，隐式的设置了一个保存点，然而在整个事务中，只有这一个保存点，因此，回滚只能会滚到事务开始时的状态。</p>
+<p><strong>链事务（Chained Transactions）</strong></p>
+<p>链事务是指一个事务由多个子事务链式组成，它可以被视为保存点模式的一个变种。带有保存点的扁平事务，当发生系统崩溃时，所有的保存点都将消失，这意味着当进行恢复时，事务需要从开始处重新执行，而不能从最近的一个保存点继续执行。链事务的思想是:在提交一个事务时，释放不需要的数据对象，将必要的处理上下文隐式地传给下一个要开始的事务，前一个子事务的提交操作和下一个子事务的开始操作合并成一个原子操作，这意味着下一个事务将看到上一个事务的结果，就好像在一个事务中进行一样。这样，<strong>在提交子事务时就可以释放不需要的数据对象，而不必等到整个事务完成后才释放</strong>。</p>
+<p><strong>嵌套事务（Nested Transactions）</strong></p>
+<p>嵌套事务是一个层次结构框架，由一个顶层事务（Top-Level Transaction）控制着各个层次的事务，顶层事务之下嵌套的事务被称为子事务(Subtransaction)，其控制着每一个局部的变换，子事务本身也可以是嵌套事务。因此，嵌套事务的层次结构可以看成是一棵树。</p>
+<p><strong>分布式事务（Distributed Transactions）</strong></p>
+<p>分布式事务通常是在一个分布式环境下运行的扁平事务，因此，需要根据数据所在位置访问网络中不同节点的数据库资源。例如，一个银行用户从招商银行的账户向工商银行的账户转账1000元，这里需要用到分布式事务，因为不能仅调用某一家银行的数据库就完成任务。</p>
+
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/MySQL/" rel="tag"># MySQL</a>
+              <a href="/tags/%E6%95%B0%E6%8D%AE%E5%BA%93/" rel="tag"># 数据库</a>
+          </div>
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/MySQL/%E6%95%B0%E6%8D%AE%E5%BA%93%E7%9A%84%E8%AE%BE%E8%AE%A1%E8%A7%84%E8%8C%83/" rel="prev" title="">
+                  <i class="fa fa-chevron-left"></i> 
+                </a>
+            </div>
+            <div class="post-nav-item">
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+
+<div class="copyright">
+  &copy; 
+  <span itemprop="copyrightYear">2022</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Hao</span>
+</div>
+<div class="busuanzi-count">
+    <span class="post-meta-item" id="busuanzi_container_site_uv">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-user"></i>
+      </span>
+      <span class="site-uv" title="Total Visitors">
+        <span id="busuanzi_value_site_uv"></span>
+      </span>
+    </span>
+    <span class="post-meta-item" id="busuanzi_container_site_pv">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-eye"></i>
+      </span>
+      <span class="site-pv" title="Total Views">
+        <span id="busuanzi_value_site_pv"></span>
+      </span>
+    </span>
+</div>
+  <div class="powered-by">Powered by <a href="https://hexo.io/" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/" rel="noopener" target="_blank">NexT.Gemini</a>
+  </div>
+
+    </div>
+  </footer>
+
+  
+  <script src="https://cdn.jsdelivr.net/npm/animejs@3.2.1/lib/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous"></script>
+<script src="/js/comments.js"></script><script src="/js/utils.js"></script><script src="/js/motion.js"></script><script src="/js/next-boot.js"></script>
+
+  
+
+
+
+
+  <script src="/js/third-party/pace.js"></script>
+
+  
+  <script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+
+
+
+
+</body>
+</html>
