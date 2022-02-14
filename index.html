@@ -133,7 +133,7 @@
   <nav class="site-state">
       <div class="site-state-item site-state-posts">
         <a href="/archives/">
-          <span class="site-state-item-count">38</span>
+          <span class="site-state-item-count">39</span>
           <span class="site-state-item-name">posts</span>
         </a>
       </div>
@@ -181,6 +181,194 @@
 
 
     <div class="main-inner index posts-expand">
+
+    
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="MySQL">
+    <link itemprop="mainEntityOfPage" href="http://yoursite-url/MySQL/MYSQL%E4%BA%8B%E5%8A%A1%E6%97%A5%E5%BF%97/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="https://nodeandimg.oss-cn-wulanchabu.aliyuncs.com/}VRZRM08TG_W9[WMAD}69[O.png">
+      <meta itemprop="name" content="Hao">
+      <meta itemprop="description" content="It's an IT blog...">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Study Node">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          <a href="/MySQL/MYSQL%E4%BA%8B%E5%8A%A1%E6%97%A5%E5%BF%97/" class="post-title-link" itemprop="url">MYSQL事务日志</a>
+        </h2>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">Posted on</span>
+
+      <time title="Created: 2022-02-14 20:55:09" itemprop="dateCreated datePublished" datetime="2022-02-14T20:55:09+08:00">2022-02-14</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">In</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/MySQL%E9%AB%98%E7%BA%A7/" itemprop="url" rel="index"><span itemprop="name">MySQL高级</span></a>
+        </span>
+          , 
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/MySQL%E9%AB%98%E7%BA%A7/%E6%95%B0%E6%8D%AE%E5%BA%93/" itemprop="url" rel="index"><span itemprop="name">数据库</span></a>
+        </span>
+    </span>
+
+  
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+          <p>事务有4种特性：原子性、一致性、隔离性和持久性。那么事务的四种特性到底是基于什么机制实现呢？</p>
+<ul>
+<li><p>事务的隔离性由<strong>锁机制</strong>实现。</p>
+</li>
+<li><p>而事务的原子性、一致性和持久性由事务的 redo 日志和undo 日志来保证。</p>
+<ul>
+<li>REDO LOG 称为<strong>重做日志</strong>，提供再写入操作，恢复提交事务修改的页操作，用来保证事务的持久性。</li>
+<li>UNDO LOG 称为<strong>回滚日志</strong>，回滚行记录到某个特定版本，用来保证事务的原子性、一致性。</li>
+</ul>
+</li>
+<li><p>redo log:是存储引擎层(innodb)生成的日志，记录的是**”物理级别”**上的页修改操作，比如页号xx、偏移量yy!写入了’zzz’数据。主要为了保证数据的可靠性;</p>
+</li>
+<li><p>undo log: 是存储引擎层(innodb)生成的日志，记录的是<strong>逻辑操作</strong>日志，比如对某一行数据进行了INSERT语句操作，那么undo log就记录一条与之相反的DELETE操作。主要用于<strong>事务的回滚</strong>(undo log记录的是每个修改操作的<strong>逆操作</strong>)和<strong>一致性非锁定读</strong>(undo log回滚行记录到某种特定的版本—MVCC，即多版本并发 控制)。</p>
+</li>
+</ul>
+<h1 id="redo日志"><a href="#redo日志" class="headerlink" title="redo日志"></a><strong>redo日志</strong></h1><p>InnoDB存储引擎是以<strong>页为单位</strong>来管理存储空间的。在真正访问页面之前，需要把在磁盘上的页缓存到内存中的<strong>Buffer Pool</strong>之后才可以访问。所有的变更都必须<strong>先更新缓冲池</strong>中的数据，然后缓冲池中的<strong>脏页</strong>会以一定的频率被刷入磁盘**（checkPoint机制)**，通过缓冲池来优化CPU和磁盘之间的鸿沟，这样就可以保证整体的性能不会下降太快。</p>
+<h2 id="为什么需要REDO日志"><a href="#为什么需要REDO日志" class="headerlink" title="为什么需要REDO日志"></a><strong>为什么需要REDO日志</strong></h2><p>一方面，缓冲池可以帮助我们消除CPU和磁盘之间的鸿沟，checkpoint机制可以保证数据的最终落盘，然而由于checkpoint <strong>并不是每次变更的时候就触发</strong>的，而是master线程隔一段时间去处理的。所以最坏的情况就是事务提交后，刚写完缓冲池，数据库宕机了，那么这段数据就是丢失的，无法恢复。</p>
+<p>另一方面，事务包含<strong>持久性</strong>的特性，就是说对于一个已经提交的事务，在事务提交后即使系统发生了崩溃，这个事务对数据库中所做的更改也不能丢失。</p>
+<p>那么如何保证这个持久性呢？ <strong>一个简单的做法</strong> ：在事务提交完成之前把该事务所修改的所有页面都刷新到磁盘，但是这个简单粗暴的做法有些问题</p>
+<ul>
+<li><strong>修改量与刷新磁盘工作量严重不成比例</strong><br>有时候我们仅仅修改了某个页面中的一个字节，但是我们知道在InnoDB中是以页为单位来进行磁盘lo的，也就是说我们在该事务提交时不得不将一个完整的页面从内存中刷新到磁盘，我们又知道一个页面默认是16KB大小，只修改一个字节就要刷新16KB的数据到磁盘上显然是太小题大做了。</li>
+<li><strong>随机IO刷新较慢</strong><br>一个事务可能包含很多语句，即使是一条语句也可能修改许多页面，假如该事务修改的这些页面可能并不相邻，这就意味着在将某个事务修改的Buffer Pool中的页面<strong>刷新到磁盘时</strong>，需要进行很多的<strong>随机I0</strong>，随机Io比顺序IO要慢，尤其对于传统的机械硬盘来说。</li>
+</ul>
+<p><strong>另一个解决的思路</strong> ：我们只是想让已经提交了的事务对数据库中数据所做的修改永久生效，即使后来系统崩溃，在重启后也能把这种修改恢复出来。所以我们其实没有必要在每次事务提交时就把该事务在内存中修改过的全部页面刷新到磁盘，只需要把<strong>修改</strong>了哪些东西<strong>记录一下</strong>就好。比如，某个事务将系统表空间中 第10号 页面中偏移量为 100 处的那个字节的值 1 改成 2 。我们只需要记录一下：将第0号表空间的10号页面的偏移量为100处的值更新为 2 。</p>
+<p><img src="https://nodeandimg.oss-cn-wulanchabu.aliyuncs.com/8ABV6BWRBAMD00.png"></p>
+<h2 id="REDO日志的好处、特点"><a href="#REDO日志的好处、特点" class="headerlink" title="REDO日志的好处、特点"></a><strong>REDO日志的好处、特点</strong></h2><p><strong>1.好处</strong></p>
+<ul>
+<li><p><strong>redo日志降低了刷盘频率</strong></p>
+</li>
+<li><p><strong>redo日志占用的空间非常小</strong></p>
+</li>
+</ul>
+<p><strong>2.</strong> <strong>特点</strong></p>
+<ul>
+<li><p><strong>redo日志是顺序写入磁盘的</strong></p>
+<p>在执行事务的过程中，每执行一条语句，就可能产生若干条redo日志，这些日志是按照<strong>产生的顺序</strong>写入磁盘的，也就是使用顺序lIo，效率比随机IO快。</p>
+</li>
+<li><p><strong>事务执行过程中，redo log不断记录</strong></p>
+<p>redo log跟bin log的区别，redo log是<strong>存储引擎层</strong>产生的，而bin log是<strong>数据库层</strong>产生的。假设一个事务，对表做10万行的记录插入，在这个过程中，一直不断的往redo logl顺序记录，而bin log不会记录，直到这个事务提交，才会一次写入到bin log文件中。</p>
+</li>
+</ul>
+<h2 id="redo的组成"><a href="#redo的组成" class="headerlink" title="redo的组成"></a><strong>redo的组成</strong></h2><p>Redo log可以简单分为以下两个部分：</p>
+<ul>
+<li>**重做日志的缓冲 (redo log buffer) **，保存在内存中，是易失的。</li>
+</ul>
+<p><strong>参数设置：innodb_log_buffer_size：</strong> </p>
+<p>redo log buffer 大小，默认<strong>16M</strong> ，最大值是4096M，最小值为1M。 </p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">mysql&gt; show variables like &#x27;%innodb_log_buffer_size%&#x27;; </span><br><span class="line">+------------------------+----------+ </span><br><span class="line">| Variable_name | Value | </span><br><span class="line">+------------------------+----------+ </span><br><span class="line">| innodb_log_buffer_size | 16777216 | </span><br><span class="line">+------------------------+----------+</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<ul>
+<li><strong>重做日志文件 (redo log file)</strong> ，保存在硬盘中，是持久的。</li>
+</ul>
+<h2 id="redo的整体流程"><a href="#redo的整体流程" class="headerlink" title="redo的整体流程"></a><strong>redo的整体流程</strong></h2><p>以一个更新事务为例，redo log 流转过程，如下图所示：</p>
+<p><img src="https://nodeandimg.oss-cn-wulanchabu.aliyuncs.com/T1UH3LNBBRF4F1S8LE.png"></p>
+<figure class="highlight vim"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">第<span class="number">1</span>步：先将原始数据从磁盘中读入内存中来，修改数据的内存拷贝 </span><br><span class="line">第<span class="number">2</span>步：生成一条重做日志并写入<span class="keyword">redo</span> <span class="built_in">log</span> <span class="keyword">buffer</span>，记录的是数据被修改后的值 </span><br><span class="line">第<span class="number">3</span>步：当事务commit时，将<span class="keyword">redo</span> <span class="built_in">log</span> <span class="keyword">buffer</span>中的内容刷新到 <span class="keyword">redo</span> <span class="built_in">log</span> <span class="keyword">file</span>，对 <span class="keyword">redo</span> <span class="built_in">log</span> <span class="keyword">file</span>采用追加 写的方式 </span><br><span class="line">第<span class="number">4</span>步：定期将内存中修改的数据刷新到磁盘中</span><br></pre></td></tr></table></figure>
+
+<blockquote>
+<p>体会：</p>
+<p>Write-Ahead Log(预先日志持久化)：在持久化一个数据页之前，先将内存中相应的日志页持久化。</p>
+</blockquote>
+<h2 id="redo-log的刷盘策略"><a href="#redo-log的刷盘策略" class="headerlink" title="redo log的刷盘策略"></a><strong>redo log的刷盘策略</strong></h2><p>redo log的写入并不是直接写入磁盘的，InnoDB引擎会在写redo log的时候先写redo log buffer，之后以 <strong>一 定的频率</strong> 刷入到真正的redo log file 中。这里的一定频率怎么看待呢？这就是我们要说的刷盘策略</p>
+<p><img src="https://nodeandimg.oss-cn-wulanchabu.aliyuncs.com/76GHUBGKP4SIZ537.png"></p>
+<p>注意，redo log buffer刷盘到redo log file的过程并不是真正的刷到磁盘中去，只是刷入到 文件系统缓存 （page cache）中去（这是现代操作系统为了提高文件写入效率做的一个优化），真正的写入会交给系统自己来决定（比如page cache足够大了）。那么对于InnoDB来说就存在一个问题，如果交给系统来同步，同样如果系统宕机，那么数据也丢失了（虽然整个系统宕机的概率还是比较小的）。</p>
+<p>针对这种情况，InnoDB给出<strong>innodb_flush_log_at_trx_commit</strong> 参数，该参数控制 commit提交事务时，如何将 redo log buffer 中的日志刷新到 redo log file 中。它支持三种策略</p>
+<ul>
+<li>设置为0 ：表示每次事务提交时不进行刷盘操作。（系统默认master thread每隔1s进行一次重做日志的同步）</li>
+<li>设置为1 ：表示每次事务提交时都将进行同步，刷盘操作（ 默认值 ） </li>
+<li>设置为2 ：表示每次事务提交时都只把 redo log buffer 内容写入 page cache，不进行同步。由os自己决定什么时候同步到磁盘文件。</li>
+</ul>
+<h2 id="不同刷盘策略演示"><a href="#不同刷盘策略演示" class="headerlink" title="不同刷盘策略演示"></a><strong>不同刷盘策略演示</strong></h2><p><strong>1.</strong> <strong>流程图</strong></p>
+<p><img src="https://nodeandimg.oss-cn-wulanchabu.aliyuncs.com/GWDF41O6FDSHNUIUHEU.png"></p>
+<p><img src="https://nodeandimg.oss-cn-wulanchabu.aliyuncs.com/PWVE5Y6K7AFMMO.png"></p>
+<p><img src="https://nodeandimg.oss-cn-wulanchabu.aliyuncs.com/etert4444.png"></p>
+<h2 id="写入redo-log-buffer过程"><a href="#写入redo-log-buffer过程" class="headerlink" title="写入redo log buffer过程"></a><strong>写入redo log buffer过程</strong></h2><p><strong>1.</strong> <strong>补充概念：Mini-Transaction</strong></p>
+<p>一个事务可以包含若干条语句，每一条语句其实是由若干个 mtr 组成，每一个 mtr 又可以包含若干条redo日志，画个图表示它们的关系就是这样：</p>
+<p><img src="https://nodeandimg.oss-cn-wulanchabu.aliyuncs.com/G41IY0O4KP1NXPMMHO.png"></p>
+<p><strong>2. redo</strong> <strong>日志写入log buffer</strong></p>
+<p><img src="https://nodeandimg.oss-cn-wulanchabu.aliyuncs.com/HQEZCREB54RR%7DM.png"></p>
+<p>每个mtr都会产生一组redo日志，用示意图来描述一下这些mtr产生的日志情况：</p>
+<p><img src="https://nodeandimg.oss-cn-wulanchabu.aliyuncs.com/0464W4PUVSBAG2U.png"></p>
+<p>不同的事务可能是 并发 执行的，所以 T1 、 T2 之间的 mtr 可能是 交替执行 的。</p>
+<p><img src="https://nodeandimg.oss-cn-wulanchabu.aliyuncs.com/efsdgserer.png"></p>
+<p><strong>3. redo log block的结构图</strong></p>
+<p><img src="https://nodeandimg.oss-cn-wulanchabu.aliyuncs.com/D6A1HA07OKQYLL1C.png"></p>
+<p><img src="https://nodeandimg.oss-cn-wulanchabu.aliyuncs.com/J5QLS59NC]F.png"></p>
+<h2 id="redo-log-file"><a href="#redo-log-file" class="headerlink" title="redo log file"></a><strong>redo log file</strong></h2><p><strong>1.</strong> <strong>相关参数设置</strong> </p>
+<ul>
+<li><p><strong>innodb_log_group_home_dir</strong> ：指定 redo log 文件组所在的路径，默认值为 ./ ，表示在数据库的数据目录下。MySQL的默认数据目录（ var/lib/mysql ）下默认有两个名为 ib_logfile0 和 ib_logfile1 的文件，log buffer中的日志默认情况下就是刷新到这两个磁盘文件中。此redo日志文件位置还可以修改。</p>
+</li>
+<li><p><strong>innodb_log_files_in_group</strong>：指明redo log file的个数，命名方式如：ib_logfile0，iblogfile1… iblogfilen。默认2个，最大100个。</p>
+</li>
+</ul>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">mysql&gt; show variables like &#x27;innodb_log_files_in_group&#x27;; </span><br><span class="line">+---------------------------+-------+ </span><br><span class="line">| Variable_name | Value | </span><br><span class="line">+---------------------------+-------+ </span><br><span class="line">| innodb_log_files_in_group | 2 | </span><br><span class="line">+---------------------------+-------+ </span><br><span class="line">#ib_logfile0 </span><br><span class="line">#ib_logfile1 </span><br></pre></td></tr></table></figure>
+
+<ul>
+<li><strong>innodb_flush_log_at_trx_commit</strong>：控制 redo log 刷新到磁盘的策略，默认为1</li>
+<li><strong>innodb_log_file_size</strong>：单个 redo log 文件设置大小，默认值为 <strong>48M</strong> 。最大值为512G，注意最大值指的是整个 redo log 系列文件之和，即（innodb_log_files_in_group * innodb_log_file_size ）不能大于最大值512G。</li>
+</ul>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">mysql&gt; show variables like &#x27;innodb_log_file_size&#x27;; </span><br><span class="line">+----------------------+----------+ </span><br><span class="line">| Variable_name | Value | </span><br><span class="line">+----------------------+----------+ </span><br><span class="line">| innodb_log_file_size | 50331648 | </span><br><span class="line">+----------------------+----------+</span><br></pre></td></tr></table></figure>
+
+<p>根据业务修改其大小，以便容纳较大的事务。编辑my.cnf文件并重启数据库生效，如下所示</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">[root@localhost ~]# vim /etc/my.cnf innodb_log_file_size=200M</span><br></pre></td></tr></table></figure>
+
+<p><strong>2.</strong> <strong>日志文件组</strong></p>
+<p><img src="https://nodeandimg.oss-cn-wulanchabu.aliyuncs.com/8SU0ZYBJFN0YQKGRP.png"></p>
+<p>总共的redo日志文件大小其实就是： **innodb_log_file_size × innodb_log_files_in_group **。</p>
+<p>采用循环使用的方式向redo日志文件组里写数据的话，会导致后写入的redo日志覆盖掉前边写的redo日志？当然！所以InnoDB的设计者提出了checkpoint的概念。</p>
+<p><strong>3. checkpoint</strong></p>
+<p><img src="https://nodeandimg.oss-cn-wulanchabu.aliyuncs.com/W7UTFA0284A35R96.png"></p>
+<p>如果 write pos 追上 checkpoint ，表示<strong>日志文件组</strong>满了，这时候不能再写入新的 redo log记录，MySQL 得停下来，清空一些记录，把 checkpoint 推进一下。</p>
+<p><img src="https://nodeandimg.oss-cn-wulanchabu.aliyuncs.com/ZAJU5DX4X3FERHXUN8.png"></p>
+<h1 id="Undo日志"><a href="#Undo日志" class="headerlink" title="Undo日志"></a><strong>Undo日志</strong></h1><p>redo log是事务持久性的保证，undo log是事务原子性的保证。在事务中 <strong>更新数据</strong>的 前置操作 其实是要先写入一个 undo log 。 </p>
+<h2 id="如何理解Undo日志"><a href="#如何理解Undo日志" class="headerlink" title="如何理解Undo日志"></a><strong>如何理解Undo日志</strong></h2>
+      
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+</div>
+
+
+
 
     
 
@@ -3407,203 +3595,6 @@
 <li><p>b.MYI (MYIndex)：存放索引信息文件</p>
 </li>
 </ul>
-
-      
-    </div>
-
-    
-    
-    
-
-    <footer class="post-footer">
-        <div class="post-eof"></div>
-      
-    </footer>
-  </article>
-</div>
-
-
-
-
-    
-
-
-<div class="post-block">
-  
-  
-
-  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="JUC">
-    <link itemprop="mainEntityOfPage" href="http://yoursite-url/JUC/JUC%E7%B3%BB%E5%88%97-%E7%AC%AC%E5%8D%81%E7%AB%A0-ThreadPool-%E7%BA%BF%E7%A8%8B%E6%B1%A0/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="https://nodeandimg.oss-cn-wulanchabu.aliyuncs.com/}VRZRM08TG_W9[WMAD}69[O.png">
-      <meta itemprop="name" content="Hao">
-      <meta itemprop="description" content="It's an IT blog...">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Study Node">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          <a href="/JUC/JUC%E7%B3%BB%E5%88%97-%E7%AC%AC%E5%8D%81%E7%AB%A0-ThreadPool-%E7%BA%BF%E7%A8%8B%E6%B1%A0/" class="post-title-link" itemprop="url">JUC系列-ThreadPool 线程池</a>
-        </h2>
-
-        <div class="post-meta-container">
-          <div class="post-meta">
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-calendar"></i>
-      </span>
-      <span class="post-meta-item-text">Posted on</span>
-
-      <time title="Created: 2021-11-19 10:02:03" itemprop="dateCreated datePublished" datetime="2021-11-19T10:02:03+08:00">2021-11-19</time>
-    </span>
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-folder"></i>
-      </span>
-      <span class="post-meta-item-text">In</span>
-        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-          <a href="/categories/JUC/" itemprop="url" rel="index"><span itemprop="name">JUC</span></a>
-        </span>
-    </span>
-
-  
-</div>
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-          <h1 id="ThreadPool-线程池"><a href="#ThreadPool-线程池" class="headerlink" title="ThreadPool 线程池"></a><strong>ThreadPool 线程池</strong></h1><h2 id="线程池简介"><a href="#线程池简介" class="headerlink" title="线程池简介"></a><strong>线程池简介</strong></h2><p>线程池（英语：thread pool）：一种线程使用模式。线程过多会带来调度销，进而影响缓存局部性和整体性能。而线程池维护着多个线程，等待着监督管理者分配可并发执行的任务。这避免了在处理短时间任务时创建与销毁线程的代价。线程池不仅能够保证内核的充分利用，还能防止过分调度。</p>
-<p>例子： 10 年前单核 CPU 电脑，假的多线程，像马戏团小丑玩多个球，CPU 需要来回切换。 现在是多核电脑，多个线程各自跑在独立的 CPU 上，不用切换效率高</p>
-<p><strong>线程池的优势：</strong> 线程池做的工作只要是控制运行的线程数量，处理过程中将任务放入队列，然后在线程创建后启动这些任务，如果线程数量超过了最大数量，超出数量的线程排队等候，等其他线程执行完毕，再从队列中取出任务来执行。</p>
-<p><strong>它的主要特点为：</strong></p>
-<ul>
-<li><p>降低资源消耗: 通过重复利用已创建的线程降低线程创建和销毁造成的销耗。</p>
-</li>
-<li><p>提高响应速度: 当任务到达时，任务可以不需要等待线程创建就能立即执行。</p>
-</li>
-<li><p>提高线程的可管理性: 线程是稀缺资源，如果无限制的创建，不仅会销耗系统资源，还会降低系统的稳定性，使用线程池可以进行统一的分配，调优和监控。</p>
-</li>
-<li><p><strong>Java</strong> <strong>中的线程池是通过</strong> <strong>Executor</strong> <strong>框架实现的，该框架中用到了Executor，Executors，ExecutorService</strong>，<strong>ThreadPoolExecutor</strong> <strong>这几个类</strong></p>
-</li>
-</ul>
-<p><img src="https://nodeandimg.oss-cn-wulanchabu.aliyuncs.com/NX1E6OPFO~GALUZ2.png"></p>
-<h2 id="线程池参数说明"><a href="#线程池参数说明" class="headerlink" title="线程池参数说明"></a><strong>线程池参数说明</strong></h2><p>本次介绍 5 种类型的线程池</p>
-<h3 id="常用参数-重点"><a href="#常用参数-重点" class="headerlink" title="常用参数(重点)"></a><strong>常用参数(重点)</strong></h3><ul>
-<li><p>corePoolSize 线程池的核心线程数</p>
-</li>
-<li><p>maximumPoolSize 能容纳的最大线程数</p>
-</li>
-<li><p>keepAliveTime 空闲线程存活时间</p>
-</li>
-<li><p>unit 存活的时间单位</p>
-</li>
-<li><p>workQueue 存放提交但未执行任务的队列</p>
-</li>
-<li><p>threadFactory 创建线程的工厂类</p>
-</li>
-<li><p>handler 等待队列满后的拒绝策略</p>
-<p><img src="https://nodeandimg.oss-cn-wulanchabu.aliyuncs.com/09-%E7%BA%BF%E7%A8%8B%E6%B1%A0%E4%B8%83%E4%B8%AA%E5%8F%82%E6%95%B0.png"></p>
-</li>
-</ul>
-<p>线程池中，有三个重要的参数，决定影响了拒绝策略：corePoolSize - 核心线程数，也即最小的线程数。workQueue - 阻塞队列 。 maximumPoolSize -最大线程数</p>
-<p>当提交任务数大于 corePoolSize 的时候，会优先将任务放到 workQueue 阻塞队列中。当阻塞队列饱和后，会扩充线程池中线程数，直到达到maximumPoolSize 最大线程数配置。此时，再多余的任务，则会触发线程池的拒绝策略了。</p>
-<p>总结起来，也就是一句话，<strong>当提交的任务数大于（workQueue.size() +</strong> <strong>maximumPoolSize ），就会触发线程池的拒绝策略</strong>。</p>
-<h3 id="拒绝策略-重点"><a href="#拒绝策略-重点" class="headerlink" title="拒绝策略(重点)"></a><strong>拒绝策略(重点)</strong></h3><p><strong>CallerRunsPolicy</strong>: 当触发拒绝策略，只要线程池没有关闭的话，则使用调用线程直接运行任务。一般并发比较小，性能要求不高，不允许失败。但是，由于调用者自己运行任务，如果任务提交速度过快，可能导致程序阻塞，性能效率上必然的损失较大</p>
-<p><strong>AbortPolicy</strong>: 丢弃任务，并抛出拒绝执行 RejectedExecutionException 异常信息。线程池默认的拒绝策略。必须处理好抛出的异常，否则会打断当前的执行流程，影响后续的任务执行。</p>
-<p><strong>DiscardPolicy</strong>: 直接丢弃，其他啥都没有</p>
-<p><strong>DiscardOldestPolicy</strong>: 当触发拒绝策略，只要线程池没有关闭的话，丢弃阻塞队列 workQueue 中最老的一个任务，并将新任务加入</p>
-<h2 id="线程池的种类与创建"><a href="#线程池的种类与创建" class="headerlink" title="线程池的种类与创建"></a><strong>线程池的种类与创建</strong></h2><h3 id="newCachedThreadPool-常用"><a href="#newCachedThreadPool-常用" class="headerlink" title="newCachedThreadPool(常用)"></a><strong>newCachedThreadPool(常用)</strong></h3><p><strong>作用</strong>：创建一个可缓存线程池，如果线程池长度超过处理需要，可灵活回收空闲线程，若无可回收，则新建线程</p>
-<p><strong>特点</strong>: </p>
-<ul>
-<li><p>线程池中数量没有固定，可达到最大值（Interger. MAX_VALUE） </p>
-</li>
-<li><p>线程池中的线程可进行缓存重复利用和回收（回收默认时间为 1 分钟）</p>
-</li>
-<li><p>当线程池中，没有可用线程，会重新创建一个线程</p>
-</li>
-</ul>
-<p><strong>创建方式：</strong></p>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * 可缓存线程池</span></span><br><span class="line"><span class="comment"> * <span class="doctag">@return</span></span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">static</span> ExecutorService <span class="title">newCachedThreadPool</span><span class="params">()</span></span>&#123;</span><br><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * corePoolSize 线程池的核心线程数</span></span><br><span class="line"><span class="comment"> * maximumPoolSize 能容纳的最大线程数</span></span><br><span class="line"><span class="comment"> * keepAliveTime 空闲线程存活时间</span></span><br><span class="line"><span class="comment"> * unit 存活的时间单位</span></span><br><span class="line"><span class="comment"> * workQueue 存放提交但未执行任务的队列</span></span><br><span class="line"><span class="comment"> * threadFactory 创建线程的工厂类:可以省略</span></span><br><span class="line"><span class="comment"> * handler 等待队列满后的拒绝策略:可以省略</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line">    <span class="keyword">return</span> <span class="keyword">new</span> ThreadPoolExecutor(<span class="number">0</span>,</span><br><span class="line">            Integer.MAX_VALUE,</span><br><span class="line">            <span class="number">60L</span>,</span><br><span class="line">            TimeUnit.SECONDS,</span><br><span class="line">            <span class="keyword">new</span> SynchronousQueue&lt;&gt;(),</span><br><span class="line">            Executors.defaultThreadFactory(),</span><br><span class="line">            <span class="keyword">new</span> ThreadPoolExecutor.AbortPolicy());</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<p><strong>场景:</strong> 适用于创建一个可无限扩大的线程池，服务器负载压力较轻，执行时间较短，任务多的场景</p>
-<h3 id="newFixedThreadPool-常用"><a href="#newFixedThreadPool-常用" class="headerlink" title="newFixedThreadPool(常用)"></a><strong>newFixedThreadPool(常用)</strong></h3><p><strong>作用</strong>：创建一个可重用固定线程数的线程池，以共享的无界队列方式来运行这些线程。在任意点，在大多数线程会处于处理任务的活动状态。如果在所有线程处于活动状态时提交附加任务，则在有可用线程之前，附加任务将在队列中等待。如果在关闭前的执行期间由于失败而导致任何线程终止，那么一个新线程将代替它执行后续的任务（如果需要）。在某个线程被显式地关闭之前，池中的线程将一直存在。</p>
-<p><strong>特征：</strong></p>
-<ul>
-<li><p>线程池中的线程处于一定的量，可以很好的控制线程的并发量</p>
-</li>
-<li><p>线程可以重复被使用，在显示关闭之前，都将一直存在</p>
-</li>
-<li><p>超出一定量的线程被提交时候需在队列中等待</p>
-</li>
-</ul>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * 固定长度线程池</span></span><br><span class="line"><span class="comment"> * <span class="doctag">@return</span></span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">static</span> ExecutorService <span class="title">newFixedThreadPool</span><span class="params">()</span></span>&#123;</span><br><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * corePoolSize 线程池的核心线程数</span></span><br><span class="line"><span class="comment"> * maximumPoolSize 能容纳的最大线程数</span></span><br><span class="line"><span class="comment"> * keepAliveTime 空闲线程存活时间</span></span><br><span class="line"><span class="comment"> * unit 存活的时间单位</span></span><br><span class="line"><span class="comment"> * workQueue 存放提交但未执行任务的队列</span></span><br><span class="line"><span class="comment"> * threadFactory 创建线程的工厂类:可以省略</span></span><br><span class="line"><span class="comment"> * handler 等待队列满后的拒绝策略:可以省略</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line">    <span class="keyword">return</span> <span class="keyword">new</span> ThreadPoolExecutor(<span class="number">10</span>,</span><br><span class="line">            <span class="number">10</span>,</span><br><span class="line">            <span class="number">0L</span>,</span><br><span class="line">            TimeUnit.SECONDS,</span><br><span class="line">            <span class="keyword">new</span> LinkedBlockingQueue&lt;&gt;(),</span><br><span class="line">            Executors.defaultThreadFactory(),</span><br><span class="line">            <span class="keyword">new</span> ThreadPoolExecutor.AbortPolicy());</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<p><strong>场景:</strong> 适用于可以预测线程数量的业务中，或者服务器负载较重，对线程数有严格限制的场景</p>
-<h3 id="newSingleThreadExecutor-常用"><a href="#newSingleThreadExecutor-常用" class="headerlink" title="newSingleThreadExecutor(常用)"></a><strong>newSingleThreadExecutor(常用)</strong></h3><p><strong>作用</strong>：创建一个使用单个 worker 线程的 Executor，以无界队列方式来运行该线程。（注意，如果因为在关闭前的执行期间出现失败而终止了此单个线程，那么如果需要，一个新线程将代替它执行后续的任务）。可保证顺序地执行各个任务，并且在任意给定的时间不会有多个线程是活动的。与其他等效的newFixedThreadPool 不同，可保证无需重新配置此方法所返回的执行程序即可使用其他的线程。</p>
-<p><strong>特征：</strong> 线程池中最多执行 1 个线程，之后提交的线程活动将会排在队列中以此执行</p>
-<p><strong>创建方式：</strong></p>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * 单一线程池</span></span><br><span class="line"><span class="comment"> * <span class="doctag">@return</span></span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">static</span> ExecutorService <span class="title">newSingleThreadExecutor</span><span class="params">()</span></span>&#123;</span><br><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * corePoolSize 线程池的核心线程数</span></span><br><span class="line"><span class="comment"> * maximumPoolSize 能容纳的最大线程数</span></span><br><span class="line"><span class="comment"> * keepAliveTime 空闲线程存活时间</span></span><br><span class="line"><span class="comment"> * unit 存活的时间单位</span></span><br><span class="line"><span class="comment"> * workQueue 存放提交但未执行任务的队列</span></span><br><span class="line"><span class="comment"> * threadFactory 创建线程的工厂类:可以省略</span></span><br><span class="line"><span class="comment"> * handler 等待队列满后的拒绝策略:可以省略</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line">    <span class="keyword">return</span> <span class="keyword">new</span> ThreadPoolExecutor(<span class="number">1</span>, <span class="number">1</span>,</span><br><span class="line">            <span class="number">0L</span>,</span><br><span class="line">            TimeUnit.SECONDS,</span><br><span class="line">            <span class="keyword">new</span> LinkedBlockingQueue&lt;&gt;(),</span><br><span class="line">            Executors.defaultThreadFactory(),</span><br><span class="line">            <span class="keyword">new</span> ThreadPoolExecutor.AbortPolicy());</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<p><strong>场景:</strong> 适用于需要保证顺序执行各个任务，并且在任意时间点，不会同时有多个线程的场景</p>
-<h3 id="newScheduleThreadPool-了解"><a href="#newScheduleThreadPool-了解" class="headerlink" title="newScheduleThreadPool(了解)"></a><strong>newScheduleThreadPool(了解)</strong></h3><p><strong>作用:</strong> 线程池支持定时以及周期性执行任务，创建一个 corePoolSize 为传入参数，最大线程数为整形的最大数的线程池</p>
-<p><strong>特征:</strong> </p>
-<p>（1）线程池中具有指定数量的线程，即便是空线程也将保留 </p>
-<p>（2）可定时或者延迟执行线程活动</p>
-<p><strong>创建方式:</strong></p>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">static</span> ScheduledExecutorService <span class="title">newScheduledThreadPool</span><span class="params">(<span class="keyword">int</span></span></span></span><br><span class="line"><span class="params"><span class="function">corePoolSize, </span></span></span><br><span class="line"><span class="params"><span class="function">ThreadFactory threadFactory)</span> </span>&#123;</span><br><span class="line"><span class="keyword">return</span> <span class="keyword">new</span> ScheduledThreadPoolExecutor(corePoolSize, </span><br><span class="line">threadFactory);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<p><strong>场景:</strong> 适用于需要多个后台线程执行周期任务的场景</p>
-<h3 id="newWorkStealingPool"><a href="#newWorkStealingPool" class="headerlink" title="newWorkStealingPool"></a><strong>newWorkStealingPool</strong></h3><p>jdk1.8 提供的线程池，底层使用的是 ForkJoinPool 实现，创建一个拥有多个任务队列的线程池，可以减少连接数，创建当前可用 cpu 核数的线程来并行执行任务</p>
-<p><strong>创建方式</strong></p>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">static</span> ExecutorService <span class="title">newWorkStealingPool</span><span class="params">(<span class="keyword">int</span> parallelism)</span> </span>&#123;</span><br><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * parallelism：并行级别，通常默认为 JVM 可用的处理器个数</span></span><br><span class="line"><span class="comment"> * factory：用于创建 ForkJoinPool 中使用的线程。</span></span><br><span class="line"><span class="comment"> * handler：用于处理工作线程未处理的异常，默认为 null</span></span><br><span class="line"><span class="comment"> * asyncMode：用于控制 WorkQueue 的工作模式:队列---反队列</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line">    <span class="keyword">return</span> <span class="keyword">new</span> ForkJoinPool(parallelism,</span><br><span class="line">            ForkJoinPool.defaultForkJoinWorkerThreadFactory, <span class="keyword">null</span>,</span><br><span class="line">            <span class="keyword">true</span>);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<p><strong>场景:</strong> 适用于大耗时，可并行执行的场景</p>
-<h2 id="线程池入门案例"><a href="#线程池入门案例" class="headerlink" title="线程池入门案例"></a><strong>线程池入门案例</strong></h2><p>案例</p>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">package</span> com.hao.pool;</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> java.util.concurrent.ArrayBlockingQueue;</span><br><span class="line"><span class="keyword">import</span> java.util.concurrent.Executors;</span><br><span class="line"><span class="keyword">import</span> java.util.concurrent.ThreadPoolExecutor;</span><br><span class="line"><span class="keyword">import</span> java.util.concurrent.TimeUnit;</span><br><span class="line"></span><br><span class="line"><span class="comment">//自定义线程池的创建</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">ThreadPoolDemo2</span> </span>&#123;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> </span>&#123;</span><br><span class="line">        ThreadPoolExecutor threadPool = <span class="keyword">new</span> ThreadPoolExecutor(</span><br><span class="line">                <span class="number">2</span>,</span><br><span class="line">                <span class="number">5</span>,</span><br><span class="line">                <span class="number">2L</span>,</span><br><span class="line">                TimeUnit.SECONDS,</span><br><span class="line">                <span class="keyword">new</span> ArrayBlockingQueue&lt;&gt;(<span class="number">3</span>),</span><br><span class="line">                Executors.defaultThreadFactory(),</span><br><span class="line">                <span class="keyword">new</span> ThreadPoolExecutor.AbortPolicy()</span><br><span class="line">        );</span><br><span class="line">        <span class="comment">//10个顾客请求</span></span><br><span class="line">        <span class="keyword">try</span> &#123;</span><br><span class="line">            <span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">1</span>; i &lt;= <span class="number">10</span>; i++) &#123;</span><br><span class="line">                <span class="comment">//执行</span></span><br><span class="line">                threadPool.execute(()-&gt;&#123;</span><br><span class="line">                    System.out.println(Thread.currentThread().getName() + <span class="string">&quot;办理业务&quot;</span>);</span><br><span class="line">                &#125;);</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;<span class="keyword">catch</span> (Exception e)&#123;</span><br><span class="line">            e.printStackTrace();</span><br><span class="line">        &#125;<span class="keyword">finally</span> &#123;</span><br><span class="line">            <span class="comment">//关闭</span></span><br><span class="line">            threadPool.shutdown();</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<h2 id="线程池底层工作原理-重要"><a href="#线程池底层工作原理-重要" class="headerlink" title="线程池底层工作原理(重要)"></a><strong>线程池底层工作原理(重要)</strong></h2><ol>
-<li><p>在创建了线程池后，线程池中的线程数为零</p>
-</li>
-<li><p>当调用 execute()方法添加一个请求任务时，线程池会做出如下判断： </p>
-<p>  2.1 如果正在运行的线程数量小于 corePoolSize，那么马上创建线程运行这个任务；</p>
-</li>
-</ol>
-<p>​         2.2 如果正在运行的线程数量大于或等于 corePoolSize，那么将这个任务放入队列；</p>
-<p>​         2.3 如果这个时候队列满了且正在运行的线程数量还小于maximumPoolSize，那么还是要创建非核心线程立刻运行这个任务；</p>
-<p>​         2.4 如果队列满了且正在运行的线程数量大于或等于 maximumPoolSize，那么线程池会启动饱和拒绝策略来执行。</p>
-<ol start="3">
-<li><p>当一个线程完成任务时，它会从队列中取下一个任务来执行</p>
-</li>
-<li><p>当一个线程无事可做超过一定的时间（keepAliveTime）时，线程会判断：</p>
-</li>
-</ol>
-<p>​        4.1 如果当前运行的线程数大于 corePoolSize，那么这个线程就被停掉。 </p>
-<p>​        4.2 所以线程池的所有任务完成后，它最终会收缩到 corePoolSize 的大小。</p>
-<p><img src="https://nodeandimg.oss-cn-wulanchabu.aliyuncs.com/MVHC8Z%60_WAQLC_HX.png"></p>
-<h2 id="注意事项-重要"><a href="#注意事项-重要" class="headerlink" title="注意事项(重要)"></a><strong>注意事项(重要)</strong></h2><ol>
-<li><p>项目中创建多线程时，使用常见的三种线程池创建方式，单一、可变、定长都有一定问题，原因是 FixedThreadPool 和 SingleThreadExecutor 底层都是用LinkedBlockingQueue 实现的，这个队列最大长度为 Integer.MAX_VALUE，容易导致 OOM。所以实际生产一般自己通过 ThreadPoolExecutor 的 7 个参数，自定义线程池</p>
-</li>
-<li><p>创建线程池推荐适用 ThreadPoolExecutor 及其 7 个参数手动创建</p>
-</li>
-</ol>
-<p>o corePoolSize 线程池的核心线程数</p>
-<p>o maximumPoolSize 能容纳的最大线程数</p>
-<p>o keepAliveTime 空闲线程存活时间</p>
-<p>o unit 存活的时间单位</p>
-<p>o workQueue 存放提交但未执行任务的队列</p>
-<p>o threadFactory 创建线程的工厂类</p>
-<p>o handler 等待队列满后的拒绝策略</p>
-<ol start="3">
-<li>为什么不允许适用不允许 Executors.的方式手动创建线程池,如下图</li>
-</ol>
-<p><img src="https://nodeandimg.oss-cn-wulanchabu.aliyuncs.com/~ZC%7DKX7O11V40S2TZGE.png"></p>
 
       
     </div>

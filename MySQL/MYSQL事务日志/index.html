@@ -1,0 +1,475 @@
+<!DOCTYPE html>
+<html lang="MySQL">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 5.4.0">
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5.15.4/css/all.min.css" integrity="sha256-mUZM63G8m73Mcidfrv5E+Y61y7a12O5mW4ezU3bxqW4=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/animate.css@3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/pace-js@1.2.4/themes/blue/pace-theme-minimal.css">
+  <script src="https://cdn.jsdelivr.net/npm/pace-js@1.2.4/pace.min.js" integrity="sha256-gqd7YTjg/BtfqWSwsJOvndl0Bxc8gFImLEkXQT8+qj0=" crossorigin="anonymous"></script>
+
+<script class="next-config" data-name="main" type="application/json">{"hostname":"yoursite-url","root":"/","images":"/images","scheme":"Gemini","darkmode":false,"version":"8.8.1","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12},"copycode":false,"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"Searching...","empty":"We didn't find any results for the search: ${query}","hits_time":"${hits} results found in ${time} ms","hits":"${hits} results found"}}</script><script src="/js/config.js"></script>
+<meta name="description" content="事务有4种特性：原子性、一致性、隔离性和持久性。那么事务的四种特性到底是基于什么机制实现呢？  事务的隔离性由锁机制实现。  而事务的原子性、一致性和持久性由事务的 redo 日志和undo 日志来保证。  REDO LOG 称为重做日志，提供再写入操作，恢复提交事务修改的页操作，用来保证事务的持久性。 UNDO LOG 称为回滚日志，回滚行记录到某个特定版本，用来保证事务的原子性、一致性。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="MYSQL事务日志">
+<meta property="og:url" content="http://yoursite-url/MySQL/MYSQL%E4%BA%8B%E5%8A%A1%E6%97%A5%E5%BF%97/index.html">
+<meta property="og:site_name" content="Study Node">
+<meta property="og:description" content="事务有4种特性：原子性、一致性、隔离性和持久性。那么事务的四种特性到底是基于什么机制实现呢？  事务的隔离性由锁机制实现。  而事务的原子性、一致性和持久性由事务的 redo 日志和undo 日志来保证。  REDO LOG 称为重做日志，提供再写入操作，恢复提交事务修改的页操作，用来保证事务的持久性。 UNDO LOG 称为回滚日志，回滚行记录到某个特定版本，用来保证事务的原子性、一致性。">
+<meta property="og:locale">
+<meta property="og:image" content="https://nodeandimg.oss-cn-wulanchabu.aliyuncs.com/8ABV6BWRBAMD00.png">
+<meta property="og:image" content="https://nodeandimg.oss-cn-wulanchabu.aliyuncs.com/T1UH3LNBBRF4F1S8LE.png">
+<meta property="og:image" content="https://nodeandimg.oss-cn-wulanchabu.aliyuncs.com/76GHUBGKP4SIZ537.png">
+<meta property="og:image" content="https://nodeandimg.oss-cn-wulanchabu.aliyuncs.com/GWDF41O6FDSHNUIUHEU.png">
+<meta property="og:image" content="https://nodeandimg.oss-cn-wulanchabu.aliyuncs.com/PWVE5Y6K7AFMMO.png">
+<meta property="og:image" content="https://nodeandimg.oss-cn-wulanchabu.aliyuncs.com/etert4444.png">
+<meta property="og:image" content="https://nodeandimg.oss-cn-wulanchabu.aliyuncs.com/G41IY0O4KP1NXPMMHO.png">
+<meta property="og:image" content="https://nodeandimg.oss-cn-wulanchabu.aliyuncs.com/HQEZCREB54RR%7DM.png">
+<meta property="og:image" content="https://nodeandimg.oss-cn-wulanchabu.aliyuncs.com/0464W4PUVSBAG2U.png">
+<meta property="og:image" content="https://nodeandimg.oss-cn-wulanchabu.aliyuncs.com/efsdgserer.png">
+<meta property="og:image" content="https://nodeandimg.oss-cn-wulanchabu.aliyuncs.com/D6A1HA07OKQYLL1C.png">
+<meta property="og:image" content="https://nodeandimg.oss-cn-wulanchabu.aliyuncs.com/J5QLS59NC]F.png">
+<meta property="og:image" content="https://nodeandimg.oss-cn-wulanchabu.aliyuncs.com/8SU0ZYBJFN0YQKGRP.png">
+<meta property="og:image" content="https://nodeandimg.oss-cn-wulanchabu.aliyuncs.com/W7UTFA0284A35R96.png">
+<meta property="og:image" content="https://nodeandimg.oss-cn-wulanchabu.aliyuncs.com/ZAJU5DX4X3FERHXUN8.png">
+<meta property="article:published_time" content="2022-02-14T12:55:09.000Z">
+<meta property="article:modified_time" content="2022-02-14T12:55:09.000Z">
+<meta property="article:author" content="Hao">
+<meta property="article:tag" content="MySQL">
+<meta property="article:tag" content="数据库">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://nodeandimg.oss-cn-wulanchabu.aliyuncs.com/8ABV6BWRBAMD00.png">
+
+
+<link rel="canonical" href="http://yoursite-url/MySQL/MYSQL%E4%BA%8B%E5%8A%A1%E6%97%A5%E5%BF%97/">
+
+
+
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"MySQL","comments":true,"permalink":"http://yoursite-url/MySQL/MYSQL%E4%BA%8B%E5%8A%A1%E6%97%A5%E5%BF%97/","path":"MySQL/MYSQL事务日志/","title":"MYSQL事务日志"}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title>MYSQL事务日志 | Study Node</title>
+  
+
+
+
+
+  <noscript>
+    <link rel="stylesheet" href="/css/noscript.css">
+  </noscript>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="Toggle navigation bar" role="button">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <h1 class="site-title">Study Node</h1>
+      <i class="logo-line"></i>
+    </a>
+      <p class="site-subtitle" itemprop="description">True mastery of any skill takes a lifetime</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu">
+        <li class="menu-item menu-item-home"><a href="/" rel="section"><i class="fa fa-home fa-fw"></i>Home</a></li>
+        <li class="menu-item menu-item-tags"><a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>Tags</a></li>
+        <li class="menu-item menu-item-categories"><a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>Categories</a></li>
+        <li class="menu-item menu-item-archives"><a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>Archives</a></li>
+  </ul>
+</nav>
+
+
+
+
+</div>
+        
+  
+  <div class="toggle sidebar-toggle" role="button">
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+  </div>
+
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          Table of Contents
+        </li>
+        <li class="sidebar-nav-overview">
+          Overview
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#redo%E6%97%A5%E5%BF%97"><span class="nav-number">1.</span> <span class="nav-text">redo日志</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%B8%BA%E4%BB%80%E4%B9%88%E9%9C%80%E8%A6%81REDO%E6%97%A5%E5%BF%97"><span class="nav-number">1.1.</span> <span class="nav-text">为什么需要REDO日志</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#REDO%E6%97%A5%E5%BF%97%E7%9A%84%E5%A5%BD%E5%A4%84%E3%80%81%E7%89%B9%E7%82%B9"><span class="nav-number">1.2.</span> <span class="nav-text">REDO日志的好处、特点</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#redo%E7%9A%84%E7%BB%84%E6%88%90"><span class="nav-number">1.3.</span> <span class="nav-text">redo的组成</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#redo%E7%9A%84%E6%95%B4%E4%BD%93%E6%B5%81%E7%A8%8B"><span class="nav-number">1.4.</span> <span class="nav-text">redo的整体流程</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#redo-log%E7%9A%84%E5%88%B7%E7%9B%98%E7%AD%96%E7%95%A5"><span class="nav-number">1.5.</span> <span class="nav-text">redo log的刷盘策略</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%B8%8D%E5%90%8C%E5%88%B7%E7%9B%98%E7%AD%96%E7%95%A5%E6%BC%94%E7%A4%BA"><span class="nav-number">1.6.</span> <span class="nav-text">不同刷盘策略演示</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%86%99%E5%85%A5redo-log-buffer%E8%BF%87%E7%A8%8B"><span class="nav-number">1.7.</span> <span class="nav-text">写入redo log buffer过程</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#redo-log-file"><span class="nav-number">1.8.</span> <span class="nav-text">redo log file</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#Undo%E6%97%A5%E5%BF%97"><span class="nav-number">2.</span> <span class="nav-text">Undo日志</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%A6%82%E4%BD%95%E7%90%86%E8%A7%A3Undo%E6%97%A5%E5%BF%97"><span class="nav-number">2.1.</span> <span class="nav-text">如何理解Undo日志</span></a></li></ol></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-author site-overview-item animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="Hao"
+      src="https://nodeandimg.oss-cn-wulanchabu.aliyuncs.com/}VRZRM08TG_W9[WMAD}69[O.png">
+  <p class="site-author-name" itemprop="name">Hao</p>
+  <div class="site-description" itemprop="description">It's an IT blog...</div>
+</div>
+<div class="site-state-wrap site-overview-item animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        <a href="/archives/">
+          <span class="site-state-item-count">39</span>
+          <span class="site-state-item-name">posts</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+          <a href="/categories/">
+        <span class="site-state-item-count">8</span>
+        <span class="site-state-item-name">categories</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+          <a href="/tags/">
+        <span class="site-state-item-count">7</span>
+        <span class="site-state-item-name">tags</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author site-overview-item animated">
+      <span class="links-of-author-item">
+        <a href="https://github.com/byteflow666" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;byteflow666" rel="noopener" target="_blank">GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="https://mail.qq.com/cgi-bin/frame_html?sid=1aPXzaqY4yWqbjhZ&r=98902ddef6ed390980f08fe54374e19b" title="E-Mail → https:&#x2F;&#x2F;mail.qq.com&#x2F;cgi-bin&#x2F;frame_html?sid&#x3D;1aPXzaqY4yWqbjhZ&amp;r&#x3D;98902ddef6ed390980f08fe54374e19b" rel="noopener" target="_blank">E-Mail</a>
+      </span>
+  </div>
+
+
+
+        </div>
+      </div>
+    </div>
+  </aside>
+  <div class="sidebar-dimmer"></div>
+
+
+    </header>
+
+    
+  <div class="back-to-top" role="button" aria-label="Back to top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="MySQL">
+    <link itemprop="mainEntityOfPage" href="http://yoursite-url/MySQL/MYSQL%E4%BA%8B%E5%8A%A1%E6%97%A5%E5%BF%97/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="https://nodeandimg.oss-cn-wulanchabu.aliyuncs.com/}VRZRM08TG_W9[WMAD}69[O.png">
+      <meta itemprop="name" content="Hao">
+      <meta itemprop="description" content="It's an IT blog...">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Study Node">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          MYSQL事务日志
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">Posted on</span>
+
+      <time title="Created: 2022-02-14 20:55:09" itemprop="dateCreated datePublished" datetime="2022-02-14T20:55:09+08:00">2022-02-14</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">In</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/MySQL%E9%AB%98%E7%BA%A7/" itemprop="url" rel="index"><span itemprop="name">MySQL高级</span></a>
+        </span>
+          , 
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/MySQL%E9%AB%98%E7%BA%A7/%E6%95%B0%E6%8D%AE%E5%BA%93/" itemprop="url" rel="index"><span itemprop="name">数据库</span></a>
+        </span>
+    </span>
+
+  
+    <span class="post-meta-item" title="Views" id="busuanzi_container_page_pv">
+      <span class="post-meta-item-icon">
+        <i class="far fa-eye"></i>
+      </span>
+      <span class="post-meta-item-text">Views: </span>
+      <span id="busuanzi_value_page_pv"></span>
+    </span>
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+        <p>事务有4种特性：原子性、一致性、隔离性和持久性。那么事务的四种特性到底是基于什么机制实现呢？</p>
+<ul>
+<li><p>事务的隔离性由<strong>锁机制</strong>实现。</p>
+</li>
+<li><p>而事务的原子性、一致性和持久性由事务的 redo 日志和undo 日志来保证。</p>
+<ul>
+<li>REDO LOG 称为<strong>重做日志</strong>，提供再写入操作，恢复提交事务修改的页操作，用来保证事务的持久性。</li>
+<li>UNDO LOG 称为<strong>回滚日志</strong>，回滚行记录到某个特定版本，用来保证事务的原子性、一致性。</li>
+</ul>
+</li>
+<li><p>redo log:是存储引擎层(innodb)生成的日志，记录的是**”物理级别”**上的页修改操作，比如页号xx、偏移量yy!写入了’zzz’数据。主要为了保证数据的可靠性;</p>
+</li>
+<li><p>undo log: 是存储引擎层(innodb)生成的日志，记录的是<strong>逻辑操作</strong>日志，比如对某一行数据进行了INSERT语句操作，那么undo log就记录一条与之相反的DELETE操作。主要用于<strong>事务的回滚</strong>(undo log记录的是每个修改操作的<strong>逆操作</strong>)和<strong>一致性非锁定读</strong>(undo log回滚行记录到某种特定的版本—MVCC，即多版本并发 控制)。</p>
+</li>
+</ul>
+<h1 id="redo日志"><a href="#redo日志" class="headerlink" title="redo日志"></a><strong>redo日志</strong></h1><p>InnoDB存储引擎是以<strong>页为单位</strong>来管理存储空间的。在真正访问页面之前，需要把在磁盘上的页缓存到内存中的<strong>Buffer Pool</strong>之后才可以访问。所有的变更都必须<strong>先更新缓冲池</strong>中的数据，然后缓冲池中的<strong>脏页</strong>会以一定的频率被刷入磁盘**（checkPoint机制)**，通过缓冲池来优化CPU和磁盘之间的鸿沟，这样就可以保证整体的性能不会下降太快。</p>
+<h2 id="为什么需要REDO日志"><a href="#为什么需要REDO日志" class="headerlink" title="为什么需要REDO日志"></a><strong>为什么需要REDO日志</strong></h2><p>一方面，缓冲池可以帮助我们消除CPU和磁盘之间的鸿沟，checkpoint机制可以保证数据的最终落盘，然而由于checkpoint <strong>并不是每次变更的时候就触发</strong>的，而是master线程隔一段时间去处理的。所以最坏的情况就是事务提交后，刚写完缓冲池，数据库宕机了，那么这段数据就是丢失的，无法恢复。</p>
+<p>另一方面，事务包含<strong>持久性</strong>的特性，就是说对于一个已经提交的事务，在事务提交后即使系统发生了崩溃，这个事务对数据库中所做的更改也不能丢失。</p>
+<p>那么如何保证这个持久性呢？ <strong>一个简单的做法</strong> ：在事务提交完成之前把该事务所修改的所有页面都刷新到磁盘，但是这个简单粗暴的做法有些问题</p>
+<ul>
+<li><strong>修改量与刷新磁盘工作量严重不成比例</strong><br>有时候我们仅仅修改了某个页面中的一个字节，但是我们知道在InnoDB中是以页为单位来进行磁盘lo的，也就是说我们在该事务提交时不得不将一个完整的页面从内存中刷新到磁盘，我们又知道一个页面默认是16KB大小，只修改一个字节就要刷新16KB的数据到磁盘上显然是太小题大做了。</li>
+<li><strong>随机IO刷新较慢</strong><br>一个事务可能包含很多语句，即使是一条语句也可能修改许多页面，假如该事务修改的这些页面可能并不相邻，这就意味着在将某个事务修改的Buffer Pool中的页面<strong>刷新到磁盘时</strong>，需要进行很多的<strong>随机I0</strong>，随机Io比顺序IO要慢，尤其对于传统的机械硬盘来说。</li>
+</ul>
+<p><strong>另一个解决的思路</strong> ：我们只是想让已经提交了的事务对数据库中数据所做的修改永久生效，即使后来系统崩溃，在重启后也能把这种修改恢复出来。所以我们其实没有必要在每次事务提交时就把该事务在内存中修改过的全部页面刷新到磁盘，只需要把<strong>修改</strong>了哪些东西<strong>记录一下</strong>就好。比如，某个事务将系统表空间中 第10号 页面中偏移量为 100 处的那个字节的值 1 改成 2 。我们只需要记录一下：将第0号表空间的10号页面的偏移量为100处的值更新为 2 。</p>
+<p><img src="https://nodeandimg.oss-cn-wulanchabu.aliyuncs.com/8ABV6BWRBAMD00.png"></p>
+<h2 id="REDO日志的好处、特点"><a href="#REDO日志的好处、特点" class="headerlink" title="REDO日志的好处、特点"></a><strong>REDO日志的好处、特点</strong></h2><p><strong>1.好处</strong></p>
+<ul>
+<li><p><strong>redo日志降低了刷盘频率</strong></p>
+</li>
+<li><p><strong>redo日志占用的空间非常小</strong></p>
+</li>
+</ul>
+<p><strong>2.</strong> <strong>特点</strong></p>
+<ul>
+<li><p><strong>redo日志是顺序写入磁盘的</strong></p>
+<p>在执行事务的过程中，每执行一条语句，就可能产生若干条redo日志，这些日志是按照<strong>产生的顺序</strong>写入磁盘的，也就是使用顺序lIo，效率比随机IO快。</p>
+</li>
+<li><p><strong>事务执行过程中，redo log不断记录</strong></p>
+<p>redo log跟bin log的区别，redo log是<strong>存储引擎层</strong>产生的，而bin log是<strong>数据库层</strong>产生的。假设一个事务，对表做10万行的记录插入，在这个过程中，一直不断的往redo logl顺序记录，而bin log不会记录，直到这个事务提交，才会一次写入到bin log文件中。</p>
+</li>
+</ul>
+<h2 id="redo的组成"><a href="#redo的组成" class="headerlink" title="redo的组成"></a><strong>redo的组成</strong></h2><p>Redo log可以简单分为以下两个部分：</p>
+<ul>
+<li>**重做日志的缓冲 (redo log buffer) **，保存在内存中，是易失的。</li>
+</ul>
+<p><strong>参数设置：innodb_log_buffer_size：</strong> </p>
+<p>redo log buffer 大小，默认<strong>16M</strong> ，最大值是4096M，最小值为1M。 </p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">mysql&gt; show variables like &#x27;%innodb_log_buffer_size%&#x27;; </span><br><span class="line">+------------------------+----------+ </span><br><span class="line">| Variable_name | Value | </span><br><span class="line">+------------------------+----------+ </span><br><span class="line">| innodb_log_buffer_size | 16777216 | </span><br><span class="line">+------------------------+----------+</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<ul>
+<li><strong>重做日志文件 (redo log file)</strong> ，保存在硬盘中，是持久的。</li>
+</ul>
+<h2 id="redo的整体流程"><a href="#redo的整体流程" class="headerlink" title="redo的整体流程"></a><strong>redo的整体流程</strong></h2><p>以一个更新事务为例，redo log 流转过程，如下图所示：</p>
+<p><img src="https://nodeandimg.oss-cn-wulanchabu.aliyuncs.com/T1UH3LNBBRF4F1S8LE.png"></p>
+<figure class="highlight vim"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">第<span class="number">1</span>步：先将原始数据从磁盘中读入内存中来，修改数据的内存拷贝 </span><br><span class="line">第<span class="number">2</span>步：生成一条重做日志并写入<span class="keyword">redo</span> <span class="built_in">log</span> <span class="keyword">buffer</span>，记录的是数据被修改后的值 </span><br><span class="line">第<span class="number">3</span>步：当事务commit时，将<span class="keyword">redo</span> <span class="built_in">log</span> <span class="keyword">buffer</span>中的内容刷新到 <span class="keyword">redo</span> <span class="built_in">log</span> <span class="keyword">file</span>，对 <span class="keyword">redo</span> <span class="built_in">log</span> <span class="keyword">file</span>采用追加 写的方式 </span><br><span class="line">第<span class="number">4</span>步：定期将内存中修改的数据刷新到磁盘中</span><br></pre></td></tr></table></figure>
+
+<blockquote>
+<p>体会：</p>
+<p>Write-Ahead Log(预先日志持久化)：在持久化一个数据页之前，先将内存中相应的日志页持久化。</p>
+</blockquote>
+<h2 id="redo-log的刷盘策略"><a href="#redo-log的刷盘策略" class="headerlink" title="redo log的刷盘策略"></a><strong>redo log的刷盘策略</strong></h2><p>redo log的写入并不是直接写入磁盘的，InnoDB引擎会在写redo log的时候先写redo log buffer，之后以 <strong>一 定的频率</strong> 刷入到真正的redo log file 中。这里的一定频率怎么看待呢？这就是我们要说的刷盘策略</p>
+<p><img src="https://nodeandimg.oss-cn-wulanchabu.aliyuncs.com/76GHUBGKP4SIZ537.png"></p>
+<p>注意，redo log buffer刷盘到redo log file的过程并不是真正的刷到磁盘中去，只是刷入到 文件系统缓存 （page cache）中去（这是现代操作系统为了提高文件写入效率做的一个优化），真正的写入会交给系统自己来决定（比如page cache足够大了）。那么对于InnoDB来说就存在一个问题，如果交给系统来同步，同样如果系统宕机，那么数据也丢失了（虽然整个系统宕机的概率还是比较小的）。</p>
+<p>针对这种情况，InnoDB给出<strong>innodb_flush_log_at_trx_commit</strong> 参数，该参数控制 commit提交事务时，如何将 redo log buffer 中的日志刷新到 redo log file 中。它支持三种策略</p>
+<ul>
+<li>设置为0 ：表示每次事务提交时不进行刷盘操作。（系统默认master thread每隔1s进行一次重做日志的同步）</li>
+<li>设置为1 ：表示每次事务提交时都将进行同步，刷盘操作（ 默认值 ） </li>
+<li>设置为2 ：表示每次事务提交时都只把 redo log buffer 内容写入 page cache，不进行同步。由os自己决定什么时候同步到磁盘文件。</li>
+</ul>
+<h2 id="不同刷盘策略演示"><a href="#不同刷盘策略演示" class="headerlink" title="不同刷盘策略演示"></a><strong>不同刷盘策略演示</strong></h2><p><strong>1.</strong> <strong>流程图</strong></p>
+<p><img src="https://nodeandimg.oss-cn-wulanchabu.aliyuncs.com/GWDF41O6FDSHNUIUHEU.png"></p>
+<p><img src="https://nodeandimg.oss-cn-wulanchabu.aliyuncs.com/PWVE5Y6K7AFMMO.png"></p>
+<p><img src="https://nodeandimg.oss-cn-wulanchabu.aliyuncs.com/etert4444.png"></p>
+<h2 id="写入redo-log-buffer过程"><a href="#写入redo-log-buffer过程" class="headerlink" title="写入redo log buffer过程"></a><strong>写入redo log buffer过程</strong></h2><p><strong>1.</strong> <strong>补充概念：Mini-Transaction</strong></p>
+<p>一个事务可以包含若干条语句，每一条语句其实是由若干个 mtr 组成，每一个 mtr 又可以包含若干条redo日志，画个图表示它们的关系就是这样：</p>
+<p><img src="https://nodeandimg.oss-cn-wulanchabu.aliyuncs.com/G41IY0O4KP1NXPMMHO.png"></p>
+<p><strong>2. redo</strong> <strong>日志写入log buffer</strong></p>
+<p><img src="https://nodeandimg.oss-cn-wulanchabu.aliyuncs.com/HQEZCREB54RR%7DM.png"></p>
+<p>每个mtr都会产生一组redo日志，用示意图来描述一下这些mtr产生的日志情况：</p>
+<p><img src="https://nodeandimg.oss-cn-wulanchabu.aliyuncs.com/0464W4PUVSBAG2U.png"></p>
+<p>不同的事务可能是 并发 执行的，所以 T1 、 T2 之间的 mtr 可能是 交替执行 的。</p>
+<p><img src="https://nodeandimg.oss-cn-wulanchabu.aliyuncs.com/efsdgserer.png"></p>
+<p><strong>3. redo log block的结构图</strong></p>
+<p><img src="https://nodeandimg.oss-cn-wulanchabu.aliyuncs.com/D6A1HA07OKQYLL1C.png"></p>
+<p><img src="https://nodeandimg.oss-cn-wulanchabu.aliyuncs.com/J5QLS59NC]F.png"></p>
+<h2 id="redo-log-file"><a href="#redo-log-file" class="headerlink" title="redo log file"></a><strong>redo log file</strong></h2><p><strong>1.</strong> <strong>相关参数设置</strong> </p>
+<ul>
+<li><p><strong>innodb_log_group_home_dir</strong> ：指定 redo log 文件组所在的路径，默认值为 ./ ，表示在数据库的数据目录下。MySQL的默认数据目录（ var/lib/mysql ）下默认有两个名为 ib_logfile0 和 ib_logfile1 的文件，log buffer中的日志默认情况下就是刷新到这两个磁盘文件中。此redo日志文件位置还可以修改。</p>
+</li>
+<li><p><strong>innodb_log_files_in_group</strong>：指明redo log file的个数，命名方式如：ib_logfile0，iblogfile1… iblogfilen。默认2个，最大100个。</p>
+</li>
+</ul>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">mysql&gt; show variables like &#x27;innodb_log_files_in_group&#x27;; </span><br><span class="line">+---------------------------+-------+ </span><br><span class="line">| Variable_name | Value | </span><br><span class="line">+---------------------------+-------+ </span><br><span class="line">| innodb_log_files_in_group | 2 | </span><br><span class="line">+---------------------------+-------+ </span><br><span class="line">#ib_logfile0 </span><br><span class="line">#ib_logfile1 </span><br></pre></td></tr></table></figure>
+
+<ul>
+<li><strong>innodb_flush_log_at_trx_commit</strong>：控制 redo log 刷新到磁盘的策略，默认为1</li>
+<li><strong>innodb_log_file_size</strong>：单个 redo log 文件设置大小，默认值为 <strong>48M</strong> 。最大值为512G，注意最大值指的是整个 redo log 系列文件之和，即（innodb_log_files_in_group * innodb_log_file_size ）不能大于最大值512G。</li>
+</ul>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">mysql&gt; show variables like &#x27;innodb_log_file_size&#x27;; </span><br><span class="line">+----------------------+----------+ </span><br><span class="line">| Variable_name | Value | </span><br><span class="line">+----------------------+----------+ </span><br><span class="line">| innodb_log_file_size | 50331648 | </span><br><span class="line">+----------------------+----------+</span><br></pre></td></tr></table></figure>
+
+<p>根据业务修改其大小，以便容纳较大的事务。编辑my.cnf文件并重启数据库生效，如下所示</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">[root@localhost ~]# vim /etc/my.cnf innodb_log_file_size=200M</span><br></pre></td></tr></table></figure>
+
+<p><strong>2.</strong> <strong>日志文件组</strong></p>
+<p><img src="https://nodeandimg.oss-cn-wulanchabu.aliyuncs.com/8SU0ZYBJFN0YQKGRP.png"></p>
+<p>总共的redo日志文件大小其实就是： **innodb_log_file_size × innodb_log_files_in_group **。</p>
+<p>采用循环使用的方式向redo日志文件组里写数据的话，会导致后写入的redo日志覆盖掉前边写的redo日志？当然！所以InnoDB的设计者提出了checkpoint的概念。</p>
+<p><strong>3. checkpoint</strong></p>
+<p><img src="https://nodeandimg.oss-cn-wulanchabu.aliyuncs.com/W7UTFA0284A35R96.png"></p>
+<p>如果 write pos 追上 checkpoint ，表示<strong>日志文件组</strong>满了，这时候不能再写入新的 redo log记录，MySQL 得停下来，清空一些记录，把 checkpoint 推进一下。</p>
+<p><img src="https://nodeandimg.oss-cn-wulanchabu.aliyuncs.com/ZAJU5DX4X3FERHXUN8.png"></p>
+<h1 id="Undo日志"><a href="#Undo日志" class="headerlink" title="Undo日志"></a><strong>Undo日志</strong></h1><p>redo log是事务持久性的保证，undo log是事务原子性的保证。在事务中 <strong>更新数据</strong>的 前置操作 其实是要先写入一个 undo log 。 </p>
+<h2 id="如何理解Undo日志"><a href="#如何理解Undo日志" class="headerlink" title="如何理解Undo日志"></a><strong>如何理解Undo日志</strong></h2>
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/MySQL/" rel="tag"># MySQL</a>
+              <a href="/tags/%E6%95%B0%E6%8D%AE%E5%BA%93/" rel="tag"># 数据库</a>
+          </div>
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/MySQL/%E4%BA%8B%E5%8A%A1%E5%9F%BA%E7%A1%80%E7%9F%A5%E8%AF%86/" rel="prev" title="事务基础知识">
+                  <i class="fa fa-chevron-left"></i> 事务基础知识
+                </a>
+            </div>
+            <div class="post-nav-item">
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+
+<div class="copyright">
+  &copy; 
+  <span itemprop="copyrightYear">2022</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Hao</span>
+</div>
+<div class="busuanzi-count">
+    <span class="post-meta-item" id="busuanzi_container_site_uv">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-user"></i>
+      </span>
+      <span class="site-uv" title="Total Visitors">
+        <span id="busuanzi_value_site_uv"></span>
+      </span>
+    </span>
+    <span class="post-meta-item" id="busuanzi_container_site_pv">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-eye"></i>
+      </span>
+      <span class="site-pv" title="Total Views">
+        <span id="busuanzi_value_site_pv"></span>
+      </span>
+    </span>
+</div>
+  <div class="powered-by">Powered by <a href="https://hexo.io/" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/" rel="noopener" target="_blank">NexT.Gemini</a>
+  </div>
+
+    </div>
+  </footer>
+
+  
+  <script src="https://cdn.jsdelivr.net/npm/animejs@3.2.1/lib/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous"></script>
+<script src="/js/comments.js"></script><script src="/js/utils.js"></script><script src="/js/motion.js"></script><script src="/js/next-boot.js"></script>
+
+  
+
+
+
+
+  <script src="/js/third-party/pace.js"></script>
+
+  
+  <script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+
+
+
+
+</body>
+</html>
