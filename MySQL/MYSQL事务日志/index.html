@@ -44,6 +44,13 @@
 <meta property="og:image" content="https://nodeandimg.oss-cn-wulanchabu.aliyuncs.com/8SU0ZYBJFN0YQKGRP.png">
 <meta property="og:image" content="https://nodeandimg.oss-cn-wulanchabu.aliyuncs.com/W7UTFA0284A35R96.png">
 <meta property="og:image" content="https://nodeandimg.oss-cn-wulanchabu.aliyuncs.com/ZAJU5DX4X3FERHXUN8.png">
+<meta property="og:image" content="https://nodeandimg.oss-cn-wulanchabu.aliyuncs.com/TER3H99HUUA3N6NIO.png">
+<meta property="og:image" content="https://nodeandimg.oss-cn-wulanchabu.aliyuncs.com/9H0HMFG9OKRI22.png">
+<meta property="og:image" content="https://nodeandimg.oss-cn-wulanchabu.aliyuncs.com/4LNTD487OYFF7RZZG.png">
+<meta property="og:image" content="https://nodeandimg.oss-cn-wulanchabu.aliyuncs.com/9V2D0Y46J72C6H0FR.png">
+<meta property="og:image" content="https://nodeandimg.oss-cn-wulanchabu.aliyuncs.com/H6ZTBCEFTX%7B5PBH1D.png">
+<meta property="og:image" content="https://nodeandimg.oss-cn-wulanchabu.aliyuncs.com/LZ44UQYTDFBAC.png">
+<meta property="og:image" content="https://nodeandimg.oss-cn-wulanchabu.aliyuncs.com/N0JC18YA7RA0M3B.png">
 <meta property="article:published_time" content="2022-02-14T12:55:09.000Z">
 <meta property="article:modified_time" content="2022-02-14T12:55:09.000Z">
 <meta property="article:author" content="Hao">
@@ -139,7 +146,7 @@
       <div class="sidebar-panel-container">
         <!--noindex-->
         <div class="post-toc-wrap sidebar-panel">
-            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#redo%E6%97%A5%E5%BF%97"><span class="nav-number">1.</span> <span class="nav-text">redo日志</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%B8%BA%E4%BB%80%E4%B9%88%E9%9C%80%E8%A6%81REDO%E6%97%A5%E5%BF%97"><span class="nav-number">1.1.</span> <span class="nav-text">为什么需要REDO日志</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#REDO%E6%97%A5%E5%BF%97%E7%9A%84%E5%A5%BD%E5%A4%84%E3%80%81%E7%89%B9%E7%82%B9"><span class="nav-number">1.2.</span> <span class="nav-text">REDO日志的好处、特点</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#redo%E7%9A%84%E7%BB%84%E6%88%90"><span class="nav-number">1.3.</span> <span class="nav-text">redo的组成</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#redo%E7%9A%84%E6%95%B4%E4%BD%93%E6%B5%81%E7%A8%8B"><span class="nav-number">1.4.</span> <span class="nav-text">redo的整体流程</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#redo-log%E7%9A%84%E5%88%B7%E7%9B%98%E7%AD%96%E7%95%A5"><span class="nav-number">1.5.</span> <span class="nav-text">redo log的刷盘策略</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%B8%8D%E5%90%8C%E5%88%B7%E7%9B%98%E7%AD%96%E7%95%A5%E6%BC%94%E7%A4%BA"><span class="nav-number">1.6.</span> <span class="nav-text">不同刷盘策略演示</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%86%99%E5%85%A5redo-log-buffer%E8%BF%87%E7%A8%8B"><span class="nav-number">1.7.</span> <span class="nav-text">写入redo log buffer过程</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#redo-log-file"><span class="nav-number">1.8.</span> <span class="nav-text">redo log file</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#Undo%E6%97%A5%E5%BF%97"><span class="nav-number">2.</span> <span class="nav-text">Undo日志</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%A6%82%E4%BD%95%E7%90%86%E8%A7%A3Undo%E6%97%A5%E5%BF%97"><span class="nav-number">2.1.</span> <span class="nav-text">如何理解Undo日志</span></a></li></ol></li></ol></div>
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#redo%E6%97%A5%E5%BF%97"><span class="nav-number">1.</span> <span class="nav-text">redo日志</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%B8%BA%E4%BB%80%E4%B9%88%E9%9C%80%E8%A6%81REDO%E6%97%A5%E5%BF%97"><span class="nav-number">1.1.</span> <span class="nav-text">为什么需要REDO日志</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#REDO%E6%97%A5%E5%BF%97%E7%9A%84%E5%A5%BD%E5%A4%84%E3%80%81%E7%89%B9%E7%82%B9"><span class="nav-number">1.2.</span> <span class="nav-text">REDO日志的好处、特点</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#redo%E7%9A%84%E7%BB%84%E6%88%90"><span class="nav-number">1.3.</span> <span class="nav-text">redo的组成</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#redo%E7%9A%84%E6%95%B4%E4%BD%93%E6%B5%81%E7%A8%8B"><span class="nav-number">1.4.</span> <span class="nav-text">redo的整体流程</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#redo-log%E7%9A%84%E5%88%B7%E7%9B%98%E7%AD%96%E7%95%A5"><span class="nav-number">1.5.</span> <span class="nav-text">redo log的刷盘策略</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%B8%8D%E5%90%8C%E5%88%B7%E7%9B%98%E7%AD%96%E7%95%A5%E6%BC%94%E7%A4%BA"><span class="nav-number">1.6.</span> <span class="nav-text">不同刷盘策略演示</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%86%99%E5%85%A5redo-log-buffer%E8%BF%87%E7%A8%8B"><span class="nav-number">1.7.</span> <span class="nav-text">写入redo log buffer过程</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#redo-log-file"><span class="nav-number">1.8.</span> <span class="nav-text">redo log file</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#Undo%E6%97%A5%E5%BF%97"><span class="nav-number">2.</span> <span class="nav-text">Undo日志</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%A6%82%E4%BD%95%E7%90%86%E8%A7%A3Undo%E6%97%A5%E5%BF%97"><span class="nav-number">2.1.</span> <span class="nav-text">如何理解Undo日志</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Undo%E6%97%A5%E5%BF%97%E7%9A%84%E4%BD%9C%E7%94%A8"><span class="nav-number">2.2.</span> <span class="nav-text">Undo日志的作用</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#undo%E7%9A%84%E5%AD%98%E5%82%A8%E7%BB%93%E6%9E%84"><span class="nav-number">2.3.</span> <span class="nav-text">undo的存储结构</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#undo%E7%9A%84%E7%B1%BB%E5%9E%8B"><span class="nav-number">2.4.</span> <span class="nav-text">undo的类型</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#undo-log%E7%9A%84%E7%94%9F%E5%91%BD%E5%91%A8%E6%9C%9F"><span class="nav-number">2.5.</span> <span class="nav-text">undo log的生命周期</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%B0%8F%E8%8A%82"><span class="nav-number">2.6.</span> <span class="nav-text">小节</span></a></li></ol></li></ol></div>
         </div>
         <!--/noindex-->
 
@@ -154,7 +161,7 @@
   <nav class="site-state">
       <div class="site-state-item site-state-posts">
         <a href="/archives/">
-          <span class="site-state-item-count">39</span>
+          <span class="site-state-item-count">41</span>
           <span class="site-state-item-name">posts</span>
         </a>
       </div>
@@ -381,7 +388,98 @@
 <p>如果 write pos 追上 checkpoint ，表示<strong>日志文件组</strong>满了，这时候不能再写入新的 redo log记录，MySQL 得停下来，清空一些记录，把 checkpoint 推进一下。</p>
 <p><img src="https://nodeandimg.oss-cn-wulanchabu.aliyuncs.com/ZAJU5DX4X3FERHXUN8.png"></p>
 <h1 id="Undo日志"><a href="#Undo日志" class="headerlink" title="Undo日志"></a><strong>Undo日志</strong></h1><p>redo log是事务持久性的保证，undo log是事务原子性的保证。在事务中 <strong>更新数据</strong>的 前置操作 其实是要先写入一个 undo log 。 </p>
-<h2 id="如何理解Undo日志"><a href="#如何理解Undo日志" class="headerlink" title="如何理解Undo日志"></a><strong>如何理解Undo日志</strong></h2>
+<h2 id="如何理解Undo日志"><a href="#如何理解Undo日志" class="headerlink" title="如何理解Undo日志"></a><strong>如何理解Undo日志</strong></h2><p>事务需要保证<strong>原子性</strong> ，也就是事务中的操作要么全部完成，要么什么也不做。但有时候事务执行到一半会出现一些情况，比如：</p>
+<ul>
+<li>情况一：事务执行过程中可能遇到各种错误，比如<strong>服务器本身的错误 ， 操作系统错误</strong>，甚至是突然<strong>断电</strong> 导致的错误。</li>
+<li>情况二：程序员可以在事务执行过程中手动输入 ROLLBACK 语句结束当前事务的执行</li>
+</ul>
+<p>以上情况出现，我们需要把数据改回原先的样子，这个过程称之为 回滚 ，这样就可以造成一个假象：这个事务看起来什么都没做，所以符合<strong>原子性</strong>要求。</p>
+<h2 id="Undo日志的作用"><a href="#Undo日志的作用" class="headerlink" title="Undo日志的作用"></a><strong>Undo日志的作用</strong></h2><ul>
+<li><strong>作用1：回滚数据</strong></li>
+<li><strong>作用2：MVCC</strong></li>
+</ul>
+<h2 id="undo的存储结构"><a href="#undo的存储结构" class="headerlink" title="undo的存储结构"></a><strong>undo的存储结构</strong></h2><p><strong>1.</strong> <strong>回滚段与undo页</strong></p>
+<p>InnoDB对undo log的管理采用段的方式，也就是<strong>回滚段（rollback segment）</strong> 。每个回滚段记录了<strong>1024</strong>个<strong>undo log segment</strong> ，而在每个undo log segment段中进行<strong>undo页</strong>的申请。</p>
+<ul>
+<li>在<strong>InnoDB1.1</strong>版本之前 （不包括1.1版本），只有一个rollback segment，因此支持同时在线的事务限制为**1024 **。虽然对绝大多数的应用来说都已经够用。</li>
+<li>从1.1版本开始InnoDB支持最大<strong>128个rollback segment <strong>，故其支持同时在线的事务限制提高到了</strong>128*1024</strong> 。</li>
+</ul>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">mysql&gt; show variables like &#x27;innodb_undo_logs&#x27;; </span><br><span class="line">+------------------+-------+ </span><br><span class="line">| Variable_name | Value | </span><br><span class="line">+------------------+-------+ </span><br><span class="line">| innodb_undo_logs | 128 | </span><br><span class="line">+------------------+-------+</span><br></pre></td></tr></table></figure>
+
+<p><strong>2.</strong> <strong>回滚段与事务</strong> </p>
+<ol>
+<li><p>每个事务只会使用一个回滚段，一个回滚段在同一时刻可能会服务于多个事务。</p>
+</li>
+<li><p>当一个事务开始的时候，会制定一个回滚段，在事务进行的过程中，当数据被修改时，原始的数据会被复制到回滚段。</p>
+</li>
+<li><p>在回滚段中，事务会不断填充盘区，直到事务结束或所有的空间被用完。如果当前的盘区不够用，事务会在段中请求扩展下一个盘区，如果所有已分配的盘区都被用完，事务会覆盖最初的盘区或者在回滚段允许的情况下扩展新的盘区来使用。</p>
+</li>
+<li><p>回滚段存在于undo表空间中，在数据库中可以存在多个undo表空间，但同一时刻只能使用一个undo表空间。</p>
+</li>
+<li><p>当事务提交时，InnoDB存储引擎会做以下两件事情：</p>
+</li>
+</ol>
+<ul>
+<li><p>将undo log放入列表中，以供之后的purge操作</p>
+</li>
+<li><p>判断undo log所在的页是否可以重用，若可以分配给下个事务使用</p>
+</li>
+</ul>
+<p><strong>回滚段中的数据分类</strong></p>
+<p><strong>1.未提交的回滚数据(uncommitted undo information)</strong>:该数据所关联    的事务并未提交，用于实现读一致性，所以该数据不能被其他事务的数    据覆盖。</p>
+<p>**2．已经提交但未过期的回滚数据( committed undo information)**∶该    数据关联的事务已经提交，但是仍受到undo retention参数的保持时间    的影响。 </p>
+<p>**3．事务己经提交并过期的数据(expired undo information)**∶事务已经提交，而且数据保存时间已经超过undo retention参数指定的时间，属于已经过期的数据。当回滚段满了之后，会优先覆盖”事务已经提交并过期的数据”。</p>
+<p>事务提交后并不能马上删除undo log及undo log所在的页。这是因为可能还有其他事务需要通过undo log来得到行记录之前的版本。故事务提交时将undo log放入一个链表中，是否可以最终删除undo log及undo log所在页由purge线程来判断。</p>
+<h2 id="undo的类型"><a href="#undo的类型" class="headerlink" title="undo的类型"></a><strong>undo的类型</strong></h2><p>在InnoDB存储引擎中，undo log分为：</p>
+<ul>
+<li><p>insert undo log </p>
+<p>insert undo log是指在insert操作中产生的undo log.因为insert操作的记录，只对事务本身可见，对其他事务不可见(这是事务隔离性的要求)，故该undo log可以在事务提交后直接删除。不需要进行purge操作。</p>
+</li>
+<li><p>update undo log </p>
+<p>update undo log记录的是对delete和update操作产生的undo log。该undo log可能需要提供MVcC机制，因此不能在事务提交时就进行删除。提交时放入undo log链表，等待purge线程进行最后的删除。</p>
+</li>
+</ul>
+<h2 id="undo-log的生命周期"><a href="#undo-log的生命周期" class="headerlink" title="undo log的生命周期"></a><strong>undo log的生命周期</strong></h2><p><strong>1.</strong> <strong>简要生成过程</strong></p>
+<p><strong>只有Buffer Pool的流程：</strong></p>
+<p><img src="https://nodeandimg.oss-cn-wulanchabu.aliyuncs.com/TER3H99HUUA3N6NIO.png"></p>
+<p><strong>有了Redo Log和Undo Log之后：</strong></p>
+<p><img src="https://nodeandimg.oss-cn-wulanchabu.aliyuncs.com/9H0HMFG9OKRI22.png"></p>
+<p><strong>2.</strong> <strong>详细生成过程</strong></p>
+<p><img src="https://nodeandimg.oss-cn-wulanchabu.aliyuncs.com/4LNTD487OYFF7RZZG.png"></p>
+<p><strong>当我们执行INSERT时：</strong></p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">begin;</span><br><span class="line">INSERT INTO user (name) VALUES (&quot;tom&quot;);</span><br></pre></td></tr></table></figure>
+
+<p><img src="https://nodeandimg.oss-cn-wulanchabu.aliyuncs.com/9V2D0Y46J72C6H0FR.png"></p>
+<p><strong>当我们执行UPDATE时：</strong></p>
+<p><img src="https://nodeandimg.oss-cn-wulanchabu.aliyuncs.com/H6ZTBCEFTX%7B5PBH1D.png"></p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">UPDATE user SET id=2 WHERE id=1;</span><br></pre></td></tr></table></figure>
+
+<p><img src="https://nodeandimg.oss-cn-wulanchabu.aliyuncs.com/LZ44UQYTDFBAC.png"></p>
+<p><strong>3. undo log是如何回滚的</strong></p>
+<p>以上面的例子来说，假设执行rollback，那么对应的流程应该是这样：</p>
+<ol>
+<li><p>通过undo no=3的日志把id=2的数据删除</p>
+</li>
+<li><p>通过undo no=2的日志把id=1的数据的deletemark还原成0 </p>
+</li>
+<li><p>通过undo no=1的日志把id=1的数据的name还原成Tom </p>
+</li>
+<li><p>通过undo no=0的日志把id=1的数据删除</p>
+</li>
+</ol>
+<p><strong>4. undo log的删除</strong></p>
+<ul>
+<li>针对于insert undo log</li>
+</ul>
+<p>因为insert操作的记录，只对事务本身可见，对其他事务不可见。故该undo log可以在事务提交后直接删除，不需要进行purge操作。</p>
+<ul>
+<li>针对于update undo log </li>
+</ul>
+<p>该undo log可能需要提供MVCC机制，因此不能在事务提交时就进行删除。提交时放入undo log链表，等待purge线程进行最后的删除。</p>
+<h2 id="小节"><a href="#小节" class="headerlink" title="小节"></a>小节</h2><p><img src="https://nodeandimg.oss-cn-wulanchabu.aliyuncs.com/N0JC18YA7RA0M3B.png"></p>
+<p>undo log是逻辑日志，对事务回滚时，只是将数据库逻辑地恢复到原来的样子。</p>
+<p>redo log是物理日志，记录的是数据页的物理变化，undo log不是redo log的逆过程。</p>
+
     </div>
 
     
@@ -403,6 +501,9 @@
                 </a>
             </div>
             <div class="post-nav-item">
+                <a href="/MySQL/%E9%94%81/" rel="next" title="锁">
+                  锁 <i class="fa fa-chevron-right"></i>
+                </a>
             </div>
           </div>
     </footer>
