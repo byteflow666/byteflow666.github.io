@@ -1,0 +1,432 @@
+<!DOCTYPE html>
+<html lang="Reids">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 5.4.0">
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5.15.4/css/all.min.css" integrity="sha256-mUZM63G8m73Mcidfrv5E+Y61y7a12O5mW4ezU3bxqW4=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/animate.css@3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/pace-js@1.2.4/themes/blue/pace-theme-minimal.css">
+  <script src="https://cdn.jsdelivr.net/npm/pace-js@1.2.4/pace.min.js" integrity="sha256-gqd7YTjg/BtfqWSwsJOvndl0Bxc8gFImLEkXQT8+qj0=" crossorigin="anonymous"></script>
+
+<script class="next-config" data-name="main" type="application/json">{"hostname":"yoursite-url","root":"/","images":"/images","scheme":"Gemini","darkmode":false,"version":"8.8.1","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12},"copycode":false,"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"Searching...","empty":"We didn't find any results for the search: ${query}","hits_time":"${hits} results found in ${time} ms","hits":"${hits} results found"}}</script><script src="/js/config.js"></script>
+<meta name="description" content="近期写一点Redis的笔记 不过就写重点的 然后写一些面试总结把 这一篇讲Redis的在Linux下的安装以及Redis概述 Redis入门概述 Redis是什么？  Redis（Remote Dictionary Server )，即远程字典服务。 是一个开源的使用ANSI C语言编写、支持网络、可基于内存亦可持久化的日志型、Key-Value数据库，并提供多种语言的API。 与memcache">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Redis的入门">
+<meta property="og:url" content="http://yoursite-url/Reids/Redis%E7%9A%84%E5%85%A5%E9%97%A8/index.html">
+<meta property="og:site_name" content="Study Node">
+<meta property="og:description" content="近期写一点Redis的笔记 不过就写重点的 然后写一些面试总结把 这一篇讲Redis的在Linux下的安装以及Redis概述 Redis入门概述 Redis是什么？  Redis（Remote Dictionary Server )，即远程字典服务。 是一个开源的使用ANSI C语言编写、支持网络、可基于内存亦可持久化的日志型、Key-Value数据库，并提供多种语言的API。 与memcache">
+<meta property="og:locale">
+<meta property="og:image" content="https://nodeandimg.oss-cn-wulanchabu.aliyuncs.com/1231asdasdasda.png">
+<meta property="og:image" content="https://nodeandimg.oss-cn-wulanchabu.aliyuncs.com/3DM]BYGHCM6SDBU4EFX.png">
+<meta property="og:image" content="https://nodeandimg.oss-cn-wulanchabu.aliyuncs.com/VEONLASUQHJTNCCCU.png">
+<meta property="og:image" content="https://nodeandimg.oss-cn-wulanchabu.aliyuncs.com/VMRSWAHV1NH48S303.png">
+<meta property="og:image" content="https://nodeandimg.oss-cn-wulanchabu.aliyuncs.com/VUDE3K37GCBBXDS0M7A.png">
+<meta property="og:image" content="https://nodeandimg.oss-cn-wulanchabu.aliyuncs.com/51QYTDKMRVIPM3TKXB.png">
+<meta property="og:image" content="https://nodeandimg.oss-cn-wulanchabu.aliyuncs.com/1Q24LG6JZNC8IV0.png">
+<meta property="og:image" content="https://nodeandimg.oss-cn-wulanchabu.aliyuncs.com/FG45C2O6SNFX5KBQ6C.png">
+<meta property="og:image" content="https://nodeandimg.oss-cn-wulanchabu.aliyuncs.com/M740JI2C4MI5RKLC.png">
+<meta property="article:published_time" content="2022-03-17T13:30:48.000Z">
+<meta property="article:modified_time" content="2022-03-17T13:30:48.000Z">
+<meta property="article:author" content="Hao">
+<meta property="article:tag" content="NoSQL">
+<meta property="article:tag" content="Redis">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://nodeandimg.oss-cn-wulanchabu.aliyuncs.com/1231asdasdasda.png">
+
+
+<link rel="canonical" href="http://yoursite-url/Reids/Redis%E7%9A%84%E5%85%A5%E9%97%A8/">
+
+
+
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"Reids","comments":true,"permalink":"http://yoursite-url/Reids/Redis%E7%9A%84%E5%85%A5%E9%97%A8/","path":"Reids/Redis的入门/","title":"Redis的入门"}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title>Redis的入门 | Study Node</title>
+  
+
+
+
+
+  <noscript>
+    <link rel="stylesheet" href="/css/noscript.css">
+  </noscript>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="Toggle navigation bar" role="button">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <h1 class="site-title">Study Node</h1>
+      <i class="logo-line"></i>
+    </a>
+      <p class="site-subtitle" itemprop="description">True mastery of any skill takes a lifetime</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu">
+        <li class="menu-item menu-item-home"><a href="/" rel="section"><i class="fa fa-home fa-fw"></i>Home</a></li>
+        <li class="menu-item menu-item-tags"><a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>Tags</a></li>
+        <li class="menu-item menu-item-categories"><a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>Categories</a></li>
+        <li class="menu-item menu-item-archives"><a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>Archives</a></li>
+  </ul>
+</nav>
+
+
+
+
+</div>
+        
+  
+  <div class="toggle sidebar-toggle" role="button">
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+  </div>
+
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          Table of Contents
+        </li>
+        <li class="sidebar-nav-overview">
+          Overview
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#Redis%E5%85%A5%E9%97%A8"><span class="nav-number">1.</span> <span class="nav-text">Redis入门</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%A6%82%E8%BF%B0"><span class="nav-number">1.1.</span> <span class="nav-text">概述</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Linux%E5%AE%89%E8%A3%85"><span class="nav-number">1.2.</span> <span class="nav-text">Linux安装</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%9F%BA%E7%A1%80%E7%9F%A5%E8%AF%86"><span class="nav-number">1.3.</span> <span class="nav-text">基础知识</span></a></li></ol></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-author site-overview-item animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="Hao"
+      src="https://nodeandimg.oss-cn-wulanchabu.aliyuncs.com/}VRZRM08TG_W9[WMAD}69[O.png">
+  <p class="site-author-name" itemprop="name">Hao</p>
+  <div class="site-description" itemprop="description">It's an IT blog...</div>
+</div>
+<div class="site-state-wrap site-overview-item animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        <a href="/archives/">
+          <span class="site-state-item-count">45</span>
+          <span class="site-state-item-name">posts</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+          <a href="/categories/">
+        <span class="site-state-item-count">11</span>
+        <span class="site-state-item-name">categories</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+          <a href="/tags/">
+        <span class="site-state-item-count">10</span>
+        <span class="site-state-item-name">tags</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author site-overview-item animated">
+      <span class="links-of-author-item">
+        <a href="https://github.com/byteflow666" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;byteflow666" rel="noopener" target="_blank">GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="https://mail.qq.com/cgi-bin/frame_html?sid=1aPXzaqY4yWqbjhZ&r=98902ddef6ed390980f08fe54374e19b" title="E-Mail → https:&#x2F;&#x2F;mail.qq.com&#x2F;cgi-bin&#x2F;frame_html?sid&#x3D;1aPXzaqY4yWqbjhZ&amp;r&#x3D;98902ddef6ed390980f08fe54374e19b" rel="noopener" target="_blank">E-Mail</a>
+      </span>
+  </div>
+
+
+
+        </div>
+      </div>
+    </div>
+  </aside>
+  <div class="sidebar-dimmer"></div>
+
+
+    </header>
+
+    
+  <div class="back-to-top" role="button" aria-label="Back to top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="Reids">
+    <link itemprop="mainEntityOfPage" href="http://yoursite-url/Reids/Redis%E7%9A%84%E5%85%A5%E9%97%A8/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="https://nodeandimg.oss-cn-wulanchabu.aliyuncs.com/}VRZRM08TG_W9[WMAD}69[O.png">
+      <meta itemprop="name" content="Hao">
+      <meta itemprop="description" content="It's an IT blog...">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Study Node">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          Redis的入门
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">Posted on</span>
+
+      <time title="Created: 2022-03-17 21:30:48" itemprop="dateCreated datePublished" datetime="2022-03-17T21:30:48+08:00">2022-03-17</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">In</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/NoSQL/" itemprop="url" rel="index"><span itemprop="name">NoSQL</span></a>
+        </span>
+          , 
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/NoSQL/Redis/" itemprop="url" rel="index"><span itemprop="name">Redis</span></a>
+        </span>
+    </span>
+
+  
+    <span class="post-meta-item" title="Views" id="busuanzi_container_page_pv">
+      <span class="post-meta-item-icon">
+        <i class="far fa-eye"></i>
+      </span>
+      <span class="post-meta-item-text">Views: </span>
+      <span id="busuanzi_value_page_pv"></span>
+    </span>
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+        <p>近期写一点Redis的笔记 不过就写重点的 然后写一些面试总结把</p>
+<p>这一篇讲Redis的在Linux下的安装以及Redis概述</p>
+<h1 id="Redis入门"><a href="#Redis入门" class="headerlink" title="Redis入门"></a>Redis入门</h1><h2 id="概述"><a href="#概述" class="headerlink" title="概述"></a>概述</h2><blockquote>
+<p>Redis是什么？</p>
+</blockquote>
+<p>Redis（Remote Dictionary Server )，即远程字典服务。</p>
+<p>是一个开源的使用ANSI C语言编写、支持网络、可基于内存亦可持久化的日志型、Key-Value数据库，并提供多种语言的API。</p>
+<p>与memcached一样，为了保证效率，数据都是缓存在内存中。区别的是redis会周期性的把更新的数据写入磁盘或者把修改操作写入追加的记录文件，并且在此基础上实现了master-slave(主从)同步。</p>
+<blockquote>
+<p>Redis能该干什么？</p>
+</blockquote>
+<ol>
+<li>内存存储、持久化，内存是断电即失的，所以需要持久化（RDB、AOF）</li>
+<li>高效率、用于高速缓冲</li>
+<li>发布订阅系统</li>
+<li>地图信息分析</li>
+<li>计时器、计数器(eg：浏览量)</li>
+</ol>
+<blockquote>
+<p>特性</p>
+</blockquote>
+<ol>
+<li>多样的数据类型</li>
+<li>持久化</li>
+<li>集群</li>
+<li>事务</li>
+</ol>
+<p>…</p>
+<h2 id="Linux安装"><a href="#Linux安装" class="headerlink" title="Linux安装"></a>Linux安装</h2><ol>
+<li>下载安装包！<code>redis-5.0.8.tar.gz</code></li>
+<li>解压Redis的安装包！程序一般放在 <code>/opt</code> 目录下</li>
+</ol>
+<p><img src="https://nodeandimg.oss-cn-wulanchabu.aliyuncs.com/1231asdasdasda.png"></p>
+<p>3.基本环境安装</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">yum install gcc-c++</span><br><span class="line"><span class="comment"># 然后进入redis目录下执行</span></span><br><span class="line">make</span><br><span class="line"><span class="comment"># 然后执行</span></span><br><span class="line">make install</span><br></pre></td></tr></table></figure>
+
+<p>4.redis默认安装路径 <code>/usr/local/bin</code></p>
+<p><img src="https://nodeandimg.oss-cn-wulanchabu.aliyuncs.com/3DM]BYGHCM6SDBU4EFX.png"></p>
+<p>5.将redis的配置文件复制到 程序安装目录 <code>/usr/local/bin/kconfig</code>下</p>
+<p><img src="https://nodeandimg.oss-cn-wulanchabu.aliyuncs.com/VEONLASUQHJTNCCCU.png"></p>
+<p>6.redis默认不是后台启动的，需要修改配置文件！</p>
+<p><img src="https://nodeandimg.oss-cn-wulanchabu.aliyuncs.com/VMRSWAHV1NH48S303.png"></p>
+<p>7.通过制定的配置文件启动redis服务</p>
+<p><img src="https://nodeandimg.oss-cn-wulanchabu.aliyuncs.com/VUDE3K37GCBBXDS0M7A.png"></p>
+<p>8.使用redis-cli连接指定的端口号测试，Redis的默认端口6379</p>
+<p><img src="https://nodeandimg.oss-cn-wulanchabu.aliyuncs.com/51QYTDKMRVIPM3TKXB.png"></p>
+<p>9.查看redis进程是否开启</p>
+<p><img src="https://nodeandimg.oss-cn-wulanchabu.aliyuncs.com/1Q24LG6JZNC8IV0.png"></p>
+<p>10.关闭Redis服务 <code>shutdown</code></p>
+<p><img src="https://nodeandimg.oss-cn-wulanchabu.aliyuncs.com/FG45C2O6SNFX5KBQ6C.png"></p>
+<p>11.再次查看进程是否存在</p>
+<p>12.后面我们会使用单机多Redis启动集群测试</p>
+<h2 id="基础知识"><a href="#基础知识" class="headerlink" title="基础知识"></a>基础知识</h2><blockquote>
+<p>redis默认有16个数据库</p>
+</blockquote>
+<p><img src="https://nodeandimg.oss-cn-wulanchabu.aliyuncs.com/M740JI2C4MI5RKLC.png"></p>
+<p>默认使用的第0个;</p>
+<p>16个数据库为：DB 0~DB 15<br>默认使用DB 0 ，可以使用<code>select n</code>切换到DB n，<code>dbsize</code>可以查看当前数据库的大小，与key数量相关。</p>
+<figure class="highlight accesslog"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br></pre></td><td class="code"><pre><span class="line"><span class="number">127.0.0.1:6379</span>&gt; config get databases # 命令行查看数据库数量databases</span><br><span class="line"><span class="number">1</span>) <span class="string">&quot;databases&quot;</span></span><br><span class="line"><span class="number">2</span>) <span class="string">&quot;16&quot;</span></span><br><span class="line"></span><br><span class="line"><span class="number">127.0.0.1:6379</span>&gt; select <span class="number">8</span> # 切换数据库 DB <span class="number">8</span></span><br><span class="line">OK</span><br><span class="line"><span class="number">127.0.0.1:6379</span><span class="string">[8]</span>&gt; dbsize # 查看数据库大小</span><br><span class="line">(integer) <span class="number">0</span></span><br><span class="line"></span><br><span class="line"># 不同数据库之间 数据是不能互通的，并且dbsize 是根据库中key的个数。</span><br><span class="line"><span class="number">127.0.0.1:6379</span>&gt; set name sakura </span><br><span class="line">OK</span><br><span class="line"><span class="number">127.0.0.1:6379</span>&gt; SELECT <span class="number">8</span></span><br><span class="line">OK</span><br><span class="line"><span class="number">127.0.0.1:6379</span><span class="string">[8]</span>&gt; get name # db8中并不能获取db0中的键值对。</span><br><span class="line">(nil)</span><br><span class="line"><span class="number">127.0.0.1:6379</span><span class="string">[8]</span>&gt; DBSIZE</span><br><span class="line">(integer) <span class="number">0</span></span><br><span class="line"><span class="number">127.0.0.1:6379</span><span class="string">[8]</span>&gt; SELECT <span class="number">0</span></span><br><span class="line">OK</span><br><span class="line"><span class="number">127.0.0.1:6379</span>&gt; keys *</span><br><span class="line"><span class="number">1</span>) <span class="string">&quot;counter:__rand_int__&quot;</span></span><br><span class="line"><span class="number">2</span>) <span class="string">&quot;mylist&quot;</span></span><br><span class="line"><span class="number">3</span>) <span class="string">&quot;name&quot;</span></span><br><span class="line"><span class="number">4</span>) <span class="string">&quot;key:__rand_int__&quot;</span></span><br><span class="line"><span class="number">5</span>) <span class="string">&quot;myset:__rand_int__&quot;</span></span><br><span class="line"><span class="number">127.0.0.1:6379</span>&gt; DBSIZE # size和key个数相关</span><br><span class="line">(integer) <span class="number">5</span></span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<p><code>keys *</code> ：查看当前数据库中所有的key。</p>
+<p><code>flushdb</code>：清空当前数据库中的键值对。</p>
+<p><code>flushall</code>：清空所有数据库的键值对。</p>
+<blockquote>
+<p><strong>Redis是单线程的，Redis是基于内存操作的。</strong></p>
+</blockquote>
+<p>所以Redis的性能瓶颈不是CPU,而是机器内存和网络带宽。</p>
+<p>那么为什么Redis的速度如此快呢，性能这么高呢？QPS达到10W+</p>
+<blockquote>
+<p><strong>Redis为什么单线程还这么快？</strong></p>
+</blockquote>
+<p>误区1：高性能的服务器一定是多线程的？<br>误区2：多线程（CPU上下文会切换！）一定比单线程效率高！<br>核心：Redis是将所有的数据放在内存中的，所以说使用单线程去操作效率就是最高的，多线程（CPU上下文会切换：耗时的操作！），对于内存系统来说，如果没有上下文切换效率就是最高的，多次读写都是在一个CPU上的，在内存存储数据情况下，单线程就是最佳的方案。<br>8544</p>
+
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/NoSQL/" rel="tag"># NoSQL</a>
+              <a href="/tags/Redis/" rel="tag"># Redis</a>
+          </div>
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/%E9%9D%A2%E8%AF%95/%E9%9D%A2%E8%AF%95%E6%80%BB%E7%BB%93-md/" rel="prev" title="面试总结.md">
+                  <i class="fa fa-chevron-left"></i> 面试总结.md
+                </a>
+            </div>
+            <div class="post-nav-item">
+                <a href="/Reids/%E4%BA%94%E5%A4%A7%E6%95%B0%E6%8D%AE%E7%B1%BB%E5%9E%8B/" rel="next" title="Redis数据类型">
+                  Redis数据类型 <i class="fa fa-chevron-right"></i>
+                </a>
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+
+<div class="copyright">
+  &copy; 
+  <span itemprop="copyrightYear">2022</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Hao</span>
+</div>
+<div class="busuanzi-count">
+    <span class="post-meta-item" id="busuanzi_container_site_uv">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-user"></i>
+      </span>
+      <span class="site-uv" title="Total Visitors">
+        <span id="busuanzi_value_site_uv"></span>
+      </span>
+    </span>
+    <span class="post-meta-item" id="busuanzi_container_site_pv">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-eye"></i>
+      </span>
+      <span class="site-pv" title="Total Views">
+        <span id="busuanzi_value_site_pv"></span>
+      </span>
+    </span>
+</div>
+  <div class="powered-by">Powered by <a href="https://hexo.io/" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/" rel="noopener" target="_blank">NexT.Gemini</a>
+  </div>
+
+    </div>
+  </footer>
+
+  
+  <script src="https://cdn.jsdelivr.net/npm/animejs@3.2.1/lib/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous"></script>
+<script src="/js/comments.js"></script><script src="/js/utils.js"></script><script src="/js/motion.js"></script><script src="/js/next-boot.js"></script>
+
+  
+
+
+
+
+  <script src="/js/third-party/pace.js"></script>
+
+  
+  <script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+
+
+
+
+</body>
+</html>
