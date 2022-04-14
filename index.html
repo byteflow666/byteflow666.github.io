@@ -133,7 +133,7 @@
   <nav class="site-state">
       <div class="site-state-item site-state-posts">
         <a href="/archives/">
-          <span class="site-state-item-count">67</span>
+          <span class="site-state-item-count">69</span>
           <span class="site-state-item-name">posts</span>
         </a>
       </div>
@@ -181,6 +181,293 @@
 
 
     <div class="main-inner index posts-expand">
+
+    
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="设计模式">
+    <link itemprop="mainEntityOfPage" href="http://yoursite-url/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F/%E8%A1%8C%E4%B8%BA%E5%9E%8B%E6%A8%A1%E5%BC%8F-%E4%B8%AD%E4%BB%8B%E8%80%85%E6%A8%A1%E5%BC%8F/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="https://nodeandimg.oss-cn-wulanchabu.aliyuncs.com/}VRZRM08TG_W9[WMAD}69[O.png">
+      <meta itemprop="name" content="Hao">
+      <meta itemprop="description" content="It's an IT blog...">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Study Node">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          <a href="/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F/%E8%A1%8C%E4%B8%BA%E5%9E%8B%E6%A8%A1%E5%BC%8F-%E4%B8%AD%E4%BB%8B%E8%80%85%E6%A8%A1%E5%BC%8F/" class="post-title-link" itemprop="url">行为型模式 - 中介者模式</a>
+        </h2>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">Posted on</span>
+
+      <time title="Created: 2022-04-14 19:00:59" itemprop="dateCreated datePublished" datetime="2022-04-14T19:00:59+08:00">2022-04-14</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">In</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F/" itemprop="url" rel="index"><span itemprop="name">设计模式</span></a>
+        </span>
+          , 
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F/%E7%BC%96%E7%A8%8B%E6%80%9D%E6%83%B3/" itemprop="url" rel="index"><span itemprop="name">编程思想</span></a>
+        </span>
+    </span>
+
+  
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+          <h1 id="中介者模式"><a href="#中介者模式" class="headerlink" title="中介者模式"></a>中介者模式</h1><h2 id="概述"><a href="#概述" class="headerlink" title="概述"></a>概述</h2><p>一般来说，同事类之间的关系是比较复杂的，多个同事类之间互相关联时，他们之间的关系会呈现为复杂的网状结构，这是一种过度耦合的架构，既不利于类的复用，也不稳定。例如在下左图中，有六个同事类对象，假如对象 1 发生变化，那么将会有 4 个对象受到影响。如果对象 2 发生变化，那么将会有 5 个对象受到影响。也就是说，同事类之间直接关联的设计是不好的。</p>
+<p>如果引入中介者模式，那么同事类之间的关系将变为星型结构，从下右图中可以看到，任何一个类的变动，只会影响的类本身，以及中介者，这样就减小了系统的耦合。一个好的设计，必定不会把所有的对象关系处理逻辑封装在本类中，而是使用一个专门的类来管理那些不属于自己的行为。</p>
+<p><img src="https://nodeandimg.oss-cn-wulanchabu.aliyuncs.com/FTTIGJEJC6LRRPOGH.png"></p>
+<p><strong>中介者模式</strong>：又叫调停模式，定义一个中介角色来封装一系列对象之间的交互，使原有对象之间的耦合松散，且可以独立地改变它们之间的交互。</p>
+<h2 id="结构"><a href="#结构" class="headerlink" title="结构"></a>结构</h2><p>中介者模式包含以下主要角色：</p>
+<ul>
+<li>Mediator：抽象中介者角色，它是中介者的接口，提供了同事对象注册与转发同事对象信息的抽象方法。</li>
+<li>ConcreteMediator：具体中介者角色，实现中介者接口，定义一个 List 来管理同事对象，协调各个同事角色之间的交互关系，因此它依赖于同事角色。</li>
+<li>Colleague：抽象同事类角色，定义同事类的接口，保存中介者对象，提供同事对象交互的抽象方法，实现所有相互影响的同事类的公共功能。</li>
+<li>Concrete Colleague：具体同事类角色，是抽象同事类的实现者，当需要与其他同事对象交互时，由中介者对象负责后续的交互。</li>
+</ul>
+<h2 id="案例实现"><a href="#案例实现" class="headerlink" title="案例实现"></a>案例实现</h2><p>【例】租房</p>
+<p>现在租房基本都是通过房屋中介，房主将房屋托管给房屋中介，而租房者从房屋中介获取房屋信息。房屋中介充当租房者与房屋所有者之间的中介者。</p>
+<p><img src="https://nodeandimg.oss-cn-wulanchabu.aliyuncs.com/DA0APSJ1DET_9OFC.png"></p>
+<p><strong>抽象中介者类</strong>：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">abstract</span> <span class="class"><span class="keyword">class</span> <span class="title">Mediator</span> </span>&#123;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">abstract</span> <span class="keyword">void</span> <span class="title">contact</span><span class="params">(String message, Person person)</span></span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p><strong>抽象同事类</strong>：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@AllArgsConstructor</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">abstract</span> <span class="class"><span class="keyword">class</span> <span class="title">Person</span> </span>&#123;</span><br><span class="line">    <span class="keyword">protected</span> String name;</span><br><span class="line">    <span class="keyword">protected</span> Mediator mediator;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p><strong>具体同事类：</strong>房主、房客</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * 具体的同事角色类 - 房主</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">HouseOwner</span> <span class="keyword">extends</span> <span class="title">Person</span> </span>&#123;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="title">HouseOwner</span><span class="params">(String name, Mediator mediator)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">super</span>(name, mediator);</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="comment">// 和中介联系（沟通）</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">contact</span><span class="params">(String message)</span> </span>&#123;</span><br><span class="line">        mediator.contact(message,<span class="keyword">this</span>);</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="comment">// 获取信息</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">getMessage</span><span class="params">(String message)</span> </span>&#123;</span><br><span class="line">        System.out.println(<span class="string">&quot;房主&quot;</span> + name + <span class="string">&quot;获取到的信息是：&quot;</span> + message);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * 具体的同事角色类 - 房客</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">Tenant</span> <span class="keyword">extends</span> <span class="title">Person</span> </span>&#123;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="title">Tenant</span><span class="params">(String name, Mediator mediator)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">super</span>(name, mediator);</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="comment">// 和中介联系（沟通）</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">contact</span><span class="params">(String message)</span> </span>&#123;</span><br><span class="line">        mediator.contact(message,<span class="keyword">this</span>);</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="comment">// 获取信息</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">getMessage</span><span class="params">(String message)</span> </span>&#123;</span><br><span class="line">        System.out.println(<span class="string">&quot;租房者&quot;</span> + name + <span class="string">&quot;获取到的信息是：&quot;</span> + message);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<p><strong>具体中介者角色</strong>：中介机构</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Data</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">MediatorStructure</span> <span class="keyword">extends</span> <span class="title">Mediator</span> </span>&#123;</span><br><span class="line">    <span class="comment">// 聚合房主和房客对象</span></span><br><span class="line">    <span class="keyword">private</span> HouseOwner houseOwner;</span><br><span class="line">    <span class="keyword">private</span> Tenant tenant;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">contact</span><span class="params">(String message, Person person)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">if</span> (person == houseOwner) &#123;</span><br><span class="line">            tenant.getMessage(message);</span><br><span class="line">        &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">            houseOwner.getMessage(message);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<p>测试类：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">Client</span> </span>&#123;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> </span>&#123;</span><br><span class="line">        <span class="comment">// 中介者对象</span></span><br><span class="line">        MediatorStructure mediator = <span class="keyword">new</span> MediatorStructure();</span><br><span class="line">        <span class="comment">// 租房者对象</span></span><br><span class="line">        Tenant tenant = <span class="keyword">new</span> Tenant(<span class="string">&quot;李四&quot;</span>, mediator);</span><br><span class="line">        <span class="comment">// 房主对象</span></span><br><span class="line">        HouseOwner houseOwner = <span class="keyword">new</span> HouseOwner(<span class="string">&quot;张三&quot;</span>, mediator);</span><br><span class="line"></span><br><span class="line">        <span class="comment">// 中介者要知道具体的房主和租房者</span></span><br><span class="line">        mediator.setTenant(tenant);</span><br><span class="line">        mediator.setHouseOwner(houseOwner);</span><br><span class="line"></span><br><span class="line">        tenant.contact(<span class="string">&quot;我要租三室的房子！！！&quot;</span>);</span><br><span class="line">        houseOwner.contact(<span class="string">&quot;我这里有三室的房子，你要租吗？&quot;</span>);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">房主张三获取到的信息是：我要租三室的房子！！！</span><br><span class="line">租房者李四获取到的信息是：我这里有三室的房子，你要租吗？</span><br></pre></td></tr></table></figure>
+
+<h2 id="优缺点"><a href="#优缺点" class="headerlink" title="优缺点"></a>优缺点</h2><p>优点：</p>
+<ul>
+<li>松散耦合</li>
+</ul>
+<p>中介者模式通过把多个同事对象之间的交互封装到中介者对象里面，从而使得同事对象之间松散耦合，基本上可以做到互补依赖。这样一来，同事对象就可以独立地变化和复用，而不再像以前那样 “牵一处而动全身” 了。</p>
+<ul>
+<li>集中控制交互</li>
+</ul>
+<p>多个同事对象的交互，被封装在中介者对象里面集中管理，使得这些交互行为发生变化的时候，只需要修改中介者对象就可以了，当然如果是已经做好的系统，那么就扩展中介者对象，而各个同事类不需要做修改。</p>
+<ul>
+<li>一对多关联转变为一对一的关联</li>
+</ul>
+<p>没有使用中介者模式的时候，同事对象之间的关系通常是一对多的，引入中介者对象以后，中介者对象和同事对象的关系通常变成双向的一对一，这会让对象的关系更容易理解和实现。</p>
+<p><strong>缺点：</strong></p>
+<ul>
+<li>当同事类太多时，中介者的职责将很大，它会变得复杂而庞大，以至于系统难以维护。</li>
+</ul>
+<h2 id="使用场景"><a href="#使用场景" class="headerlink" title="使用场景"></a>使用场景</h2><ul>
+<li>系统中对象之间存在复杂的引用关系，系统结构混乱且难以理解。</li>
+<li>当想创建一个运行于多个类之间的对象，又不想生成新的子类时。</li>
+</ul>
+
+      
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+</div>
+
+
+
+
+    
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="设计模式">
+    <link itemprop="mainEntityOfPage" href="http://yoursite-url/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F/%E8%A1%8C%E4%B8%BA%E5%9E%8B%E6%A8%A1%E5%BC%8F-%E8%A7%82%E5%AF%9F%E8%80%85%E6%A8%A1%E5%BC%8F/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="https://nodeandimg.oss-cn-wulanchabu.aliyuncs.com/}VRZRM08TG_W9[WMAD}69[O.png">
+      <meta itemprop="name" content="Hao">
+      <meta itemprop="description" content="It's an IT blog...">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Study Node">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          <a href="/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F/%E8%A1%8C%E4%B8%BA%E5%9E%8B%E6%A8%A1%E5%BC%8F-%E8%A7%82%E5%AF%9F%E8%80%85%E6%A8%A1%E5%BC%8F/" class="post-title-link" itemprop="url">行为型模式 - 观察者模式</a>
+        </h2>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">Posted on</span>
+
+      <time title="Created: 2022-04-14 18:43:29" itemprop="dateCreated datePublished" datetime="2022-04-14T18:43:29+08:00">2022-04-14</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">In</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F/" itemprop="url" rel="index"><span itemprop="name">设计模式</span></a>
+        </span>
+          , 
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F/%E7%BC%96%E7%A8%8B%E6%80%9D%E6%83%B3/" itemprop="url" rel="index"><span itemprop="name">编程思想</span></a>
+        </span>
+    </span>
+
+  
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+          <p>行为型模式用于描述程序在运行时复杂的流程控制，即描述多个类或对象之间怎样相互协作共同完成单个对象无法单独完成的任务，它涉及算法与对象间职责的分配。行为型模式分为类行为模式和对象行为模式：</p>
+<ul>
+<li><strong>类行为模式</strong>：采用继承机制来在类间分派行为</li>
+<li><strong>对象行为模式</strong>：采用组合或聚合在对象间分配行为</li>
+</ul>
+<p>由于组合关系或聚合关系比继承关系耦合度低，满足 “合成复用原则”，所以对象行为模式比类行为模式具有更大的灵活性。</p>
+<p>行为型模式分为：</p>
+<ul>
+<li>模板方法模式</li>
+<li>策略模式</li>
+<li>命令模式</li>
+<li>职责链模式</li>
+<li>状态模式</li>
+<li>观察者模式</li>
+<li>中介者模式</li>
+<li>迭代器模式</li>
+<li>访问者模式</li>
+<li>备忘录模式</li>
+<li>解释器模式</li>
+</ul>
+<p>以上 11 种行为型模式，除了模板方法模式和解释器模式是类行为型模式，其他的全部属于对象行为型模式。</p>
+<h1 id="观察者模式"><a href="#观察者模式" class="headerlink" title="观察者模式"></a>观察者模式</h1><h2 id="概述"><a href="#概述" class="headerlink" title="概述"></a>概述</h2><p><strong>观察者模式</strong>：又被称为 发布 - 订阅（Publish / Subscribe）模式，它定义了一种一对多的依赖关系，让多个观察者对象同时监听某一个主题对象。这个主题对象在状态变化时，会通知所有的观察者对象，使他们能够自动更新自己。</p>
+<h2 id="结构"><a href="#结构" class="headerlink" title="结构"></a>结构</h2><p>在观察者模式中有如下角色：</p>
+<ul>
+<li>Subject：抽象主题（抽象被观察者），抽象主题角色把所有观察者对象保存在一个集合里，每个主题都可以有任意数量的观察者，抽象主题提供一个接口，可以增加和删除观察者对象。</li>
+<li>ConcreteSubject：具体主题（具体被观察者），该角色将有关状态存入具体观察者对象，在具体主题的内部状态发生改变时，给所有注册过的观察者发送通知。</li>
+<li>Observer：抽象观察者，是观察者的抽象类，它定义了一个更新接口，使得在得到主题更改通知时更新自己。</li>
+<li>ConcrereObserver：具体观察者，实现抽象观察者定义的更新接口，以便在得到主题更改通知时更新自身的状态。</li>
+</ul>
+<h2 id="案例实现"><a href="#案例实现" class="headerlink" title="案例实现"></a>案例实现</h2><p>【例】微信公众号</p>
+<p>在使用微信公众号时，大家都会有这样的体验，当你关注的公众号中有新内容更新的话，它就会推送给关注公众号的微信用户端。我们使用观察者模式来模拟这样的场景，微信用户就是观察者，微信公众号是被观察者，有多个的微信用户关注了程序猿这个公众号。</p>
+<p><img src="https://nodeandimg.oss-cn-wulanchabu.aliyuncs.com/R96OUEBJ29YULI.png"></p>
+<p><strong>抽象观察者</strong>：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">interface</span> <span class="title">Observer</span> </span>&#123;</span><br><span class="line">    <span class="function"><span class="keyword">void</span> <span class="title">update</span><span class="params">(String message)</span></span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p><strong>具体观察者</strong>：微信用户，实现了更新的方法</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">WeiXinUser</span> <span class="keyword">implements</span> <span class="title">Observer</span> </span>&#123;</span><br><span class="line">    <span class="keyword">private</span> String name;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="title">WeiXinUser</span><span class="params">(String name)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">this</span>.name = name;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">update</span><span class="params">(String message)</span> </span>&#123;</span><br><span class="line">        System.out.println(name + <span class="string">&quot;-&quot;</span> + message);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p><strong>抽象主题角色</strong>：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">interface</span> <span class="title">Subject</span> </span>&#123;</span><br><span class="line">    <span class="comment">// 添加订阅者（添加观察者对象）</span></span><br><span class="line">    <span class="function"><span class="keyword">void</span> <span class="title">attach</span><span class="params">(Observer observer)</span></span>;</span><br><span class="line">    <span class="comment">// 删除订阅者</span></span><br><span class="line">    <span class="function"><span class="keyword">void</span> <span class="title">detach</span><span class="params">(Observer observer)</span></span>;</span><br><span class="line">    <span class="comment">// 通知订阅者更新消息</span></span><br><span class="line">    <span class="function"><span class="keyword">void</span> <span class="title">notify</span><span class="params">(String message)</span></span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p><strong>具体主题角色</strong>：微信公众号，里面存储了订阅该公众号的微信用户，并实现了抽象主题中的方法</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">SubscriptionSubject</span> <span class="keyword">implements</span> <span class="title">Subject</span> </span>&#123;</span><br><span class="line">    <span class="comment">// 定义一个集合，用来存储多个观察者对象</span></span><br><span class="line">    <span class="keyword">private</span> List&lt;Observer&gt; weiXinUserList = <span class="keyword">new</span> ArrayList&lt;&gt;();</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">attach</span><span class="params">(Observer observer)</span> </span>&#123;</span><br><span class="line">        weiXinUserList.add(observer);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">detach</span><span class="params">(Observer observer)</span> </span>&#123;</span><br><span class="line">        weiXinUserList.remove(observer);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">notify</span><span class="params">(String message)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">for</span> (Observer observer : weiXinUserList) &#123;</span><br><span class="line">            <span class="comment">// 调用观察者对象中的update方法</span></span><br><span class="line">            observer.update(message);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>测试类：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">Client</span> </span>&#123;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> </span>&#123;</span><br><span class="line">        <span class="comment">// 1,创建公众号对象</span></span><br><span class="line">        SubscriptionSubject subject = <span class="keyword">new</span> SubscriptionSubject();</span><br><span class="line">        <span class="comment">// 2,订阅公众号</span></span><br><span class="line">        subject.attach(<span class="keyword">new</span> WeiXinUser(<span class="string">&quot;孙悟空&quot;</span>));</span><br><span class="line">        subject.attach(<span class="keyword">new</span> WeiXinUser(<span class="string">&quot;猪悟能&quot;</span>));</span><br><span class="line">        subject.attach(<span class="keyword">new</span> WeiXinUser(<span class="string">&quot;沙悟净&quot;</span>));</span><br><span class="line">        <span class="comment">// 3,公众号更新，发出消息给订阅者（观察者对象）</span></span><br><span class="line">        subject.notify(<span class="string">&quot;传智黑马的专栏更新了！&quot;</span>);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">孙悟空-传智黑马的专栏更新了！</span><br><span class="line">猪悟能-传智黑马的专栏更新了！</span><br><span class="line">沙悟净-传智黑马的专栏更新了！</span><br></pre></td></tr></table></figure>
+
+<h2 id="优缺点"><a href="#优缺点" class="headerlink" title="优缺点"></a>优缺点</h2><p><strong>优点：</strong></p>
+<ul>
+<li>降低了目标与观察者之间的耦合关系，两者之间是抽象耦合关系。</li>
+<li>被观察者发送通知，所有注册的观察者都会收到信息【可以实现广播机制】。</li>
+</ul>
+<p><strong>缺点：</strong></p>
+<ul>
+<li>如果观察者非常多的话，那么所有的观察者收到被观察者发送的通知会耗时。</li>
+<li>如果被观察者有循环依赖的话，那么被观察者发送通知会使观察者循环调用，会导致系统崩溃。</li>
+</ul>
+<h2 id="使用场景"><a href="#使用场景" class="headerlink" title="使用场景"></a>使用场景</h2><ul>
+<li>对象间存在一对多关系，一个对象的状态发生改变会影响其他对象。</li>
+<li>当一个抽象模型有两个方面，其中一个方面依赖于另一方面时。</li>
+</ul>
+<h2 id="JDK-提供的实现-Observable"><a href="#JDK-提供的实现-Observable" class="headerlink" title="JDK 提供的实现 - Observable"></a>JDK 提供的实现 - Observable</h2><p>该类在 JDK9 中被弃用</p>
+<p>在 Java 中，通过 java.util.Observable 类和 java.util.Observer 接口定义了观察者模式，只要实现它们的子类就可以编写观察者模式实例。</p>
+<p>Observable 类：抽象目标类（被观察者），它有一个 Vector 集合成员变量，用于保存所有要通知的观察者对象。</p>
+<ul>
+<li>void addObserver(Observer o) 方法：用于将新的观察者对象添加到集合中。</li>
+<li>void notifyObservers(Object arg) 方法：调用集合中的所有观察者对象的 update方法，通知它们数据发生改变。通常越晚加入集合的观察者越先得到通知。</li>
+<li>void setChange() 方法：用来设置一个 boolean 类型的内部标志，注明目标对象发生了变化。当它为 true 时，notifyObservers() 才会通知观察者。</li>
+</ul>
+<p>Observer 接口：抽象观察者，它监视目标对象的变化，当目标对象发生变化时，观察者得到通知，并调用 update 方法，进行相应的工作。</p>
+<p>示例<br>【例】警察抓小偷</p>
+<p>警察抓小偷也可以使用观察者模式来实现，警察是观察者，小偷是被观察者。</p>
+<p>小偷是一个被观察者，所以需要继承 Observable 类：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Data</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">Thief</span> <span class="keyword">extends</span> <span class="title">Observable</span> </span>&#123;</span><br><span class="line">    <span class="keyword">private</span> String name;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="title">Thief</span><span class="params">(String name)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">this</span>.name = name;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">steal</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        System.out.println(<span class="string">&quot;小偷：我偷东西了，有没有人来抓我！！！&quot;</span>);</span><br><span class="line">        <span class="keyword">super</span>.setChanged(); <span class="comment">// changed  = true</span></span><br><span class="line">        <span class="keyword">super</span>.notifyObservers();</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<p>警察是一个观察者，所以需要让其实现 Observer 接口：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Data</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">Policemen</span> <span class="keyword">implements</span> <span class="title">Observer</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">private</span> String name;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="title">Policemen</span><span class="params">(String name)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">this</span>.name = name;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">update</span><span class="params">(Observable o, Object arg)</span> </span>&#123;</span><br><span class="line">        System.out.println(<span class="string">&quot;警察：&quot;</span> + ((Thief) o).getName() + <span class="string">&quot;，我已经盯你很久了！！！&quot;</span>);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>客户端：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">Client</span> </span>&#123;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> </span>&#123;</span><br><span class="line">        <span class="comment">// 创建小偷对象</span></span><br><span class="line">        Thief t = <span class="keyword">new</span> Thief(<span class="string">&quot;隔壁老王&quot;</span>);</span><br><span class="line">        <span class="comment">// 创建警察对象</span></span><br><span class="line">        Policemen p = <span class="keyword">new</span> Policemen(<span class="string">&quot;小李&quot;</span>);</span><br><span class="line">        <span class="comment">// 让警察盯着小偷</span></span><br><span class="line">        t.addObserver(p);</span><br><span class="line">        <span class="comment">// 小偷偷东西</span></span><br><span class="line">        t.steal();</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+
+      
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+</div>
+
+
+
 
     
 
@@ -1362,311 +1649,6 @@
 <p><img src="https://nodeandimg.oss-cn-wulanchabu.aliyuncs.com/OURH5ALSLPEHIJJHV9JL.png"></p>
 <p>为什么在此处使用外观模式？</p>
 <p>定义 RequestFacade 类，实现 ServletRequest ，同时定义私有成员变量 Request ，并且方法的实现调用 Request 的实现。然后将 RequestFacade 上转为 ServletRequest 传给 servlet 的 service 方法，这样即使在 servlet 中被下转为 RequestFacade ，也不能访问私有成员变量对象中的方法。既用了 Request，又防止其中方法被不合理的访问。</p>
-
-      
-    </div>
-
-    
-    
-    
-
-    <footer class="post-footer">
-        <div class="post-eof"></div>
-      
-    </footer>
-  </article>
-</div>
-
-
-
-
-    
-
-
-<div class="post-block">
-  
-  
-
-  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="设计模式">
-    <link itemprop="mainEntityOfPage" href="http://yoursite-url/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F/%E7%BB%93%E6%9E%84%E5%9E%8B%E6%A8%A1%E5%BC%8F-%E6%A1%A5%E6%8E%A5%E6%A8%A1%E5%BC%8F/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="https://nodeandimg.oss-cn-wulanchabu.aliyuncs.com/}VRZRM08TG_W9[WMAD}69[O.png">
-      <meta itemprop="name" content="Hao">
-      <meta itemprop="description" content="It's an IT blog...">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Study Node">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          <a href="/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F/%E7%BB%93%E6%9E%84%E5%9E%8B%E6%A8%A1%E5%BC%8F-%E6%A1%A5%E6%8E%A5%E6%A8%A1%E5%BC%8F/" class="post-title-link" itemprop="url">结构型模式 - 桥接模式</a>
-        </h2>
-
-        <div class="post-meta-container">
-          <div class="post-meta">
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-calendar"></i>
-      </span>
-      <span class="post-meta-item-text">Posted on</span>
-
-      <time title="Created: 2022-04-04 21:41:48" itemprop="dateCreated datePublished" datetime="2022-04-04T21:41:48+08:00">2022-04-04</time>
-    </span>
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-folder"></i>
-      </span>
-      <span class="post-meta-item-text">In</span>
-        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-          <a href="/categories/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F/" itemprop="url" rel="index"><span itemprop="name">设计模式</span></a>
-        </span>
-          , 
-        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-          <a href="/categories/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F/%E7%BC%96%E7%A8%8B%E6%80%9D%E6%83%B3/" itemprop="url" rel="index"><span itemprop="name">编程思想</span></a>
-        </span>
-    </span>
-
-  
-</div>
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-          <p>结构型模式描述如何将类或对象按某种布局组成更大的结构，有以下两种：</p>
-<ul>
-<li><strong>类结构型模式</strong>：采用继承机制来组织接口和类。</li>
-<li><strong>对象结构型模式</strong>：釆用组合或聚合来组合对象。</li>
-</ul>
-<p>由于组合关系或聚合关系比继承关系耦合度低，满足 “合成复用原则”，所以对象结构型模式比类结构型模式具有更大的灵活性。</p>
-<p>结构型模式分为以下 7 种：</p>
-<ul>
-<li>代理模式</li>
-<li>适配器模式</li>
-<li>装饰者模式</li>
-<li>桥接模式</li>
-<li>外观模式</li>
-<li>组合模式</li>
-<li>享元模式</li>
-</ul>
-<h1 id="桥接模式"><a href="#桥接模式" class="headerlink" title="桥接模式"></a>桥接模式</h1><h2 id="概述"><a href="#概述" class="headerlink" title="概述"></a>概述</h2><p>现在有一个需求，需要创建不同的图形，并且每个图形都有可能会有不同的颜色。可以利用继承的方式来设计类的关系：</p>
-<p><img src="https://nodeandimg.oss-cn-wulanchabu.aliyuncs.com/F8YGNU6CI2RQ96D.png"></p>
-<p>可以发现有很多的类，假如需要增加一个形状或再增加一种颜色，就需要创建更多的类。</p>
-<p>在一个有多种可能会变化的维度的系统中，用继承方式会造成类爆炸，扩展起来不灵活。每次在一个维度上新增一个具体实现都要增加多个子类。为了更加灵活的设计系统，此时可以考虑使用桥接模式。</p>
-<p>桥接模式：将抽象与实现分离，使它们可以独立变化。它是用组合关系代替继承关系来实现，从而降低了抽象和实现这两个可变维度的耦合度。</p>
-<h2 id="结构"><a href="#结构" class="headerlink" title="结构"></a>结构</h2><p>桥接（Bridge）模式包含以下主要角色：</p>
-<ul>
-<li>抽象化（Abstraction）角色 ：定义抽象类，并包含一个对实现化对象的引用。</li>
-<li>扩展抽象化（Refined Abstraction）角色 ：抽象化角色的子类，实现父类中的业务方法，并通过组合关系调用实现化角色中的业务方法。</li>
-<li>实现化（Implementor）角色 ：定义实现化角色的接口，供扩展抽象化角色调用。</li>
-<li>具体实现化（Concrete Implementor）角色 ：给出实现化角色接口的具体实现。</li>
-</ul>
-<h2 id="案例"><a href="#案例" class="headerlink" title="案例"></a>案例</h2><p>【例】视频播放器</p>
-<p>需要开发一个跨平台视频播放器，可以在不同操作系统平台（Windows、Mac、Linux 等）上播放多种格式的视频文件，常见的视频格式包括 RMVB、AVI、WMV 等，该播放器包含了<strong>两个维度</strong>，适合使用桥接模式。</p>
-<blockquote>
-<p>两个维度是指：不同操作系统、不同的视频格式，这些都有可能任意变化</p>
-</blockquote>
-<p>类图如下：</p>
-<p><img src="https://nodeandimg.oss-cn-wulanchabu.aliyuncs.com/91VC0CTZJCTT9L60O.png"></p>
-<p><strong>实现化角色</strong>：视频文件格式接口</p>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">interface</span> <span class="title">VideoFile</span> </span>&#123;</span><br><span class="line">    <span class="comment">// 解码功能</span></span><br><span class="line">    <span class="function"><span class="keyword">void</span> <span class="title">decode</span><span class="params">(String fileName)</span></span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<p><strong>具体实现化角色</strong>：具体的视频文件类，avi、rmvb 等</p>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">AviFile</span> <span class="keyword">implements</span> <span class="title">VideoFile</span> </span>&#123;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">decode</span><span class="params">(String fileName)</span> </span>&#123;</span><br><span class="line">        System.out.println(<span class="string">&quot;avi视频文件 ：&quot;</span> + fileName);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">RmvbFile</span> <span class="keyword">implements</span> <span class="title">VideoFile</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">decode</span><span class="params">(String fileName)</span> </span>&#123;</span><br><span class="line">        System.out.println(<span class="string">&quot;rmvb视频文件 ：&quot;</span> + fileName);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<p><strong>抽象化角色</strong>：操作系统抽象类</p>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">abstract</span> <span class="class"><span class="keyword">class</span> <span class="title">OperatingSystem</span> </span>&#123;</span><br><span class="line">    <span class="comment">// 声明videFile变量</span></span><br><span class="line">    <span class="keyword">protected</span> VideoFile videoFile;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="title">OperatingSystem</span><span class="params">(VideoFile videoFile)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">this</span>.videoFile = videoFile;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">abstract</span> <span class="keyword">void</span> <span class="title">play</span><span class="params">(String fileName)</span></span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<p><strong>拓展抽象化角色</strong>：Windows、Mac 操作系统</p>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">Windows</span> <span class="keyword">extends</span> <span class="title">OperatingSystem</span> </span>&#123;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="title">Windows</span><span class="params">(VideoFile videoFile)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">super</span>(videoFile);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">play</span><span class="params">(String fileName)</span> </span>&#123;</span><br><span class="line">        videoFile.decode(fileName);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">Mac</span> <span class="keyword">extends</span> <span class="title">OperatingSystem</span> </span>&#123;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="title">Mac</span><span class="params">(VideoFile videoFile)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">super</span>(videoFile);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">play</span><span class="params">(String fileName)</span> </span>&#123;</span><br><span class="line">        videoFile.decode(fileName);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<p>测试类：</p>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">Client</span> </span>&#123;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> </span>&#123;</span><br><span class="line">        <span class="comment">// 创建Mac系统对象</span></span><br><span class="line">        OperatingSystem system = <span class="keyword">new</span> Mac(<span class="keyword">new</span> AviFile());</span><br><span class="line">        <span class="comment">// 使用操作系统播放视频文件</span></span><br><span class="line">        system.play(<span class="string">&quot;战狼3&quot;</span>);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">avi视频文件 ：战狼<span class="number">3</span></span><br></pre></td></tr></table></figure>
-
-<h2 id="使用场景"><a href="#使用场景" class="headerlink" title="使用场景"></a>使用场景</h2><ul>
-<li>当一个类存在两个独立变化的维度，且这两个维度都需要进行扩展时。</li>
-<li>当一个系统不希望使用继承或因为多层次继承导致出现 “类爆炸” 的情况时。</li>
-</ul>
-<blockquote>
-<p><strong>类爆炸</strong>：类的个数急剧增加</p>
-</blockquote>
-<ul>
-<li><p>当一个系统需要在构件的抽象化角色和具体化角色之间增加更多的灵活性时。</p>
-<p>避免在两个层次之间建立静态的继承联系，通过桥接模式可以使它们在抽象层建立一个关联关系。</p>
-</li>
-</ul>
-
-      
-    </div>
-
-    
-    
-    
-
-    <footer class="post-footer">
-        <div class="post-eof"></div>
-      
-    </footer>
-  </article>
-</div>
-
-
-
-
-    
-
-
-<div class="post-block">
-  
-  
-
-  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="设计模式">
-    <link itemprop="mainEntityOfPage" href="http://yoursite-url/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F/%E7%BB%93%E6%9E%84%E5%9E%8B%E6%A8%A1%E5%BC%8F-%E8%A3%85%E9%A5%B0%E8%80%85%E6%A8%A1%E5%BC%8F/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="https://nodeandimg.oss-cn-wulanchabu.aliyuncs.com/}VRZRM08TG_W9[WMAD}69[O.png">
-      <meta itemprop="name" content="Hao">
-      <meta itemprop="description" content="It's an IT blog...">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Study Node">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          <a href="/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F/%E7%BB%93%E6%9E%84%E5%9E%8B%E6%A8%A1%E5%BC%8F-%E8%A3%85%E9%A5%B0%E8%80%85%E6%A8%A1%E5%BC%8F/" class="post-title-link" itemprop="url">结构型模式 - 装饰者模式</a>
-        </h2>
-
-        <div class="post-meta-container">
-          <div class="post-meta">
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-calendar"></i>
-      </span>
-      <span class="post-meta-item-text">Posted on</span>
-
-      <time title="Created: 2022-04-03 19:30:03" itemprop="dateCreated datePublished" datetime="2022-04-03T19:30:03+08:00">2022-04-03</time>
-    </span>
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-folder"></i>
-      </span>
-      <span class="post-meta-item-text">In</span>
-        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-          <a href="/categories/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F/" itemprop="url" rel="index"><span itemprop="name">设计模式</span></a>
-        </span>
-          , 
-        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-          <a href="/categories/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F/%E7%BC%96%E7%A8%8B%E6%80%9D%E6%83%B3/" itemprop="url" rel="index"><span itemprop="name">编程思想</span></a>
-        </span>
-    </span>
-
-  
-</div>
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-          <p>结构型模式描述如何将类或对象按某种布局组成更大的结构，有以下两种：</p>
-<ul>
-<li><strong>类结构型模式</strong>：采用继承机制来组织接口和类。</li>
-<li><strong>对象结构型模式</strong>：釆用组合或聚合来组合对象。</li>
-</ul>
-<p>由于组合关系或聚合关系比继承关系<a target="_blank" rel="noopener" href="https://so.csdn.net/so/search?q=%E8%80%A6%E5%90%88%E5%BA%A6&spm=1001.2101.3001.7020">耦合度</a>低，满足 “合成复用原则”，所以对象结构型模式比类结构型模式具有更大的灵活性。</p>
-<p>结构型模式分为以下 7 种：</p>
-<ul>
-<li>代理模式</li>
-<li>适配器模式</li>
-<li>装饰者模式</li>
-<li>桥接模式</li>
-<li>外观模式</li>
-<li>组合模式</li>
-<li>享元模式</li>
-</ul>
-<h1 id="装饰者模式"><a href="#装饰者模式" class="headerlink" title="装饰者模式"></a>装饰者模式</h1><h2 id="概述"><a href="#概述" class="headerlink" title="概述"></a>概述</h2><p>先来看一个快餐店的例子：快餐店有炒面、炒饭等快餐，可以额外附加鸡蛋、火腿、培根这些配菜，当然加配菜需要额外加钱，每个配菜的价钱通常不太一样，那么计算总价就会显得比较麻烦。下面是使用继承方式的类图：</p>
-<p><img src="https://nodeandimg.oss-cn-wulanchabu.aliyuncs.com/FTF0EPM9IA1WN0.png"></p>
-<p>使用继承的方式存在的问题：</p>
-<ul>
-<li><strong>扩展性不好</strong>：如果要再加一种配料（火腿肠），我们就会发现需要给 FriedRice 和 FriedNoodles 分别定义一个子类。如果要新增一个快餐品类（炒河粉）的话，就需要定义更多的子类。</li>
-<li><strong>产生过多的子类</strong></li>
-</ul>
-<p><strong>装饰者模式：</strong>在不改变现有对象结构的情况下，动态地给该对象增加一些职责（即增加其额外功能）的模式。</p>
-<h2 id="结构"><a href="#结构" class="headerlink" title="结构"></a>结构</h2><p>装饰者（Decorator）模式中的角色：</p>
-<ul>
-<li>抽象构件（Component）角色 ：定义一个抽象接口以规范准备接收附加责任的对象。</li>
-<li>具体构件（Concrete Component）角色 ：实现抽象构件，通过装饰角色为其添加一些职责。</li>
-<li>抽象装饰（Decorator）角色 ： 继承或实现抽象构件，并包含具体构件的实例，可以通过其子类扩展具体构件的功能。</li>
-<li>具体装饰（ConcreteDecorator）角色 ：实现抽象装饰的相关方法，并给具体构件对象添加附加的责任。</li>
-</ul>
-<h2 id="案例"><a href="#案例" class="headerlink" title="案例"></a>案例</h2><p>使用装饰者模式对快餐店案例进行改进，类图如下：</p>
-<p><img src="https://nodeandimg.oss-cn-wulanchabu.aliyuncs.com/Y1FYPAYARROZQJ.png"></p>
-<p><strong>抽象构件角色</strong>：快餐类</p>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Data</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">abstract</span> <span class="class"><span class="keyword">class</span> <span class="title">FastFood</span> </span>&#123;</span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">float</span> price; <span class="comment">// 价格</span></span><br><span class="line">    <span class="keyword">private</span> String desc; <span class="comment">// 描述</span></span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="title">FastFood</span><span class="params">(<span class="keyword">float</span> price, String desc)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">this</span>.price = price;</span><br><span class="line">        <span class="keyword">this</span>.desc = desc;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">abstract</span> <span class="keyword">float</span> <span class="title">cost</span><span class="params">()</span></span>;</span><br><span class="line">&#125;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
-
-<p><strong>具体构件角色</strong>：炒饭类、炒面类</p>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">FriedRice</span> <span class="keyword">extends</span> <span class="title">FastFood</span> </span>&#123;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="title">FriedRice</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        <span class="keyword">super</span>(<span class="number">10</span>, <span class="string">&quot;炒饭&quot;</span>);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">float</span> <span class="title">cost</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        <span class="keyword">return</span> getPrice();</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">FriedNoodles</span> <span class="keyword">extends</span> <span class="title">FastFood</span> </span>&#123;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="title">FriedNoodles</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        <span class="keyword">super</span>(<span class="number">12</span>, <span class="string">&quot;炒面&quot;</span>);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">float</span> <span class="title">cost</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        <span class="keyword">return</span> getPrice();</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<p><strong>抽象装饰者角色</strong>：配料类</p>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Data</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">abstract</span> <span class="class"><span class="keyword">class</span> <span class="title">Garnish</span> <span class="keyword">extends</span> <span class="title">FastFood</span> </span>&#123;</span><br><span class="line">    <span class="comment">// 声明快餐类的变量</span></span><br><span class="line">    <span class="keyword">private</span> FastFood fastFood;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="title">Garnish</span><span class="params">(FastFood fastFood, <span class="keyword">float</span> price, String desc)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">super</span>(price, desc);</span><br><span class="line">        <span class="keyword">this</span>.fastFood = fastFood;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<p><strong>具体装饰者角色</strong>：鸡蛋配料类、培根配料类</p>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">Egg</span> <span class="keyword">extends</span> <span class="title">Garnish</span> </span>&#123;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="title">Egg</span><span class="params">(FastFood fastFood)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">super</span>(fastFood, <span class="number">1</span>, <span class="string">&quot;鸡蛋&quot;</span>);</span><br><span class="line">    &#125;</span><br><span class="line">  </span><br><span class="line">    <span class="comment">// 计算价格</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">float</span> <span class="title">cost</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        <span class="keyword">return</span> getPrice() + getFastFood().cost();</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> String <span class="title">getDesc</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="keyword">super</span>.getDesc() + getFastFood().getDesc();</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">Bacon</span> <span class="keyword">extends</span> <span class="title">Garnish</span> </span>&#123;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="title">Bacon</span><span class="params">(FastFood fastFood)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">super</span>(fastFood, <span class="number">2</span>, <span class="string">&quot;培根&quot;</span>);</span><br><span class="line">    &#125;</span><br><span class="line">	</span><br><span class="line">  	<span class="comment">// 计算价格</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">float</span> <span class="title">cost</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        <span class="keyword">return</span> getPrice() + getFastFood().cost();</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> String <span class="title">getDesc</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="keyword">super</span>.getDesc() + getFastFood().getDesc();</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<p>测试类：</p>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">Client</span> </span>&#123;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> </span>&#123;</span><br><span class="line">        <span class="comment">//  点一份炒饭</span></span><br><span class="line">        FastFood food = <span class="keyword">new</span> FriedRice();</span><br><span class="line">        System.out.println(food.getDesc() + <span class="string">&quot;  &quot;</span> + food.cost() + <span class="string">&quot;元&quot;</span>);</span><br><span class="line">        <span class="comment">// 在上面的炒饭中加一个鸡蛋</span></span><br><span class="line">        food = <span class="keyword">new</span> Egg(food);</span><br><span class="line">        System.out.println(food.getDesc() + <span class="string">&quot;  &quot;</span> + food.cost() + <span class="string">&quot;元&quot;</span>);</span><br><span class="line">        <span class="comment">// 再加一个鸡蛋</span></span><br><span class="line">        food = <span class="keyword">new</span> Egg(food);</span><br><span class="line">        System.out.println(food.getDesc() + <span class="string">&quot;  &quot;</span> + food.cost() + <span class="string">&quot;元&quot;</span>);</span><br><span class="line">        <span class="comment">// 再加一个培根</span></span><br><span class="line">        food = <span class="keyword">new</span> Bacon(food);</span><br><span class="line">        System.out.println(food.getDesc() + <span class="string">&quot;  &quot;</span> + food.cost() + <span class="string">&quot;元&quot;</span>);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
-
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">炒饭  <span class="number">10.0</span>元</span><br><span class="line">鸡蛋炒饭  <span class="number">11.0</span>元</span><br><span class="line">鸡蛋鸡蛋炒饭  <span class="number">12.0</span>元</span><br><span class="line">培根鸡蛋鸡蛋炒饭  <span class="number">14.0</span>元</span><br></pre></td></tr></table></figure>
-
-<h2 id="使用场景"><a href="#使用场景" class="headerlink" title="使用场景"></a>使用场景</h2><ul>
-<li>当不能采用继承的方式对系统进行扩充或者采用继承不利于系统扩展和维护时。</li>
-</ul>
-<blockquote>
-<p>不能采用继承的情况主要有两类：</p>
-<ul>
-<li>第一类是系统中存在大量独立的扩展，为支持每一种组合将产生大量的子类，使得子类数目呈爆炸性增长。</li>
-<li>第二类是因为类定义不能继承（如 final 类）。</li>
-</ul>
-</blockquote>
-<ul>
-<li>在不影响其他对象的情况下，以动态、透明的方式给单个对象添加职责。</li>
-<li>当对象的功能要求可以动态地添加，也可以再动态地撤销时。</li>
-</ul>
-<h2 id="JDK源码解析"><a href="#JDK源码解析" class="headerlink" title="JDK源码解析"></a>JDK源码解析</h2><p>IO流中的包装类使用到了装饰者模式：BufferedInputStream，BufferedOutputStream，BufferedReader，BufferedWriter。</p>
-<p>以 BufferedWriter 举例来说明，先看看如何使用 BufferedWriter：</p>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 创建FileWriter对象</span></span><br><span class="line">FileWriter fw = <span class="keyword">new</span> FileWriter(<span class="string">&quot;C:\\Users\\Think\\Desktop\\a.txt&quot;</span>);</span><br><span class="line"><span class="comment">// 创建BufferedWriter对象</span></span><br><span class="line">BufferedWriter bw = <span class="keyword">new</span> BufferedWriter(fw);</span><br><span class="line"><span class="comment">// 写数据</span></span><br><span class="line">bw.write(<span class="string">&quot;hello Buffered&quot;</span>);</span><br><span class="line">bw.close();</span><br></pre></td></tr></table></figure>
-
-<p>使用起来感觉确实像是装饰者模式，接下来看它们的结构：</p>
-<p><img src="https://nodeandimg.oss-cn-wulanchabu.aliyuncs.com/5F2G24Q28V8U77M.png"></p>
-<p>BufferedWriter 使用装饰者模式对 Writer 子实现类进行了增强，添加了缓冲区，提高了写数据的效率。</p>
-<h2 id="代理和装饰者的区别"><a href="#代理和装饰者的区别" class="headerlink" title="代理和装饰者的区别"></a>代理和装饰者的区别</h2><p><strong>相同点</strong>：</p>
-<ul>
-<li>都要实现与目标类相同的业务接口</li>
-<li>在两个类中都要声明目标对象</li>
-<li>都可以在不修改目标类的前提下增强目标方法</li>
-</ul>
-<p><strong>不同点</strong>：</p>
-<ul>
-<li><p>目的不同</p>
-<p>装饰者是为了增强目标对象<br>静态代理是为了保护和隐藏目标对象</p>
-</li>
-</ul>
-<blockquote>
-<p>装饰者可以迭代增强，代理只能增强一次</p>
-</blockquote>
-<ul>
-<li>获取目标对象构建的地方不同<br>装饰者是由外界传递进来，可以通过构造方法传递<br>静态代理是在代理类内部创建，以此来隐藏目标对象</li>
-</ul>
 
       
     </div>

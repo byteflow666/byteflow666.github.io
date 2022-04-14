@@ -133,7 +133,7 @@
   <nav class="site-state">
       <div class="site-state-item site-state-posts">
         <a href="/archives/">
-          <span class="site-state-item-count">67</span>
+          <span class="site-state-item-count">69</span>
           <span class="site-state-item-name">posts</span>
         </a>
       </div>
@@ -181,6 +181,550 @@
 
 
     <div class="main-inner index posts-expand">
+
+    
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="MySQL">
+    <link itemprop="mainEntityOfPage" href="http://yoursite-url/MySQL/MYSQL%E4%BA%8B%E5%8A%A1%E6%97%A5%E5%BF%97/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="https://nodeandimg.oss-cn-wulanchabu.aliyuncs.com/}VRZRM08TG_W9[WMAD}69[O.png">
+      <meta itemprop="name" content="Hao">
+      <meta itemprop="description" content="It's an IT blog...">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Study Node">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          <a href="/MySQL/MYSQL%E4%BA%8B%E5%8A%A1%E6%97%A5%E5%BF%97/" class="post-title-link" itemprop="url">MYSQL事务日志</a>
+        </h2>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">Posted on</span>
+
+      <time title="Created: 2022-02-14 20:55:09" itemprop="dateCreated datePublished" datetime="2022-02-14T20:55:09+08:00">2022-02-14</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">In</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/MySQL%E9%AB%98%E7%BA%A7/" itemprop="url" rel="index"><span itemprop="name">MySQL高级</span></a>
+        </span>
+          , 
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/MySQL%E9%AB%98%E7%BA%A7/%E6%95%B0%E6%8D%AE%E5%BA%93/" itemprop="url" rel="index"><span itemprop="name">数据库</span></a>
+        </span>
+    </span>
+
+  
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+          <p>事务有4种特性：原子性、一致性、隔离性和持久性。那么事务的四种特性到底是基于什么机制实现呢？</p>
+<ul>
+<li><p>事务的隔离性由<strong>锁机制</strong>实现。</p>
+</li>
+<li><p>而事务的原子性、一致性和持久性由事务的 redo 日志和undo 日志来保证。</p>
+<ul>
+<li>REDO LOG 称为<strong>重做日志</strong>，提供再写入操作，恢复提交事务修改的页操作，用来保证事务的持久性。</li>
+<li>UNDO LOG 称为<strong>回滚日志</strong>，回滚行记录到某个特定版本，用来保证事务的原子性、一致性。</li>
+</ul>
+</li>
+<li><p>redo log:是存储引擎层(innodb)生成的日志，记录的是**”物理级别”**上的页修改操作，比如页号xx、偏移量yy!写入了’zzz’数据。主要为了保证数据的可靠性;</p>
+</li>
+<li><p>undo log: 是存储引擎层(innodb)生成的日志，记录的是<strong>逻辑操作</strong>日志，比如对某一行数据进行了INSERT语句操作，那么undo log就记录一条与之相反的DELETE操作。主要用于<strong>事务的回滚</strong>(undo log记录的是每个修改操作的<strong>逆操作</strong>)和<strong>一致性非锁定读</strong>(undo log回滚行记录到某种特定的版本—MVCC，即多版本并发 控制)。</p>
+</li>
+</ul>
+<h1 id="redo日志"><a href="#redo日志" class="headerlink" title="redo日志"></a><strong>redo日志</strong></h1><p>InnoDB存储引擎是以<strong>页为单位</strong>来管理存储空间的。在真正访问页面之前，需要把在磁盘上的页缓存到内存中的<strong>Buffer Pool</strong>之后才可以访问。所有的变更都必须<strong>先更新缓冲池</strong>中的数据，然后缓冲池中的<strong>脏页</strong>会以一定的频率被刷入磁盘**（checkPoint机制)**，通过缓冲池来优化CPU和磁盘之间的鸿沟，这样就可以保证整体的性能不会下降太快。</p>
+<h2 id="为什么需要REDO日志"><a href="#为什么需要REDO日志" class="headerlink" title="为什么需要REDO日志"></a><strong>为什么需要REDO日志</strong></h2><p>一方面，缓冲池可以帮助我们消除CPU和磁盘之间的鸿沟，checkpoint机制可以保证数据的最终落盘，然而由于checkpoint <strong>并不是每次变更的时候就触发</strong>的，而是master线程隔一段时间去处理的。所以最坏的情况就是事务提交后，刚写完缓冲池，数据库宕机了，那么这段数据就是丢失的，无法恢复。</p>
+<p>另一方面，事务包含<strong>持久性</strong>的特性，就是说对于一个已经提交的事务，在事务提交后即使系统发生了崩溃，这个事务对数据库中所做的更改也不能丢失。</p>
+<p>那么如何保证这个持久性呢？ <strong>一个简单的做法</strong> ：在事务提交完成之前把该事务所修改的所有页面都刷新到磁盘，但是这个简单粗暴的做法有些问题</p>
+<ul>
+<li><strong>修改量与刷新磁盘工作量严重不成比例</strong><br>有时候我们仅仅修改了某个页面中的一个字节，但是我们知道在InnoDB中是以页为单位来进行磁盘lo的，也就是说我们在该事务提交时不得不将一个完整的页面从内存中刷新到磁盘，我们又知道一个页面默认是16KB大小，只修改一个字节就要刷新16KB的数据到磁盘上显然是太小题大做了。</li>
+<li><strong>随机IO刷新较慢</strong><br>一个事务可能包含很多语句，即使是一条语句也可能修改许多页面，假如该事务修改的这些页面可能并不相邻，这就意味着在将某个事务修改的Buffer Pool中的页面<strong>刷新到磁盘时</strong>，需要进行很多的<strong>随机I0</strong>，随机Io比顺序IO要慢，尤其对于传统的机械硬盘来说。</li>
+</ul>
+<p><strong>另一个解决的思路</strong> ：我们只是想让已经提交了的事务对数据库中数据所做的修改永久生效，即使后来系统崩溃，在重启后也能把这种修改恢复出来。所以我们其实没有必要在每次事务提交时就把该事务在内存中修改过的全部页面刷新到磁盘，只需要把<strong>修改</strong>了哪些东西<strong>记录一下</strong>就好。比如，某个事务将系统表空间中 第10号 页面中偏移量为 100 处的那个字节的值 1 改成 2 。我们只需要记录一下：将第0号表空间的10号页面的偏移量为100处的值更新为 2 。</p>
+<p><img src="https://nodeandimg.oss-cn-wulanchabu.aliyuncs.com/8ABV6BWRBAMD00.png"></p>
+<h2 id="REDO日志的好处、特点"><a href="#REDO日志的好处、特点" class="headerlink" title="REDO日志的好处、特点"></a><strong>REDO日志的好处、特点</strong></h2><p><strong>1.好处</strong></p>
+<ul>
+<li><p><strong>redo日志降低了刷盘频率</strong></p>
+</li>
+<li><p><strong>redo日志占用的空间非常小</strong></p>
+</li>
+</ul>
+<p><strong>2.</strong> <strong>特点</strong></p>
+<ul>
+<li><p><strong>redo日志是顺序写入磁盘的</strong></p>
+<p>在执行事务的过程中，每执行一条语句，就可能产生若干条redo日志，这些日志是按照<strong>产生的顺序</strong>写入磁盘的，也就是使用顺序lIo，效率比随机IO快。</p>
+</li>
+<li><p><strong>事务执行过程中，redo log不断记录</strong></p>
+<p>redo log跟bin log的区别，redo log是<strong>存储引擎层</strong>产生的，而bin log是<strong>数据库层</strong>产生的。假设一个事务，对表做10万行的记录插入，在这个过程中，一直不断的往redo logl顺序记录，而bin log不会记录，直到这个事务提交，才会一次写入到bin log文件中。</p>
+</li>
+</ul>
+<h2 id="redo的组成"><a href="#redo的组成" class="headerlink" title="redo的组成"></a><strong>redo的组成</strong></h2><p>Redo log可以简单分为以下两个部分：</p>
+<ul>
+<li>**重做日志的缓冲 (redo log buffer) **，保存在内存中，是易失的。</li>
+</ul>
+<p><strong>参数设置：innodb_log_buffer_size：</strong> </p>
+<p>redo log buffer 大小，默认<strong>16M</strong> ，最大值是4096M，最小值为1M。 </p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">mysql&gt; show variables like &#x27;%innodb_log_buffer_size%&#x27;; </span><br><span class="line">+------------------------+----------+ </span><br><span class="line">| Variable_name | Value | </span><br><span class="line">+------------------------+----------+ </span><br><span class="line">| innodb_log_buffer_size | 16777216 | </span><br><span class="line">+------------------------+----------+</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<ul>
+<li><strong>重做日志文件 (redo log file)</strong> ，保存在硬盘中，是持久的。</li>
+</ul>
+<h2 id="redo的整体流程"><a href="#redo的整体流程" class="headerlink" title="redo的整体流程"></a><strong>redo的整体流程</strong></h2><p>以一个更新事务为例，redo log 流转过程，如下图所示：</p>
+<p><img src="https://nodeandimg.oss-cn-wulanchabu.aliyuncs.com/T1UH3LNBBRF4F1S8LE.png"></p>
+<figure class="highlight vim"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">第<span class="number">1</span>步：先将原始数据从磁盘中读入内存中来，修改数据的内存拷贝 </span><br><span class="line">第<span class="number">2</span>步：生成一条重做日志并写入<span class="keyword">redo</span> <span class="built_in">log</span> <span class="keyword">buffer</span>，记录的是数据被修改后的值 </span><br><span class="line">第<span class="number">3</span>步：当事务commit时，将<span class="keyword">redo</span> <span class="built_in">log</span> <span class="keyword">buffer</span>中的内容刷新到 <span class="keyword">redo</span> <span class="built_in">log</span> <span class="keyword">file</span>，对 <span class="keyword">redo</span> <span class="built_in">log</span> <span class="keyword">file</span>采用追加 写的方式 </span><br><span class="line">第<span class="number">4</span>步：定期将内存中修改的数据刷新到磁盘中</span><br></pre></td></tr></table></figure>
+
+<blockquote>
+<p>体会：</p>
+<p>Write-Ahead Log(预先日志持久化)：在持久化一个数据页之前，先将内存中相应的日志页持久化。</p>
+</blockquote>
+<h2 id="redo-log的刷盘策略"><a href="#redo-log的刷盘策略" class="headerlink" title="redo log的刷盘策略"></a><strong>redo log的刷盘策略</strong></h2><p>redo log的写入并不是直接写入磁盘的，InnoDB引擎会在写redo log的时候先写redo log buffer，之后以 <strong>一 定的频率</strong> 刷入到真正的redo log file 中。这里的一定频率怎么看待呢？这就是我们要说的刷盘策略</p>
+<p><img src="https://nodeandimg.oss-cn-wulanchabu.aliyuncs.com/76GHUBGKP4SIZ537.png"></p>
+<p>注意，redo log buffer刷盘到redo log file的过程并不是真正的刷到磁盘中去，只是刷入到 文件系统缓存 （page cache）中去（这是现代操作系统为了提高文件写入效率做的一个优化），真正的写入会交给系统自己来决定（比如page cache足够大了）。那么对于InnoDB来说就存在一个问题，如果交给系统来同步，同样如果系统宕机，那么数据也丢失了（虽然整个系统宕机的概率还是比较小的）。</p>
+<p>针对这种情况，InnoDB给出<strong>innodb_flush_log_at_trx_commit</strong> 参数，该参数控制 commit提交事务时，如何将 redo log buffer 中的日志刷新到 redo log file 中。它支持三种策略</p>
+<ul>
+<li>设置为0 ：表示每次事务提交时不进行刷盘操作。（系统默认master thread每隔1s进行一次重做日志的同步）</li>
+<li>设置为1 ：表示每次事务提交时都将进行同步，刷盘操作（ 默认值 ） </li>
+<li>设置为2 ：表示每次事务提交时都只把 redo log buffer 内容写入 page cache，不进行同步。由os自己决定什么时候同步到磁盘文件。</li>
+</ul>
+<h2 id="不同刷盘策略演示"><a href="#不同刷盘策略演示" class="headerlink" title="不同刷盘策略演示"></a><strong>不同刷盘策略演示</strong></h2><p><strong>1.</strong> <strong>流程图</strong></p>
+<p><img src="https://nodeandimg.oss-cn-wulanchabu.aliyuncs.com/GWDF41O6FDSHNUIUHEU.png"></p>
+<p><img src="https://nodeandimg.oss-cn-wulanchabu.aliyuncs.com/PWVE5Y6K7AFMMO.png"></p>
+<p><img src="https://nodeandimg.oss-cn-wulanchabu.aliyuncs.com/etert4444.png"></p>
+<h2 id="写入redo-log-buffer过程"><a href="#写入redo-log-buffer过程" class="headerlink" title="写入redo log buffer过程"></a><strong>写入redo log buffer过程</strong></h2><p><strong>1.</strong> <strong>补充概念：Mini-Transaction</strong></p>
+<p>一个事务可以包含若干条语句，每一条语句其实是由若干个 mtr 组成，每一个 mtr 又可以包含若干条redo日志，画个图表示它们的关系就是这样：</p>
+<p><img src="https://nodeandimg.oss-cn-wulanchabu.aliyuncs.com/G41IY0O4KP1NXPMMHO.png"></p>
+<p><strong>2. redo</strong> <strong>日志写入log buffer</strong></p>
+<p><img src="https://nodeandimg.oss-cn-wulanchabu.aliyuncs.com/HQEZCREB54RR%7DM.png"></p>
+<p>每个mtr都会产生一组redo日志，用示意图来描述一下这些mtr产生的日志情况：</p>
+<p><img src="https://nodeandimg.oss-cn-wulanchabu.aliyuncs.com/0464W4PUVSBAG2U.png"></p>
+<p>不同的事务可能是 并发 执行的，所以 T1 、 T2 之间的 mtr 可能是 交替执行 的。</p>
+<p><img src="https://nodeandimg.oss-cn-wulanchabu.aliyuncs.com/efsdgserer.png"></p>
+<p><strong>3. redo log block的结构图</strong></p>
+<p><img src="https://nodeandimg.oss-cn-wulanchabu.aliyuncs.com/D6A1HA07OKQYLL1C.png"></p>
+<p><img src="https://nodeandimg.oss-cn-wulanchabu.aliyuncs.com/J5QLS59NC]F.png"></p>
+<h2 id="redo-log-file"><a href="#redo-log-file" class="headerlink" title="redo log file"></a><strong>redo log file</strong></h2><p><strong>1.</strong> <strong>相关参数设置</strong> </p>
+<ul>
+<li><p><strong>innodb_log_group_home_dir</strong> ：指定 redo log 文件组所在的路径，默认值为 ./ ，表示在数据库的数据目录下。MySQL的默认数据目录（ var/lib/mysql ）下默认有两个名为 ib_logfile0 和 ib_logfile1 的文件，log buffer中的日志默认情况下就是刷新到这两个磁盘文件中。此redo日志文件位置还可以修改。</p>
+</li>
+<li><p><strong>innodb_log_files_in_group</strong>：指明redo log file的个数，命名方式如：ib_logfile0，iblogfile1… iblogfilen。默认2个，最大100个。</p>
+</li>
+</ul>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">mysql&gt; show variables like &#x27;innodb_log_files_in_group&#x27;; </span><br><span class="line">+---------------------------+-------+ </span><br><span class="line">| Variable_name | Value | </span><br><span class="line">+---------------------------+-------+ </span><br><span class="line">| innodb_log_files_in_group | 2 | </span><br><span class="line">+---------------------------+-------+ </span><br><span class="line">#ib_logfile0 </span><br><span class="line">#ib_logfile1 </span><br></pre></td></tr></table></figure>
+
+<ul>
+<li><strong>innodb_flush_log_at_trx_commit</strong>：控制 redo log 刷新到磁盘的策略，默认为1</li>
+<li><strong>innodb_log_file_size</strong>：单个 redo log 文件设置大小，默认值为 <strong>48M</strong> 。最大值为512G，注意最大值指的是整个 redo log 系列文件之和，即（innodb_log_files_in_group * innodb_log_file_size ）不能大于最大值512G。</li>
+</ul>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">mysql&gt; show variables like &#x27;innodb_log_file_size&#x27;; </span><br><span class="line">+----------------------+----------+ </span><br><span class="line">| Variable_name | Value | </span><br><span class="line">+----------------------+----------+ </span><br><span class="line">| innodb_log_file_size | 50331648 | </span><br><span class="line">+----------------------+----------+</span><br></pre></td></tr></table></figure>
+
+<p>根据业务修改其大小，以便容纳较大的事务。编辑my.cnf文件并重启数据库生效，如下所示</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">[root@localhost ~]# vim /etc/my.cnf innodb_log_file_size=200M</span><br></pre></td></tr></table></figure>
+
+<p><strong>2.</strong> <strong>日志文件组</strong></p>
+<p><img src="https://nodeandimg.oss-cn-wulanchabu.aliyuncs.com/8SU0ZYBJFN0YQKGRP.png"></p>
+<p>总共的redo日志文件大小其实就是： **innodb_log_file_size × innodb_log_files_in_group **。</p>
+<p>采用循环使用的方式向redo日志文件组里写数据的话，会导致后写入的redo日志覆盖掉前边写的redo日志？当然！所以InnoDB的设计者提出了checkpoint的概念。</p>
+<p><strong>3. checkpoint</strong></p>
+<p><img src="https://nodeandimg.oss-cn-wulanchabu.aliyuncs.com/W7UTFA0284A35R96.png"></p>
+<p>如果 write pos 追上 checkpoint ，表示<strong>日志文件组</strong>满了，这时候不能再写入新的 redo log记录，MySQL 得停下来，清空一些记录，把 checkpoint 推进一下。</p>
+<p><img src="https://nodeandimg.oss-cn-wulanchabu.aliyuncs.com/ZAJU5DX4X3FERHXUN8.png"></p>
+<h1 id="Undo日志"><a href="#Undo日志" class="headerlink" title="Undo日志"></a><strong>Undo日志</strong></h1><p>redo log是事务持久性的保证，undo log是事务原子性的保证。在事务中 <strong>更新数据</strong>的 前置操作 其实是要先写入一个 undo log 。 </p>
+<h2 id="如何理解Undo日志"><a href="#如何理解Undo日志" class="headerlink" title="如何理解Undo日志"></a><strong>如何理解Undo日志</strong></h2><p>事务需要保证<strong>原子性</strong> ，也就是事务中的操作要么全部完成，要么什么也不做。但有时候事务执行到一半会出现一些情况，比如：</p>
+<ul>
+<li>情况一：事务执行过程中可能遇到各种错误，比如<strong>服务器本身的错误 ， 操作系统错误</strong>，甚至是突然<strong>断电</strong> 导致的错误。</li>
+<li>情况二：程序员可以在事务执行过程中手动输入 ROLLBACK 语句结束当前事务的执行</li>
+</ul>
+<p>以上情况出现，我们需要把数据改回原先的样子，这个过程称之为 回滚 ，这样就可以造成一个假象：这个事务看起来什么都没做，所以符合<strong>原子性</strong>要求。</p>
+<h2 id="Undo日志的作用"><a href="#Undo日志的作用" class="headerlink" title="Undo日志的作用"></a><strong>Undo日志的作用</strong></h2><ul>
+<li><strong>作用1：回滚数据</strong></li>
+<li><strong>作用2：MVCC</strong></li>
+</ul>
+<h2 id="undo的存储结构"><a href="#undo的存储结构" class="headerlink" title="undo的存储结构"></a><strong>undo的存储结构</strong></h2><p><strong>1.</strong> <strong>回滚段与undo页</strong></p>
+<p>InnoDB对undo log的管理采用段的方式，也就是<strong>回滚段（rollback segment）</strong> 。每个回滚段记录了<strong>1024</strong>个<strong>undo log segment</strong> ，而在每个undo log segment段中进行<strong>undo页</strong>的申请。</p>
+<ul>
+<li>在<strong>InnoDB1.1</strong>版本之前 （不包括1.1版本），只有一个rollback segment，因此支持同时在线的事务限制为**1024 **。虽然对绝大多数的应用来说都已经够用。</li>
+<li>从1.1版本开始InnoDB支持最大<strong>128个rollback segment <strong>，故其支持同时在线的事务限制提高到了</strong>128*1024</strong> 。</li>
+</ul>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">mysql&gt; show variables like &#x27;innodb_undo_logs&#x27;; </span><br><span class="line">+------------------+-------+ </span><br><span class="line">| Variable_name | Value | </span><br><span class="line">+------------------+-------+ </span><br><span class="line">| innodb_undo_logs | 128 | </span><br><span class="line">+------------------+-------+</span><br></pre></td></tr></table></figure>
+
+<p><strong>2.</strong> <strong>回滚段与事务</strong> </p>
+<ol>
+<li><p>每个事务只会使用一个回滚段，一个回滚段在同一时刻可能会服务于多个事务。</p>
+</li>
+<li><p>当一个事务开始的时候，会制定一个回滚段，在事务进行的过程中，当数据被修改时，原始的数据会被复制到回滚段。</p>
+</li>
+<li><p>在回滚段中，事务会不断填充盘区，直到事务结束或所有的空间被用完。如果当前的盘区不够用，事务会在段中请求扩展下一个盘区，如果所有已分配的盘区都被用完，事务会覆盖最初的盘区或者在回滚段允许的情况下扩展新的盘区来使用。</p>
+</li>
+<li><p>回滚段存在于undo表空间中，在数据库中可以存在多个undo表空间，但同一时刻只能使用一个undo表空间。</p>
+</li>
+<li><p>当事务提交时，InnoDB存储引擎会做以下两件事情：</p>
+</li>
+</ol>
+<ul>
+<li><p>将undo log放入列表中，以供之后的purge操作</p>
+</li>
+<li><p>判断undo log所在的页是否可以重用，若可以分配给下个事务使用</p>
+</li>
+</ul>
+<p><strong>回滚段中的数据分类</strong></p>
+<p><strong>1.未提交的回滚数据(uncommitted undo information)</strong>:该数据所关联    的事务并未提交，用于实现读一致性，所以该数据不能被其他事务的数    据覆盖。</p>
+<p>**2．已经提交但未过期的回滚数据( committed undo information)**∶该    数据关联的事务已经提交，但是仍受到undo retention参数的保持时间    的影响。 </p>
+<p>**3．事务己经提交并过期的数据(expired undo information)**∶事务已经提交，而且数据保存时间已经超过undo retention参数指定的时间，属于已经过期的数据。当回滚段满了之后，会优先覆盖”事务已经提交并过期的数据”。</p>
+<p>事务提交后并不能马上删除undo log及undo log所在的页。这是因为可能还有其他事务需要通过undo log来得到行记录之前的版本。故事务提交时将undo log放入一个链表中，是否可以最终删除undo log及undo log所在页由purge线程来判断。</p>
+<h2 id="undo的类型"><a href="#undo的类型" class="headerlink" title="undo的类型"></a><strong>undo的类型</strong></h2><p>在InnoDB存储引擎中，undo log分为：</p>
+<ul>
+<li><p>insert undo log </p>
+<p>insert undo log是指在insert操作中产生的undo log.因为insert操作的记录，只对事务本身可见，对其他事务不可见(这是事务隔离性的要求)，故该undo log可以在事务提交后直接删除。不需要进行purge操作。</p>
+</li>
+<li><p>update undo log </p>
+<p>update undo log记录的是对delete和update操作产生的undo log。该undo log可能需要提供MVcC机制，因此不能在事务提交时就进行删除。提交时放入undo log链表，等待purge线程进行最后的删除。</p>
+</li>
+</ul>
+<h2 id="undo-log的生命周期"><a href="#undo-log的生命周期" class="headerlink" title="undo log的生命周期"></a><strong>undo log的生命周期</strong></h2><p><strong>1.</strong> <strong>简要生成过程</strong></p>
+<p><strong>只有Buffer Pool的流程：</strong></p>
+<p><img src="https://nodeandimg.oss-cn-wulanchabu.aliyuncs.com/TER3H99HUUA3N6NIO.png"></p>
+<p><strong>有了Redo Log和Undo Log之后：</strong></p>
+<p><img src="https://nodeandimg.oss-cn-wulanchabu.aliyuncs.com/9H0HMFG9OKRI22.png"></p>
+<p><strong>2.</strong> <strong>详细生成过程</strong></p>
+<p><img src="https://nodeandimg.oss-cn-wulanchabu.aliyuncs.com/4LNTD487OYFF7RZZG.png"></p>
+<p><strong>当我们执行INSERT时：</strong></p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">begin;</span><br><span class="line">INSERT INTO user (name) VALUES (&quot;tom&quot;);</span><br></pre></td></tr></table></figure>
+
+<p><img src="https://nodeandimg.oss-cn-wulanchabu.aliyuncs.com/9V2D0Y46J72C6H0FR.png"></p>
+<p><strong>当我们执行UPDATE时：</strong></p>
+<p><img src="https://nodeandimg.oss-cn-wulanchabu.aliyuncs.com/H6ZTBCEFTX%7B5PBH1D.png"></p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">UPDATE user SET id=2 WHERE id=1;</span><br></pre></td></tr></table></figure>
+
+<p><img src="https://nodeandimg.oss-cn-wulanchabu.aliyuncs.com/LZ44UQYTDFBAC.png"></p>
+<p><strong>3. undo log是如何回滚的</strong></p>
+<p>以上面的例子来说，假设执行rollback，那么对应的流程应该是这样：</p>
+<ol>
+<li><p>通过undo no=3的日志把id=2的数据删除</p>
+</li>
+<li><p>通过undo no=2的日志把id=1的数据的deletemark还原成0 </p>
+</li>
+<li><p>通过undo no=1的日志把id=1的数据的name还原成Tom </p>
+</li>
+<li><p>通过undo no=0的日志把id=1的数据删除</p>
+</li>
+</ol>
+<p><strong>4. undo log的删除</strong></p>
+<ul>
+<li>针对于insert undo log</li>
+</ul>
+<p>因为insert操作的记录，只对事务本身可见，对其他事务不可见。故该undo log可以在事务提交后直接删除，不需要进行purge操作。</p>
+<ul>
+<li>针对于update undo log </li>
+</ul>
+<p>该undo log可能需要提供MVCC机制，因此不能在事务提交时就进行删除。提交时放入undo log链表，等待purge线程进行最后的删除。</p>
+<h2 id="小节"><a href="#小节" class="headerlink" title="小节"></a>小节</h2><p><img src="https://nodeandimg.oss-cn-wulanchabu.aliyuncs.com/N0JC18YA7RA0M3B.png"></p>
+<p>undo log是逻辑日志，对事务回滚时，只是将数据库逻辑地恢复到原来的样子。</p>
+<p>redo log是物理日志，记录的是数据页的物理变化，undo log不是redo log的逆过程。</p>
+
+      
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+</div>
+
+
+
+
+    
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="MySQL">
+    <link itemprop="mainEntityOfPage" href="http://yoursite-url/MySQL/%E4%BA%8B%E5%8A%A1%E5%9F%BA%E7%A1%80%E7%9F%A5%E8%AF%86/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="https://nodeandimg.oss-cn-wulanchabu.aliyuncs.com/}VRZRM08TG_W9[WMAD}69[O.png">
+      <meta itemprop="name" content="Hao">
+      <meta itemprop="description" content="It's an IT blog...">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Study Node">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          <a href="/MySQL/%E4%BA%8B%E5%8A%A1%E5%9F%BA%E7%A1%80%E7%9F%A5%E8%AF%86/" class="post-title-link" itemprop="url">事务基础知识</a>
+        </h2>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">Posted on</span>
+
+      <time title="Created: 2022-02-14 12:38:10" itemprop="dateCreated datePublished" datetime="2022-02-14T12:38:10+08:00">2022-02-14</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">In</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/MySQL%E9%AB%98%E7%BA%A7/" itemprop="url" rel="index"><span itemprop="name">MySQL高级</span></a>
+        </span>
+          , 
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/MySQL%E9%AB%98%E7%BA%A7/%E6%95%B0%E6%8D%AE%E5%BA%93/" itemprop="url" rel="index"><span itemprop="name">数据库</span></a>
+        </span>
+    </span>
+
+  
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+          <h1 id="数据库事务概述"><a href="#数据库事务概述" class="headerlink" title="数据库事务概述"></a><strong>数据库事务概述</strong></h1><h2 id="存储引擎支持情况"><a href="#存储引擎支持情况" class="headerlink" title="存储引擎支持情况"></a><strong>存储引擎支持情况</strong></h2><p><strong>SHOW ENGINES</strong> 命令来查看当前 MySQL 支持的存储引擎都有哪些，以及这些存储引擎是否支持事务。</p>
+<p><img src="https://nodeandimg.oss-cn-wulanchabu.aliyuncs.com/H6M0A87YKH2RPZ08R.png"></p>
+<p>能看出在 MySQL 中，只有InnoDB 是支持事务的。</p>
+<h2 id="基本概念"><a href="#基本概念" class="headerlink" title="基本概念"></a><strong>基本概念</strong></h2><p><strong>事务：</strong>一组逻辑操作单元，使数据从一种状态变换到另一种状态。</p>
+<p><strong>事务处理的原则：</strong>保证所有事务都作为 <strong>一个工作单元</strong> 来执行，即使出现了故障，都不能改变这种执行方式。当在一个事务中执行多个操作时，要么所有的事务都被提交( <strong>commit <strong>)，那么这些修改就</strong>永久</strong> 地保存下来；要么数据库管理系统将<strong>放弃</strong>所作的所有<strong>修改</strong> ，整个事务回滚( **rollback **)到最初状态。</p>
+<h2 id="事务的ACID特性"><a href="#事务的ACID特性" class="headerlink" title="事务的ACID特性"></a><strong>事务的ACID特性</strong></h2><ul>
+<li><p><strong>原子性（atomicity）：</strong></p>
+<p>原子性是指事务是一个不可分割的工作单位，要么全部提交，要么全部失败回滚。</p>
+</li>
+<li><p><strong>一致性（consistency）：</strong></p>
+<p>根据定义，一致性是指事务执行前后，数据从一个<strong>合法性状态</strong>变换到另外一个<strong>合法性状态</strong>。这种状态是<strong>语义上</strong> 的而不是语法上的，跟具体的业务有关。</p>
+<p>那什么是合法的数据状态呢？满足 预定的约束 的状态就叫做合法的状态。通俗一点，这状态是由你自己来定义的（比如满足现实世界中的约束）。满足这个状态，数据就是一致的，不满足这个状态，数据就是不一致的！如果事务中的某个操作失败了，系统就会自动撤销当前正在执行的事务，返回到事务操作之前的状态。</p>
+</li>
+<li><p><strong>隔离型（isolation）：</strong></p>
+<p>事务的隔离性是指一个事务的执行 不能被其他事务干扰 ，即一个事务内部的操作及使用的数据对 并发 的其他事务是隔离的，并发执行的各个事务之间不能互相干扰。</p>
+<p>如果无法保证隔离性会怎么样？假设A账户有200元，B账户0元。A账户往B账户转账两次，每次金额为50元，分别在两个事务中执行。如果无法保证隔离性，会出现下面的情形：</p>
+</li>
+</ul>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">UPDATE accounts SET money = money - 50 WHERE NAME = &#x27;AA&#x27;; </span><br><span class="line"></span><br><span class="line">UPDATE accounts SET money = money + 50 WHERE NAME = &#x27;BB&#x27;;</span><br></pre></td></tr></table></figure>
+
+<p><img src="https://nodeandimg.oss-cn-wulanchabu.aliyuncs.com/DT9IY232IZ7HQ3K.png"></p>
+<ul>
+<li><p><strong>持久性（durability）：</strong></p>
+<p>持久性是指一个事务一旦被提交，它对数据库中数据的改变就是<strong>永久性的</strong> ，接下来的其他操作和数据库故障不应该对其有任何影响。</p>
+<p>持久性是通过<strong>事务日志</strong>来保证的。日志包括了<strong>重做日志</strong>和<strong>回滚日志</strong> 。当我们通过事务对数据进行修改的时候，首先会将数据库的变化信息记录到重做日志中，然后再对数据库中对应的行进行修改。这样做的好处是，即使数据库系统崩溃，数据库重启后也能找到没有更新到数据库系统中的重做日志，重新执行，从而使事务具有持久性。</p>
+</li>
+</ul>
+<h2 id="事务的状态"><a href="#事务的状态" class="headerlink" title="事务的状态"></a><strong>事务的状态</strong></h2><p>我们现在知道<strong>事务</strong>是一个抽象的概念，它其实对应着一个或多个数据库操作，MySQL根据这些操作所执行的不同阶段把<strong>事务</strong>大致划分成几个状态：</p>
+<ul>
+<li><p><strong>活动的（active）</strong></p>
+<p>事务对应的数据库操作正在执行过程中时，我们就说该事务处在<strong>活动的</strong>状态。</p>
+</li>
+<li><p><strong>部分提交的（partially committed）</strong></p>
+<p>当事务中的最后一个操作执行完成，但由于操作都在内存中执行，所造成的影响并 没有刷新到磁盘时，我们就说该事务处在<strong>部分提交的</strong>状态。</p>
+</li>
+<li><p><strong>失败的（failed）</strong></p>
+<p>当事务处在<strong>活动的</strong>或者<strong>部分提交的</strong>状态时，可能遇到了某些错误（数据库自身的错误、操作系统错误或者直接断电等）而无法继续执行，或者人为的停止当前事务的执行，我们就说该事务处在<strong>失败的</strong>状态。</p>
+</li>
+<li><p><strong>中止的（aborted）</strong></p>
+<p>如果事务执行了一部分而变为<strong>失败的</strong>状态，那么就需要把已经修改的事务中的操作还原到事务执行前的状态。换句话说，就是要撤销失败事务对当前数据库造成的影响。我们把这个撤销的过程称之为<strong>回滚</strong> 。当<strong>回滚</strong>操作执行完毕时，也就是数据库恢复到了执行事务之前的状态，我们就说该事务处在了<strong>中止的</strong>状态。</p>
+</li>
+<li><p><strong>提交的（committed）</strong></p>
+<p>当一个处在<strong>部分提交的</strong>状态的事务将修改过的数据都<strong>同步到磁盘</strong>上之后，我们就可以说该事务处在了<strong>提交的</strong>状态。</p>
+</li>
+</ul>
+<p>一个基本的状态转换图如下所示：</p>
+<p><img src="https://nodeandimg.oss-cn-wulanchabu.aliyuncs.com/VE5S6KDEN0PGN.png"></p>
+<h1 id="如何使用事务"><a href="#如何使用事务" class="headerlink" title="如何使用事务"></a><strong>如何使用事务</strong></h1><p>使用事务有两种方式，分别为<strong>显式事务</strong>和<strong>隐式事务</strong>。</p>
+<h2 id="显式事务"><a href="#显式事务" class="headerlink" title="显式事务"></a><strong>显式事务</strong></h2><p><strong>步骤1：START TRANSACTION</strong> 或者 <strong>BEGIN</strong> ，作用是显式开启一个事务。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">mysql&gt; BEGIN; </span><br><span class="line">#或者 </span><br><span class="line">mysql&gt; START TRANSACTION;</span><br></pre></td></tr></table></figure>
+
+<p><strong>START TRANSACTION</strong> 语句相较于<strong>BEGIN</strong>特别之处在于，后边能跟随几个 修饰符 ： </p>
+<p>① <strong>READ ONLY</strong> ：标识当前事务是一个<strong>只读事务</strong> ，也就是属于该事务的数据库操作只能读取数据，而不能修改数据。</p>
+<p>② <strong>READ WRITE</strong> ：标识当前事务是一个<strong>读写事务</strong> ，也就是属于该事务的数据库操作既可以读取数据，也可以修改数据。</p>
+<p>③ <strong>WITH CONSISTENT SNAPSHOT</strong>：启动一致性读。</p>
+<p><strong>步骤2：</strong>一系列事务中的操作（主要是DML，不含DDL）</p>
+<p><strong>步骤3：</strong>提交事务 或 中止事务（即回滚事务）</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"># 提交事务。当提交事务后，对数据库的修改是永久性的。</span><br><span class="line">mysql&gt; COMMIT;</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"># 回滚事务。即撤销正在进行的所有没有提交的修改 </span><br><span class="line">mysql&gt; ROLLBACK; </span><br><span class="line"># 将事务回滚到某个保存点。 </span><br><span class="line">mysql&gt; ROLLBACK TO [SAVEPOINT] </span><br></pre></td></tr></table></figure>
+
+<h2 id="隐式事务"><a href="#隐式事务" class="headerlink" title="隐式事务"></a><strong>隐式事务</strong></h2><p>MySQL中有一个系统变量 autocommit ：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">mysql&gt; SHOW VARIABLES LIKE &#x27;autocommit&#x27;; </span><br><span class="line">+---------------+-------+ </span><br><span class="line">| Variable_name | Value | </span><br><span class="line">+---------------+-------+ </span><br><span class="line">| autocommit | ON | </span><br><span class="line">+---------------+-------+ </span><br><span class="line">1 row in set (0.01 sec) </span><br></pre></td></tr></table></figure>
+
+<p>当然，如果我们想关闭这种<strong>自动提交</strong>的功能，可以使用下边两种方法之一：</p>
+<ul>
+<li><p>显式的的使用 <strong>START TRANSACTION</strong>或者 <strong>BEGIN</strong>语句开启一个事务。这样在本次事务提交或者回滚前会暂时关闭掉自动提交的功能。</p>
+</li>
+<li><p>把系统变量 <strong>autocommit</strong> 的值设置为<strong>OFF</strong> ，就像这样：</p>
+</li>
+</ul>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">SET autocommit = OFF; </span><br><span class="line">#或</span><br><span class="line">SET autocommit = 0;</span><br></pre></td></tr></table></figure>
+
+<h2 id="隐式提交数据的情况"><a href="#隐式提交数据的情况" class="headerlink" title="隐式提交数据的情况"></a><strong>隐式提交数据的情况</strong></h2><ul>
+<li><strong>数据定义语言（Data definition language，缩写为：DDL）</strong></li>
+<li><strong>隐式使用或修改mysql数据库中的表</strong></li>
+<li><strong>事务控制或关于锁定的语句</strong></li>
+</ul>
+<p>① 当我们在一个事务还没提交或者回滚时就又使用<strong>START TRANSACTION <strong>或者 <strong>BEGIN</strong> 语句开启了另一个事务时，会</strong>隐式的提交 上一个事务</strong>。即：</p>
+<p>② 当前的<strong>autocommit</strong>系统变量的值为<strong>OFF</strong>，我们手动把它调为<strong>ON</strong>时，也会<strong>隐式的提交</strong>前边语句所属的事务。</p>
+<p>③ 使用<strong>LOCK TABLES</strong>、<strong>UNLOCK TABLES</strong> 等关于锁定的语句也会 隐式的提交 前边语句所属的事务</p>
+<ul>
+<li><p><strong>加载数据的语句</strong></p>
+</li>
+<li><p><strong>关于MySQL复制的一些语句</strong></p>
+</li>
+<li><p><strong>其它的一些语句</strong></p>
+</li>
+</ul>
+<blockquote>
+<p> 当我们设置 autocommit=0 时，不论是否采用 START TRANSACTION 或者 BEGIN 的方式来开启事务，都需要用 COMMIT 进行提交，让事务生效，使用 ROLLBACK 对事务进行回滚。当我们设置 autocommit=1 时，每条 SQL 语句都会自动进行提交。 不过这时，如果你采用 START TRANSACTION 或者 BEGIN 的方式来显式地开启事务，那么这个事务只有在 COMMIT 时才会生效，在 ROLLBACK 时才会回滚。</p>
+</blockquote>
+<h1 id="事务隔离级别"><a href="#事务隔离级别" class="headerlink" title="事务隔离级别"></a><strong>事务隔离级别</strong></h1><p>MySQL是一个<strong>客户端／服务器</strong>架构的软件，对于同一个服务器来说，可以有若干个客户端与之连接，每个客户端与服务器连接上之后，就可以称为一个会话（<strong>Session</strong>）。每个客户端都可以在自己的会话中向服务器发出请求语句，一个请求语句可能是某个事务的一部分，也就是对于服务器来说可能同时处理多个事务。事务有<strong>隔离性</strong>的特性，理论上在某个事务<strong>对某个数据进行访问</strong>时，其他事务应该进行<strong>排 队</strong> ，当该事务提交之后，其他事务才可以继续访问这个数据。但是这样对<strong>性能影响太大</strong>，我们既想保持事务的隔离性，又想让服务器在处理访问同一数据的多个事务时<strong>性能尽量高些</strong>，那就看二者如何权衡取舍了。</p>
+<h2 id="数据准备"><a href="#数据准备" class="headerlink" title="数据准备"></a><strong>数据准备</strong></h2><p>我们需要创建一个表：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">CREATE TABLE student ( </span><br><span class="line">studentno INT, </span><br><span class="line">name VARCHAR(20), </span><br><span class="line">class varchar(20), </span><br><span class="line">PRIMARY KEY (studentno) </span><br><span class="line">) Engine=InnoDB CHARSET=utf8; </span><br></pre></td></tr></table></figure>
+
+<p>然后向这个表里插入一条数据：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">INSERT INTO student VALUES(1, &#x27;小谷&#x27;, &#x27;1班&#x27;);</span><br></pre></td></tr></table></figure>
+
+<p>现在表里的数据就是这样的：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">mysql&gt; select * from student; </span><br><span class="line">+-----------+--------+-------+ </span><br><span class="line">| studentno | name | class | </span><br><span class="line">+-----------+--------+-------+ </span><br><span class="line">| 1 | 小谷 | 1班 | </span><br><span class="line">+-----------+--------+-------+ </span><br><span class="line">1 row in set (0.00 sec)</span><br></pre></td></tr></table></figure>
+
+<h2 id="数据并发问题"><a href="#数据并发问题" class="headerlink" title="数据并发问题"></a><strong>数据并发问题</strong></h2><p>针对事务的隔离性和并发性，我们怎么做取舍呢？先看一下访问相同数据的事务在<strong>不保证串行执行</strong>（也就是执行完一个再执行另一个）的情况下可能会出现哪些问题：</p>
+<p><strong>1.</strong> <strong>脏写（ Dirty Write ）</strong></p>
+<p>对于两个事务 Session A、Session B，如果事务Session A<strong>修改了</strong>另一个<strong>未提交</strong>事务Session B<strong>修改过</strong>的数据，那就意味着发生了**脏写 **</p>
+<p><strong>2.</strong> <strong>脏读（</strong> Dirty Read <strong>）</strong></p>
+<p>对于两个事务 Session A、Session B，Session A<strong>读取</strong>了已经被 Session B<strong>更新</strong>但还 没有被提交 的字段。之后若 Session B 回滚 ，Session A<strong>读取</strong>的内容就是<strong>临时且无效</strong>的。</p>
+<p>Session A和Session B各开启了一个事务，Session B中的事务先将studentno列为1的记录的name列更新为’张三’，然后Session A中的事务再去查询这条studentno为1的记录，如果读到列name的值为’张三’，而Session B中的事务稍后进行了回滚，那么Session A中的事务相当于读到了一个不存在的数据，这种现象就称之为<strong>脏读</strong> 。 </p>
+<p><strong>3.</strong> <strong>不可重复读（ Non</strong>-<strong>Repeatable Read ）</strong></p>
+<p>对于两个事务Session A、Session B，Session A<strong>读取</strong>了一个字段，然后 Session B<strong>更新</strong>了该字段。 之后Session A<strong>再次读取</strong>同一个字段， 值就不同 了。那就意味着发生了<strong>不可重复读</strong>。</p>
+<p>我们在Session B中提交了几个<strong>隐式事务</strong>（注意是隐式事务，意味着语句结束事务就提交了），这些事务都修改了studentno列为1的记录的列name的值，每次事务提交之后，如果Session A中的事务都可以查看到最新的值，这种现象也被称之为 不可重复读 。 </p>
+<p><strong>4.</strong> <strong>幻读（ Phantom ）</strong></p>
+<p>对于两个事务Session A、Session B, Session A 从一个表中<strong>读取</strong>了一个字段, 然后 Session B 在该表中 插 入 了一些新的行。 之后, 如果 Session A <strong>再次读取</strong>同一个表, 就会多出几行。那就意味着发生了幻读。</p>
+<p>Session A中的事务先根据条件 studentno &gt; 0这个条件查询表student，得到了name列值为’张三’的记录；之后Session B中提交了一个<strong>隐式事务</strong>，该事务向表student中插入了一条新记录；之后Session A中的事务再根据相同的条件 studentno &gt; 0查询表student，得到的结果集中包含Session B中的事务新插入的那条记录，这种现象也被称之为<strong>幻读</strong>。我们把新插入的那些记录称之为<strong>幻影记录</strong>。 </p>
+<h2 id="SQL中的四种隔离级别"><a href="#SQL中的四种隔离级别" class="headerlink" title="SQL中的四种隔离级别"></a><strong>SQL中的四种隔离级别</strong></h2><p>上面介绍了几种并发事务执行过程中可能遇到的一些问题，这些问题有轻重缓急之分，我们给这些问题按照严重性来排一下序：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">脏写 &gt; 脏读 &gt; 不可重复读 &gt; 幻读</span><br></pre></td></tr></table></figure>
+
+<p>我们愿意舍弃一部分隔离性来换取一部分性能在这里就体现在：设立一些隔离级别，隔离级别越低，并发问题发生的就越多。<strong>SQL标准</strong>中设立了4个 <strong>隔离级别</strong>： </p>
+<ul>
+<li><strong>READ UNCOMMITTED</strong>：读未提交，在该隔离级别，所有事务都可以看到其他未提交事务的执行结果。不能避免脏读、不可重复读、幻读。</li>
+<li><strong>READ COMMITTED</strong>：读已提交，它满足了隔离的简单定义：一个事务只能看见已经提交事务所做的改变。这是大多数数据库系统的默认隔离级别（但不是MySQL默认的）。可以避免脏读，但不可重复读、幻读问题仍然存在。</li>
+<li><strong>REPEATABLE READ</strong>：可重复读，事务A在读到一条数据之后，此时事务B对该数据进行了修改并提交，那么事务A再读该数据，读到的还是原来的内容。可以避免脏读、不可重复读，但幻读问题仍然存在。这是MySQL的默认隔离级别。</li>
+<li><strong>SERIALIZABLE</strong>：可串行化，确保事务可以从一个表中读取相同的行。在这个事务持续期间，禁止其他事务对该表执行插入、更新和删除操作。所有的并发问题都可以避免，但性能十分低下。能避免脏读、不可重复读和幻读。</li>
+</ul>
+<p><strong>SQL标准</strong>中规定，针对不同的隔离级别，并发事务可以发生不同严重程度的问题，具体情况如下：</p>
+<p><img src="https://nodeandimg.oss-cn-wulanchabu.aliyuncs.com/HDLHAGIXDR15Y1L.png"></p>
+<p><strong>脏写</strong>怎么没涉及到？因为脏写这个问题太严重了，不论是哪种隔离级别，都不允许脏写的情况发生。</p>
+<p>不同的隔离级别有不同的现象，并有不同的锁和并发机制，隔离级别越高，数据库的并发性能就越差，4种事务隔离级别与并发性能的关系如下：</p>
+<p><img src="https://nodeandimg.oss-cn-wulanchabu.aliyuncs.com/QO8WRD4C81335JOV]O.png"></p>
+<h2 id="MySQL支持的四种隔离级别"><a href="#MySQL支持的四种隔离级别" class="headerlink" title="MySQL支持的四种隔离级别"></a><strong>MySQL支持的四种隔离级别</strong></h2><p>MySQL的默认隔离级别为REPEATABLE READ，我们可以手动修改一下事务的隔离级别。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line"># 查看隔离级别，MySQL 5.7.20的版本之前： </span><br><span class="line">mysql&gt; SHOW VARIABLES LIKE &#x27;tx_isolation&#x27;; </span><br><span class="line">+---------------+-----------------+ </span><br><span class="line">| Variable_name | Value | </span><br><span class="line">+---------------+-----------------+ </span><br><span class="line">| tx_isolation | REPEATABLE-READ | </span><br><span class="line">+---------------+-----------------+ </span><br><span class="line">1 row in set (0.00 sec) </span><br><span class="line"># MySQL 5.7.20版本之后，引入transaction_isolation来替换tx_isolation </span><br><span class="line"># 查看隔离级别，MySQL 5.7.20的版本及之后： </span><br><span class="line">mysql&gt; SHOW VARIABLES LIKE &#x27;transaction_isolation&#x27;; </span><br><span class="line">+-----------------------+-----------------+ </span><br><span class="line">| Variable_name | Value | </span><br><span class="line">+-----------------------+-----------------+</span><br><span class="line">| transaction_isolation | REPEATABLE-READ | </span><br><span class="line">+-----------------------+-----------------+ </span><br><span class="line">1 row in set (0.02 sec) </span><br><span class="line">#或者不同MySQL版本中都可以使用的： </span><br><span class="line">SELECT @@transaction_isolation; </span><br></pre></td></tr></table></figure>
+
+<h2 id="如何设置事务的隔离级别"><a href="#如何设置事务的隔离级别" class="headerlink" title="如何设置事务的隔离级别"></a><strong>如何设置事务的隔离级别</strong></h2><p><strong>通过下面的语句修改事务的隔离级别：</strong></p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">SET [GLOBAL|SESSION] TRANSACTION ISOLATION LEVEL 隔离级别; </span><br><span class="line">#其中，隔离级别格式： </span><br><span class="line">&gt; READ UNCOMMITTED </span><br><span class="line">&gt; READ COMMITTED </span><br><span class="line">&gt; REPEATABLE READ </span><br><span class="line">&gt; SERIALIZABLE </span><br></pre></td></tr></table></figure>
+
+<p>或者：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">SET [GLOBAL|SESSION] TRANSACTION_ISOLATION = &#x27;隔离级别&#x27; </span><br><span class="line">#其中，隔离级别格式： </span><br><span class="line">&gt; READ-UNCOMMITTED </span><br><span class="line">&gt; READ-COMMITTED </span><br><span class="line">&gt; REPEATABLE-READ </span><br><span class="line">&gt; SERIALIZABLE </span><br></pre></td></tr></table></figure>
+
+<p><strong>关于设置时使用GLOBAL或SESSION的影响：</strong></p>
+<ul>
+<li><p>使用 <strong>GLOBAL 关键字</strong>（在全局范围影响）：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">SET GLOBAL TRANSACTION ISOLATION LEVEL SERIALIZABLE;</span><br><span class="line">#或</span><br><span class="line">SET GLOBAL TRANSACTION_ISOLATION = &#x27;SERIALIZABLE&#x27;;</span><br></pre></td></tr></table></figure>
+
+<p>则:</p>
+<ul>
+<li>当前已经存在的会话无效</li>
+<li>只对执行完该语句之后产生的会话起作用</li>
+</ul>
+</li>
+<li><p>使用<strong>SESSION</strong>关键字（在会话范围影响）：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">SET SESSION TRANSACTION ISOLATION LEVEL SERIALIZABLE;</span><br><span class="line">#或</span><br><span class="line">SET SESSION TRANSACTION_ISOLATION = &#x27;SERIALIZABLE&#x27;;</span><br></pre></td></tr></table></figure>
+
+<p>则：</p>
+<ul>
+<li><p>对当前会话的所有后续的事务有效</p>
+</li>
+<li><p>如果在事务之间执行，则对后续的事务有效</p>
+</li>
+<li><p>该语句可以在已经开启的事务中间执行，但不会影响当前正在执行的事务</p>
+</li>
+</ul>
+</li>
+</ul>
+<blockquote>
+<p> 小结：</p>
+<p>数据库规定了多种事务隔离级别，不同隔离级别对应不同的干扰程度，隔离级别越高，数据一致性就越好，但并发性越弱。</p>
+</blockquote>
+<h2 id="不同隔离级别举例"><a href="#不同隔离级别举例" class="headerlink" title="不同隔离级别举例"></a><strong>不同隔离级别举例</strong></h2><p><strong>演示1. 读未提交之脏读</strong></p>
+<p>设置隔离级别为未提交读：</p>
+<p><img src="https://nodeandimg.oss-cn-wulanchabu.aliyuncs.com/8PHKF6QB1NKZQNHPLE.png"></p>
+<p>事务1和事务2的执行流程如下：</p>
+<p><img src="https://nodeandimg.oss-cn-wulanchabu.aliyuncs.com/JGFEG1J9AMRYBZP.png"></p>
+<p><strong>演示2：读已提交</strong></p>
+<p><img src="https://nodeandimg.oss-cn-wulanchabu.aliyuncs.com/CPZ0N088HIVH[8.png"></p>
+<p>设置隔离级别为可重复读，事务的执行流程如下：</p>
+<p><img src="https://nodeandimg.oss-cn-wulanchabu.aliyuncs.com/J2R0CSDO26MK5R3JXU07.png"></p>
+<p><strong>演示4：幻读</strong></p>
+<p><img src="https://nodeandimg.oss-cn-wulanchabu.aliyuncs.com/51LMQUR7Z5ILW4Y2.png"></p>
+<h1 id="事务的常见分类"><a href="#事务的常见分类" class="headerlink" title="事务的常见分类"></a><strong>事务的常见分类</strong></h1><p>从事务理论的角度来看，可以把事务分为以下几种类型：</p>
+<p><strong>扁平事务（Flat Transactions）</strong></p>
+<p>扁平事务是事务类型中最简单的一种，但是在实际生产环境中，这可能是使用最频繁的事务，在扁平事务中，所有操作都处于同一层次，其由BEGIN WORK开始，由COMMIT WORK或ROLLBACKWORK结束，其间的操作是原子的，要么都执行，要么都回滚，因此，扁平事务是应用程序成为原子操作的基本组成模块。扁平事务虽然简单，但是在实际环境中使用最为频繁，也正因为其简单，使用频繁，故每个数据库系统都实现了对扁平事务的支持。扁平事务的主要限制是不能提交或者回滚事务的某一部分，或分几个步骤提交。<br>扁平事务一般有三种不同的结果:①事务成功完成。在平常应用中约占所有事务的96%。②应用程序要求停止事务。比如应用程序在捕获到异常时会回滚事务，约占事务的3%。③外界因素强制终止事务。如连接超时或连接断开，约占所有事务的1%。</p>
+<p><strong>带有保存点的扁平事务（Flat Transactions with Savepoints）</strong></p>
+<p>带有保存点的扁平事务除了支持扁平事务支持的操作外，还允许在事务执行过程中回滚到同一事务中较早的一个状态。这是因为某些事务可能在执行过程中出现的错误并不会导致所有的操作都无效，放弃整个事务不合乎要求，开销太大。<br>保存点(Savepoint)用来通知事务系统应该记住事务当前的状态，以便当之后发生错误时，事务能回到保存点当时的状态。对于扁平的事务来说，隐式的设置了一个保存点，然而在整个事务中，只有这一个保存点，因此，回滚只能会滚到事务开始时的状态。</p>
+<p><strong>链事务（Chained Transactions）</strong></p>
+<p>链事务是指一个事务由多个子事务链式组成，它可以被视为保存点模式的一个变种。带有保存点的扁平事务，当发生系统崩溃时，所有的保存点都将消失，这意味着当进行恢复时，事务需要从开始处重新执行，而不能从最近的一个保存点继续执行。链事务的思想是:在提交一个事务时，释放不需要的数据对象，将必要的处理上下文隐式地传给下一个要开始的事务，前一个子事务的提交操作和下一个子事务的开始操作合并成一个原子操作，这意味着下一个事务将看到上一个事务的结果，就好像在一个事务中进行一样。这样，<strong>在提交子事务时就可以释放不需要的数据对象，而不必等到整个事务完成后才释放</strong>。</p>
+<p><strong>嵌套事务（Nested Transactions）</strong></p>
+<p>嵌套事务是一个层次结构框架，由一个顶层事务（Top-Level Transaction）控制着各个层次的事务，顶层事务之下嵌套的事务被称为子事务(Subtransaction)，其控制着每一个局部的变换，子事务本身也可以是嵌套事务。因此，嵌套事务的层次结构可以看成是一棵树。</p>
+<p><strong>分布式事务（Distributed Transactions）</strong></p>
+<p>分布式事务通常是在一个分布式环境下运行的扁平事务，因此，需要根据数据所在位置访问网络中不同节点的数据库资源。例如，一个银行用户从招商银行的账户向工商银行的账户转账1000元，这里需要用到分布式事务，因为不能仅调用某一家银行的数据库就完成任务。</p>
+
+      
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+</div>
+
+
+
 
     
 
@@ -3142,295 +3686,6 @@
 <li><p>b.MYI (MYIndex)：存放索引信息文件</p>
 </li>
 </ul>
-
-      
-    </div>
-
-    
-    
-    
-
-    <footer class="post-footer">
-        <div class="post-eof"></div>
-      
-    </footer>
-  </article>
-</div>
-
-
-
-
-    
-
-
-<div class="post-block">
-  
-  
-
-  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="JUC">
-    <link itemprop="mainEntityOfPage" href="http://yoursite-url/JUC/JUC%E7%B3%BB%E5%88%97-%E7%AC%AC%E5%8D%81%E7%AB%A0-ThreadPool-%E7%BA%BF%E7%A8%8B%E6%B1%A0/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="https://nodeandimg.oss-cn-wulanchabu.aliyuncs.com/}VRZRM08TG_W9[WMAD}69[O.png">
-      <meta itemprop="name" content="Hao">
-      <meta itemprop="description" content="It's an IT blog...">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Study Node">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          <a href="/JUC/JUC%E7%B3%BB%E5%88%97-%E7%AC%AC%E5%8D%81%E7%AB%A0-ThreadPool-%E7%BA%BF%E7%A8%8B%E6%B1%A0/" class="post-title-link" itemprop="url">JUC系列-ThreadPool 线程池</a>
-        </h2>
-
-        <div class="post-meta-container">
-          <div class="post-meta">
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-calendar"></i>
-      </span>
-      <span class="post-meta-item-text">Posted on</span>
-
-      <time title="Created: 2021-11-19 10:02:03" itemprop="dateCreated datePublished" datetime="2021-11-19T10:02:03+08:00">2021-11-19</time>
-    </span>
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-folder"></i>
-      </span>
-      <span class="post-meta-item-text">In</span>
-        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-          <a href="/categories/JUC/" itemprop="url" rel="index"><span itemprop="name">JUC</span></a>
-        </span>
-    </span>
-
-  
-</div>
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-          <h1 id="ThreadPool-线程池"><a href="#ThreadPool-线程池" class="headerlink" title="ThreadPool 线程池"></a><strong>ThreadPool 线程池</strong></h1><h2 id="线程池简介"><a href="#线程池简介" class="headerlink" title="线程池简介"></a><strong>线程池简介</strong></h2><p>线程池（英语：thread pool）：一种线程使用模式。线程过多会带来调度销，进而影响缓存局部性和整体性能。而线程池维护着多个线程，等待着监督管理者分配可并发执行的任务。这避免了在处理短时间任务时创建与销毁线程的代价。线程池不仅能够保证内核的充分利用，还能防止过分调度。</p>
-<p>例子： 10 年前单核 CPU 电脑，假的多线程，像马戏团小丑玩多个球，CPU 需要来回切换。 现在是多核电脑，多个线程各自跑在独立的 CPU 上，不用切换效率高</p>
-<p><strong>线程池的优势：</strong> 线程池做的工作只要是控制运行的线程数量，处理过程中将任务放入队列，然后在线程创建后启动这些任务，如果线程数量超过了最大数量，超出数量的线程排队等候，等其他线程执行完毕，再从队列中取出任务来执行。</p>
-<p><strong>它的主要特点为：</strong></p>
-<ul>
-<li><p>降低资源消耗: 通过重复利用已创建的线程降低线程创建和销毁造成的销耗。</p>
-</li>
-<li><p>提高响应速度: 当任务到达时，任务可以不需要等待线程创建就能立即执行。</p>
-</li>
-<li><p>提高线程的可管理性: 线程是稀缺资源，如果无限制的创建，不仅会销耗系统资源，还会降低系统的稳定性，使用线程池可以进行统一的分配，调优和监控。</p>
-</li>
-<li><p><strong>Java</strong> <strong>中的线程池是通过</strong> <strong>Executor</strong> <strong>框架实现的，该框架中用到了Executor，Executors，ExecutorService</strong>，<strong>ThreadPoolExecutor</strong> <strong>这几个类</strong></p>
-</li>
-</ul>
-<p><img src="https://nodeandimg.oss-cn-wulanchabu.aliyuncs.com/NX1E6OPFO~GALUZ2.png"></p>
-<h2 id="线程池参数说明"><a href="#线程池参数说明" class="headerlink" title="线程池参数说明"></a><strong>线程池参数说明</strong></h2><p>本次介绍 5 种类型的线程池</p>
-<h3 id="常用参数-重点"><a href="#常用参数-重点" class="headerlink" title="常用参数(重点)"></a><strong>常用参数(重点)</strong></h3><ul>
-<li><p>corePoolSize 线程池的核心线程数</p>
-</li>
-<li><p>maximumPoolSize 能容纳的最大线程数</p>
-</li>
-<li><p>keepAliveTime 空闲线程存活时间</p>
-</li>
-<li><p>unit 存活的时间单位</p>
-</li>
-<li><p>workQueue 存放提交但未执行任务的队列</p>
-</li>
-<li><p>threadFactory 创建线程的工厂类</p>
-</li>
-<li><p>handler 等待队列满后的拒绝策略</p>
-<p><img src="https://nodeandimg.oss-cn-wulanchabu.aliyuncs.com/09-%E7%BA%BF%E7%A8%8B%E6%B1%A0%E4%B8%83%E4%B8%AA%E5%8F%82%E6%95%B0.png"></p>
-</li>
-</ul>
-<p>线程池中，有三个重要的参数，决定影响了拒绝策略：corePoolSize - 核心线程数，也即最小的线程数。workQueue - 阻塞队列 。 maximumPoolSize -最大线程数</p>
-<p>当提交任务数大于 corePoolSize 的时候，会优先将任务放到 workQueue 阻塞队列中。当阻塞队列饱和后，会扩充线程池中线程数，直到达到maximumPoolSize 最大线程数配置。此时，再多余的任务，则会触发线程池的拒绝策略了。</p>
-<p>总结起来，也就是一句话，<strong>当提交的任务数大于（workQueue.size() +</strong> <strong>maximumPoolSize ），就会触发线程池的拒绝策略</strong>。</p>
-<h3 id="拒绝策略-重点"><a href="#拒绝策略-重点" class="headerlink" title="拒绝策略(重点)"></a><strong>拒绝策略(重点)</strong></h3><p><strong>CallerRunsPolicy</strong>: 当触发拒绝策略，只要线程池没有关闭的话，则使用调用线程直接运行任务。一般并发比较小，性能要求不高，不允许失败。但是，由于调用者自己运行任务，如果任务提交速度过快，可能导致程序阻塞，性能效率上必然的损失较大</p>
-<p><strong>AbortPolicy</strong>: 丢弃任务，并抛出拒绝执行 RejectedExecutionException 异常信息。线程池默认的拒绝策略。必须处理好抛出的异常，否则会打断当前的执行流程，影响后续的任务执行。</p>
-<p><strong>DiscardPolicy</strong>: 直接丢弃，其他啥都没有</p>
-<p><strong>DiscardOldestPolicy</strong>: 当触发拒绝策略，只要线程池没有关闭的话，丢弃阻塞队列 workQueue 中最老的一个任务，并将新任务加入</p>
-<h2 id="线程池的种类与创建"><a href="#线程池的种类与创建" class="headerlink" title="线程池的种类与创建"></a><strong>线程池的种类与创建</strong></h2><h3 id="newCachedThreadPool-常用"><a href="#newCachedThreadPool-常用" class="headerlink" title="newCachedThreadPool(常用)"></a><strong>newCachedThreadPool(常用)</strong></h3><p><strong>作用</strong>：创建一个可缓存线程池，如果线程池长度超过处理需要，可灵活回收空闲线程，若无可回收，则新建线程</p>
-<p><strong>特点</strong>: </p>
-<ul>
-<li><p>线程池中数量没有固定，可达到最大值（Interger. MAX_VALUE） </p>
-</li>
-<li><p>线程池中的线程可进行缓存重复利用和回收（回收默认时间为 1 分钟）</p>
-</li>
-<li><p>当线程池中，没有可用线程，会重新创建一个线程</p>
-</li>
-</ul>
-<p><strong>创建方式：</strong></p>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * 可缓存线程池</span></span><br><span class="line"><span class="comment"> * <span class="doctag">@return</span></span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">static</span> ExecutorService <span class="title">newCachedThreadPool</span><span class="params">()</span></span>&#123;</span><br><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * corePoolSize 线程池的核心线程数</span></span><br><span class="line"><span class="comment"> * maximumPoolSize 能容纳的最大线程数</span></span><br><span class="line"><span class="comment"> * keepAliveTime 空闲线程存活时间</span></span><br><span class="line"><span class="comment"> * unit 存活的时间单位</span></span><br><span class="line"><span class="comment"> * workQueue 存放提交但未执行任务的队列</span></span><br><span class="line"><span class="comment"> * threadFactory 创建线程的工厂类:可以省略</span></span><br><span class="line"><span class="comment"> * handler 等待队列满后的拒绝策略:可以省略</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line">    <span class="keyword">return</span> <span class="keyword">new</span> ThreadPoolExecutor(<span class="number">0</span>,</span><br><span class="line">            Integer.MAX_VALUE,</span><br><span class="line">            <span class="number">60L</span>,</span><br><span class="line">            TimeUnit.SECONDS,</span><br><span class="line">            <span class="keyword">new</span> SynchronousQueue&lt;&gt;(),</span><br><span class="line">            Executors.defaultThreadFactory(),</span><br><span class="line">            <span class="keyword">new</span> ThreadPoolExecutor.AbortPolicy());</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<p><strong>场景:</strong> 适用于创建一个可无限扩大的线程池，服务器负载压力较轻，执行时间较短，任务多的场景</p>
-<h3 id="newFixedThreadPool-常用"><a href="#newFixedThreadPool-常用" class="headerlink" title="newFixedThreadPool(常用)"></a><strong>newFixedThreadPool(常用)</strong></h3><p><strong>作用</strong>：创建一个可重用固定线程数的线程池，以共享的无界队列方式来运行这些线程。在任意点，在大多数线程会处于处理任务的活动状态。如果在所有线程处于活动状态时提交附加任务，则在有可用线程之前，附加任务将在队列中等待。如果在关闭前的执行期间由于失败而导致任何线程终止，那么一个新线程将代替它执行后续的任务（如果需要）。在某个线程被显式地关闭之前，池中的线程将一直存在。</p>
-<p><strong>特征：</strong></p>
-<ul>
-<li><p>线程池中的线程处于一定的量，可以很好的控制线程的并发量</p>
-</li>
-<li><p>线程可以重复被使用，在显示关闭之前，都将一直存在</p>
-</li>
-<li><p>超出一定量的线程被提交时候需在队列中等待</p>
-</li>
-</ul>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * 固定长度线程池</span></span><br><span class="line"><span class="comment"> * <span class="doctag">@return</span></span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">static</span> ExecutorService <span class="title">newFixedThreadPool</span><span class="params">()</span></span>&#123;</span><br><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * corePoolSize 线程池的核心线程数</span></span><br><span class="line"><span class="comment"> * maximumPoolSize 能容纳的最大线程数</span></span><br><span class="line"><span class="comment"> * keepAliveTime 空闲线程存活时间</span></span><br><span class="line"><span class="comment"> * unit 存活的时间单位</span></span><br><span class="line"><span class="comment"> * workQueue 存放提交但未执行任务的队列</span></span><br><span class="line"><span class="comment"> * threadFactory 创建线程的工厂类:可以省略</span></span><br><span class="line"><span class="comment"> * handler 等待队列满后的拒绝策略:可以省略</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line">    <span class="keyword">return</span> <span class="keyword">new</span> ThreadPoolExecutor(<span class="number">10</span>,</span><br><span class="line">            <span class="number">10</span>,</span><br><span class="line">            <span class="number">0L</span>,</span><br><span class="line">            TimeUnit.SECONDS,</span><br><span class="line">            <span class="keyword">new</span> LinkedBlockingQueue&lt;&gt;(),</span><br><span class="line">            Executors.defaultThreadFactory(),</span><br><span class="line">            <span class="keyword">new</span> ThreadPoolExecutor.AbortPolicy());</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<p><strong>场景:</strong> 适用于可以预测线程数量的业务中，或者服务器负载较重，对线程数有严格限制的场景</p>
-<h3 id="newSingleThreadExecutor-常用"><a href="#newSingleThreadExecutor-常用" class="headerlink" title="newSingleThreadExecutor(常用)"></a><strong>newSingleThreadExecutor(常用)</strong></h3><p><strong>作用</strong>：创建一个使用单个 worker 线程的 Executor，以无界队列方式来运行该线程。（注意，如果因为在关闭前的执行期间出现失败而终止了此单个线程，那么如果需要，一个新线程将代替它执行后续的任务）。可保证顺序地执行各个任务，并且在任意给定的时间不会有多个线程是活动的。与其他等效的newFixedThreadPool 不同，可保证无需重新配置此方法所返回的执行程序即可使用其他的线程。</p>
-<p><strong>特征：</strong> 线程池中最多执行 1 个线程，之后提交的线程活动将会排在队列中以此执行</p>
-<p><strong>创建方式：</strong></p>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * 单一线程池</span></span><br><span class="line"><span class="comment"> * <span class="doctag">@return</span></span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">static</span> ExecutorService <span class="title">newSingleThreadExecutor</span><span class="params">()</span></span>&#123;</span><br><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * corePoolSize 线程池的核心线程数</span></span><br><span class="line"><span class="comment"> * maximumPoolSize 能容纳的最大线程数</span></span><br><span class="line"><span class="comment"> * keepAliveTime 空闲线程存活时间</span></span><br><span class="line"><span class="comment"> * unit 存活的时间单位</span></span><br><span class="line"><span class="comment"> * workQueue 存放提交但未执行任务的队列</span></span><br><span class="line"><span class="comment"> * threadFactory 创建线程的工厂类:可以省略</span></span><br><span class="line"><span class="comment"> * handler 等待队列满后的拒绝策略:可以省略</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line">    <span class="keyword">return</span> <span class="keyword">new</span> ThreadPoolExecutor(<span class="number">1</span>, <span class="number">1</span>,</span><br><span class="line">            <span class="number">0L</span>,</span><br><span class="line">            TimeUnit.SECONDS,</span><br><span class="line">            <span class="keyword">new</span> LinkedBlockingQueue&lt;&gt;(),</span><br><span class="line">            Executors.defaultThreadFactory(),</span><br><span class="line">            <span class="keyword">new</span> ThreadPoolExecutor.AbortPolicy());</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<p><strong>场景:</strong> 适用于需要保证顺序执行各个任务，并且在任意时间点，不会同时有多个线程的场景</p>
-<h3 id="newScheduleThreadPool-了解"><a href="#newScheduleThreadPool-了解" class="headerlink" title="newScheduleThreadPool(了解)"></a><strong>newScheduleThreadPool(了解)</strong></h3><p><strong>作用:</strong> 线程池支持定时以及周期性执行任务，创建一个 corePoolSize 为传入参数，最大线程数为整形的最大数的线程池</p>
-<p><strong>特征:</strong> </p>
-<p>（1）线程池中具有指定数量的线程，即便是空线程也将保留 </p>
-<p>（2）可定时或者延迟执行线程活动</p>
-<p><strong>创建方式:</strong></p>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">static</span> ScheduledExecutorService <span class="title">newScheduledThreadPool</span><span class="params">(<span class="keyword">int</span></span></span></span><br><span class="line"><span class="params"><span class="function">corePoolSize, </span></span></span><br><span class="line"><span class="params"><span class="function">ThreadFactory threadFactory)</span> </span>&#123;</span><br><span class="line"><span class="keyword">return</span> <span class="keyword">new</span> ScheduledThreadPoolExecutor(corePoolSize, </span><br><span class="line">threadFactory);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<p><strong>场景:</strong> 适用于需要多个后台线程执行周期任务的场景</p>
-<h3 id="newWorkStealingPool"><a href="#newWorkStealingPool" class="headerlink" title="newWorkStealingPool"></a><strong>newWorkStealingPool</strong></h3><p>jdk1.8 提供的线程池，底层使用的是 ForkJoinPool 实现，创建一个拥有多个任务队列的线程池，可以减少连接数，创建当前可用 cpu 核数的线程来并行执行任务</p>
-<p><strong>创建方式</strong></p>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">static</span> ExecutorService <span class="title">newWorkStealingPool</span><span class="params">(<span class="keyword">int</span> parallelism)</span> </span>&#123;</span><br><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * parallelism：并行级别，通常默认为 JVM 可用的处理器个数</span></span><br><span class="line"><span class="comment"> * factory：用于创建 ForkJoinPool 中使用的线程。</span></span><br><span class="line"><span class="comment"> * handler：用于处理工作线程未处理的异常，默认为 null</span></span><br><span class="line"><span class="comment"> * asyncMode：用于控制 WorkQueue 的工作模式:队列---反队列</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line">    <span class="keyword">return</span> <span class="keyword">new</span> ForkJoinPool(parallelism,</span><br><span class="line">            ForkJoinPool.defaultForkJoinWorkerThreadFactory, <span class="keyword">null</span>,</span><br><span class="line">            <span class="keyword">true</span>);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<p><strong>场景:</strong> 适用于大耗时，可并行执行的场景</p>
-<h2 id="线程池入门案例"><a href="#线程池入门案例" class="headerlink" title="线程池入门案例"></a><strong>线程池入门案例</strong></h2><p>案例</p>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">package</span> com.hao.pool;</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> java.util.concurrent.ArrayBlockingQueue;</span><br><span class="line"><span class="keyword">import</span> java.util.concurrent.Executors;</span><br><span class="line"><span class="keyword">import</span> java.util.concurrent.ThreadPoolExecutor;</span><br><span class="line"><span class="keyword">import</span> java.util.concurrent.TimeUnit;</span><br><span class="line"></span><br><span class="line"><span class="comment">//自定义线程池的创建</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">ThreadPoolDemo2</span> </span>&#123;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> </span>&#123;</span><br><span class="line">        ThreadPoolExecutor threadPool = <span class="keyword">new</span> ThreadPoolExecutor(</span><br><span class="line">                <span class="number">2</span>,</span><br><span class="line">                <span class="number">5</span>,</span><br><span class="line">                <span class="number">2L</span>,</span><br><span class="line">                TimeUnit.SECONDS,</span><br><span class="line">                <span class="keyword">new</span> ArrayBlockingQueue&lt;&gt;(<span class="number">3</span>),</span><br><span class="line">                Executors.defaultThreadFactory(),</span><br><span class="line">                <span class="keyword">new</span> ThreadPoolExecutor.AbortPolicy()</span><br><span class="line">        );</span><br><span class="line">        <span class="comment">//10个顾客请求</span></span><br><span class="line">        <span class="keyword">try</span> &#123;</span><br><span class="line">            <span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">1</span>; i &lt;= <span class="number">10</span>; i++) &#123;</span><br><span class="line">                <span class="comment">//执行</span></span><br><span class="line">                threadPool.execute(()-&gt;&#123;</span><br><span class="line">                    System.out.println(Thread.currentThread().getName() + <span class="string">&quot;办理业务&quot;</span>);</span><br><span class="line">                &#125;);</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;<span class="keyword">catch</span> (Exception e)&#123;</span><br><span class="line">            e.printStackTrace();</span><br><span class="line">        &#125;<span class="keyword">finally</span> &#123;</span><br><span class="line">            <span class="comment">//关闭</span></span><br><span class="line">            threadPool.shutdown();</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<h2 id="线程池底层工作原理-重要"><a href="#线程池底层工作原理-重要" class="headerlink" title="线程池底层工作原理(重要)"></a><strong>线程池底层工作原理(重要)</strong></h2><ol>
-<li><p>在创建了线程池后，线程池中的线程数为零</p>
-</li>
-<li><p>当调用 execute()方法添加一个请求任务时，线程池会做出如下判断： </p>
-<p>  2.1 如果正在运行的线程数量小于 corePoolSize，那么马上创建线程运行这个任务；</p>
-</li>
-</ol>
-<p>​         2.2 如果正在运行的线程数量大于或等于 corePoolSize，那么将这个任务放入队列；</p>
-<p>​         2.3 如果这个时候队列满了且正在运行的线程数量还小于maximumPoolSize，那么还是要创建非核心线程立刻运行这个任务；</p>
-<p>​         2.4 如果队列满了且正在运行的线程数量大于或等于 maximumPoolSize，那么线程池会启动饱和拒绝策略来执行。</p>
-<ol start="3">
-<li><p>当一个线程完成任务时，它会从队列中取下一个任务来执行</p>
-</li>
-<li><p>当一个线程无事可做超过一定的时间（keepAliveTime）时，线程会判断：</p>
-</li>
-</ol>
-<p>​        4.1 如果当前运行的线程数大于 corePoolSize，那么这个线程就被停掉。 </p>
-<p>​        4.2 所以线程池的所有任务完成后，它最终会收缩到 corePoolSize 的大小。</p>
-<p><img src="https://nodeandimg.oss-cn-wulanchabu.aliyuncs.com/MVHC8Z%60_WAQLC_HX.png"></p>
-<h2 id="注意事项-重要"><a href="#注意事项-重要" class="headerlink" title="注意事项(重要)"></a><strong>注意事项(重要)</strong></h2><ol>
-<li><p>项目中创建多线程时，使用常见的三种线程池创建方式，单一、可变、定长都有一定问题，原因是 FixedThreadPool 和 SingleThreadExecutor 底层都是用LinkedBlockingQueue 实现的，这个队列最大长度为 Integer.MAX_VALUE，容易导致 OOM。所以实际生产一般自己通过 ThreadPoolExecutor 的 7 个参数，自定义线程池</p>
-</li>
-<li><p>创建线程池推荐适用 ThreadPoolExecutor 及其 7 个参数手动创建</p>
-</li>
-</ol>
-<p>o corePoolSize 线程池的核心线程数</p>
-<p>o maximumPoolSize 能容纳的最大线程数</p>
-<p>o keepAliveTime 空闲线程存活时间</p>
-<p>o unit 存活的时间单位</p>
-<p>o workQueue 存放提交但未执行任务的队列</p>
-<p>o threadFactory 创建线程的工厂类</p>
-<p>o handler 等待队列满后的拒绝策略</p>
-<ol start="3">
-<li>为什么不允许适用不允许 Executors.的方式手动创建线程池,如下图</li>
-</ol>
-<p><img src="https://nodeandimg.oss-cn-wulanchabu.aliyuncs.com/~ZC%7DKX7O11V40S2TZGE.png"></p>
-
-      
-    </div>
-
-    
-    
-    
-
-    <footer class="post-footer">
-        <div class="post-eof"></div>
-      
-    </footer>
-  </article>
-</div>
-
-
-
-
-    
-
-
-<div class="post-block">
-  
-  
-
-  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="思考">
-    <link itemprop="mainEntityOfPage" href="http://yoursite-url/%E6%80%9D%E8%80%83/%E5%9B%A2%E9%98%9F%E7%B2%BE%E7%A5%9E/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="https://nodeandimg.oss-cn-wulanchabu.aliyuncs.com/}VRZRM08TG_W9[WMAD}69[O.png">
-      <meta itemprop="name" content="Hao">
-      <meta itemprop="description" content="It's an IT blog...">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Study Node">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          <a href="/%E6%80%9D%E8%80%83/%E5%9B%A2%E9%98%9F%E7%B2%BE%E7%A5%9E/" class="post-title-link" itemprop="url">团队精神</a>
-        </h2>
-
-        <div class="post-meta-container">
-          <div class="post-meta">
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-calendar"></i>
-      </span>
-      <span class="post-meta-item-text">Posted on</span>
-
-      <time title="Created: 2021-11-17 13:50:25" itemprop="dateCreated datePublished" datetime="2021-11-17T13:50:25+08:00">2021-11-17</time>
-    </span>
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-folder"></i>
-      </span>
-      <span class="post-meta-item-text">In</span>
-        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-          <a href="/categories/%E5%9B%A2%E9%98%9F/" itemprop="url" rel="index"><span itemprop="name">团队</span></a>
-        </span>
-    </span>
-
-  
-</div>
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-          <h1 id="团队精神"><a href="#团队精神" class="headerlink" title="团队精神"></a>团队精神</h1><p>为什么要谈这个话题 因为最近读了一本叫做浪潮之巅的书籍 有所思考 首先团队精神是什么呢？</p>
-<p>百度百科中是这样解释的</p>
-<blockquote>
-<p>团队精神是大局意识、协作精神和服务精神的集中体现，核心是协同合作，反映的是个体利益和整体利益的统一，并进而保证组织的高效率运转。 团队精神的形成并不要求团队成员牺牲自我，相反，挥洒个性、表现特长保证了成员共同完成任务目标，而明确的协作意愿和协作方式则产生了真正的内心动力。</p>
-</blockquote>
-<p> 一个团队首先要有一个优秀的领导者，比如IBM的郭士纳,苹果公司的乔布斯,惠普公司的马克赫德。</p>
-<p>优秀的领导者能做什么呢？我认为一个优秀的领导者可以带领你前进的方向，让你的方向正确。我们通常说选择大于努力</p>
-<p>可能也是因为这个吧。</p>
-<blockquote>
-<p>例如现在的it行业培训机构 我认为就是只是培训 而一个行业如果想要做好 不付出是不可能的。大家如果都只是来随便讲讲课</p>
-<p>聊聊天,那么这种培训机构宁愿不要去。老师应该去教会别人怎样去思考,而不是一味的去叫一门技术,难道五年后技术变革之后在</p>
-<p>没人报一个培训班吗？显然不可能</p>
-</blockquote>
-<p> 第二点就是要有“叛逆”精神大家没必要觉得老师说的都是对的,他只不过比我们多学了10几年而已。我们作为二十一实际的年轻人,应该具有思辨性。不应该全部听从老师的,我们应该去多于团队之间的人间交流,进行思维的碰撞。让自己的认知得到提高</p>
-<p>我认为好的团队就是一下几点</p>
-<ul>
-<li>有一个优秀的领导者</li>
-<li>团队氛围(积极的进行思维的交流于碰撞)</li>
-</ul>
-<p>当然这些太过于理想化,如果一个团队有我想象中的这么美好。我相信一定是战无不胜的。</p>
 
       
     </div>
