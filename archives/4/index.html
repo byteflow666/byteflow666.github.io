@@ -133,18 +133,18 @@
   <nav class="site-state">
       <div class="site-state-item site-state-posts">
         <a href="/archives/">
-          <span class="site-state-item-count">75</span>
+          <span class="site-state-item-count">76</span>
           <span class="site-state-item-name">posts</span>
         </a>
       </div>
       <div class="site-state-item site-state-categories">
           <a href="/categories/">
-        <span class="site-state-item-count">15</span>
+        <span class="site-state-item-count">16</span>
         <span class="site-state-item-name">categories</span></a>
       </div>
       <div class="site-state-item site-state-tags">
           <a href="/tags/">
-        <span class="site-state-item-count">15</span>
+        <span class="site-state-item-count">17</span>
         <span class="site-state-item-name">tags</span></a>
       </div>
   </nav>
@@ -181,6 +181,154 @@
 
 
     <div class="main-inner index posts-expand">
+
+    
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="Reids">
+    <link itemprop="mainEntityOfPage" href="http://yoursite-url/Reids/Redis%E6%8C%81%E4%B9%85%E5%8C%96/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="https://nodeandimg.oss-cn-wulanchabu.aliyuncs.com/}VRZRM08TG_W9[WMAD}69[O.png">
+      <meta itemprop="name" content="Hao">
+      <meta itemprop="description" content="It's an IT blog...">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Study Node">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          <a href="/Reids/Redis%E6%8C%81%E4%B9%85%E5%8C%96/" class="post-title-link" itemprop="url">Redis持久化</a>
+        </h2>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">Posted on</span>
+
+      <time title="Created: 2022-03-20 22:00:44" itemprop="dateCreated datePublished" datetime="2022-03-20T22:00:44+08:00">2022-03-20</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">In</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/NoSQL/" itemprop="url" rel="index"><span itemprop="name">NoSQL</span></a>
+        </span>
+          , 
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/NoSQL/Redis/" itemprop="url" rel="index"><span itemprop="name">Redis</span></a>
+        </span>
+    </span>
+
+  
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+          <h1 id="Redis持久化"><a href="#Redis持久化" class="headerlink" title="Redis持久化"></a>Redis持久化</h1><h2 id="持久化—RDB"><a href="#持久化—RDB" class="headerlink" title="持久化—RDB"></a>持久化—RDB</h2><p>redis是内存数据库，如果不将内存中的数据库状态保存到磁盘，那么一旦服务器进程退出，服务器中的数据库状态也会消失，所以redis提供了持久化的功能<strong>如果只做缓存，是不用持久化的</strong></p>
+<p><img src="https://nodeandimg.oss-cn-wulanchabu.aliyuncs.com/BTJU3AU4C7KL0JE9.png"></p>
+<h3 id="什么是RDB"><a href="#什么是RDB" class="headerlink" title="什么是RDB"></a>什么是RDB</h3><p>在指定时间间隔后，将内存中的数据集快照写入数据库 ；在恢复时候，直接读取快照文件，进行数据的恢复 ；</p>
+<p>默认情况下， Redis 将数据库快照保存在名字为 dump.rdb的二进制文件中。文件名可以在配置文件中进行自定义。</p>
+<h3 id="工作原理"><a href="#工作原理" class="headerlink" title="工作原理"></a>工作原理</h3><p>在进行 <strong><code>RDB</code></strong> 的时候，**<code>redis</code>** 的主线程是不会做 <strong><code>io</code></strong> 操作的，主线程会 <strong><code>fork</code></strong> 一个子线程来完成该操作；</p>
+<ol>
+<li>Redis 调用forks。同时拥有父进程和子进程。</li>
+<li>子进程将数据集写入到一个临时 RDB 文件中。</li>
+<li>当子进程完成对新 RDB 文件的写入时，Redis 用新 RDB 文件替换原来的 RDB 文件，并删除旧的 RDB 文件。</li>
+</ol>
+<p>这种工作方式使得 Redis 可以从写时复制（copy-on-write）机制中获益(因为是使用子进程进行写操作，而父进程依然可以接收来自客户端的请求。)</p>
+<p><img src="https://nodeandimg.oss-cn-wulanchabu.aliyuncs.com/JUDC34YP73HPPFDO6F5.png"></p>
+<h3 id="触发机制"><a href="#触发机制" class="headerlink" title="触发机制"></a>触发机制</h3><ol>
+<li>save的规则满足的情况下，会自动触发rdb原则</li>
+<li>执行flushall命令，也会触发我们的rdb原则</li>
+<li>退出redis，也会自动产生rdb文件</li>
+</ol>
+<h3 id="save"><a href="#save" class="headerlink" title="save"></a>save</h3><p>使用 <code>save</code> 命令，会立刻对当前内存中的数据进行持久化 ,但是会阻塞，也就是不接受其他操作了；</p>
+<blockquote>
+<p>由于 <code>save</code> 命令是同步命令，会占用Redis的主进程。若Redis数据非常多时，<code>save</code>命令执行速度会非常慢，阻塞所有客户端的请求。</p>
+</blockquote>
+<p><img src="https://nodeandimg.oss-cn-wulanchabu.aliyuncs.com/Y98NKAMDAPGWNYFGXVY.png"></p>
+<h3 id="flushall命令"><a href="#flushall命令" class="headerlink" title="flushall命令"></a>flushall命令</h3><p><code>flushall</code> 命令也会触发持久化 ；</p>
+<h3 id="触发持久化规则"><a href="#触发持久化规则" class="headerlink" title="触发持久化规则"></a>触发持久化规则</h3><p>满足配置条件中的触发条件 ；</p>
+<blockquote>
+<p>可以通过配置文件对 Redis 进行设置， 让它在“ N 秒内数据集至少有 M 个改动”这一条件被满足时， 自动进行数据集保存操作。</p>
+</blockquote>
+<p><img src="https://nodeandimg.oss-cn-wulanchabu.aliyuncs.com/VT061SWH3TC84649P.png"></p>
+<h3 id="bgsave"><a href="#bgsave" class="headerlink" title="bgsave"></a>bgsave</h3><p><code>bgsave</code> 是异步进行，进行持久化的时候，<code>redis</code> 还可以将继续响应客户端请求 ；</p>
+<p><img src="https://nodeandimg.oss-cn-wulanchabu.aliyuncs.com/19E4S8JTT9KEMS2OS3EN.png"></p>
+<h3 id="优缺点"><a href="#优缺点" class="headerlink" title="优缺点"></a>优缺点</h3><p><strong>优点：</strong></p>
+<ol>
+<li>适合大规模的数据恢复</li>
+<li>对数据的完整性要求不高</li>
+</ol>
+<p><strong>缺点：</strong></p>
+<ol>
+<li>需要一定的时间间隔进行操作，如果redis意外宕机了，这个最后一次修改的数据就没有了。</li>
+<li>fork进程的时候，会占用一定的内容空间。</li>
+</ol>
+<h2 id="持久化AOF"><a href="#持久化AOF" class="headerlink" title="持久化AOF"></a>持久化AOF</h2><p><strong>Append Only File</strong></p>
+<p>将我们所有的命令都记录下来，history，恢复的时候就把这个文件全部再执行一遍</p>
+<blockquote>
+<p>以日志的形式来记录每个写的操作，将Redis执行过的所有指令记录下来（读操作不记录），只许追加文件但不可以改写文件，redis启动之初会读取该文件重新构建数据，换言之，redis重启的话就根据日志文件的内容将写指令从前到后执行一次以完成数据的恢复工作。</p>
+</blockquote>
+<h3 id="什么是AOF"><a href="#什么是AOF" class="headerlink" title="什么是AOF"></a>什么是AOF</h3><p> 快照功能（RDB）并不是非常耐久（durable）： 如果 Redis 因为某些原因而造成故障停机， 那么服务器将丢失最近写入、以及未保存到快照中的那些数据。 从 1.1 版本开始， Redis 增加了一种完全耐久的持久化方式： AOF 持久化。</p>
+<p>如果要使用AOF，需要修改配置文件：</p>
+<p><img src="https://nodeandimg.oss-cn-wulanchabu.aliyuncs.com/V34R4ICRCS8OCUSA.png"></p>
+<p>appendonly no yes则表示启用AOF</p>
+<p>默认是不开启的，我们需要手动配置，然后重启redis，就可以生效了！</p>
+<p>如果这个aof文件有错位，这时候redis是启动不起来的，我需要修改这个aof文件</p>
+<p>redis给我们提供了一个工具redis-check-aof –fix</p>
+<blockquote>
+<p>优点和缺点</p>
+</blockquote>
+<figure class="highlight clean"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">appendonly yes  # 默认是不开启aof模式的，默认是使用rdb方式持久化的，在大部分的情况下，rdb完全够用</span><br><span class="line">appendfilename <span class="string">&quot;appendonly.aof&quot;</span></span><br><span class="line"></span><br><span class="line"># appendfsync always # 每次修改都会sync 消耗性能</span><br><span class="line">appendfsync everysec # 每秒执行一次 sync 可能会丢失这一秒的数据</span><br><span class="line"># appendfsync no # 不执行 sync ,这时候操作系统自己同步数据，速度最快</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<p><strong>优点</strong></p>
+<ol>
+<li>每一次修改都会同步，文件的完整性会更加好</li>
+<li>没秒同步一次，可能会丢失一秒的数据</li>
+<li>从不同步，效率最高</li>
+</ol>
+<p><strong>缺点</strong></p>
+<ol>
+<li>相对于数据文件来说，aof远远大于rdb，修复速度比rdb慢！</li>
+<li>Aof运行效率也要比rdb慢，所以我们redis默认的配置就是rdb持久化</li>
+</ol>
+<h2 id="RDB和AOP选择"><a href="#RDB和AOP选择" class="headerlink" title="RDB和AOP选择"></a>RDB和AOP选择</h2><p><img src="https://nodeandimg.oss-cn-wulanchabu.aliyuncs.com/MMXO%7DUS]PWXU1.png"></p>
+<p>如何选择使用哪种持久化方式？<br>一般来说， 如果想达到足以媲美 PostgreSQL 的数据安全性， 你应该同时使用两种持久化功能。</p>
+<p>如果你非常关心你的数据， 但仍然可以承受数分钟以内的数据丢失， 那么你可以只使用 RDB 持久化。</p>
+<p>有很多用户都只使用 AOF 持久化， 但并不推荐这种方式： 因为定时生成 RDB 快照（snapshot）非常便于进行数据库备份， 并且 RDB 恢复数据集的速度也要比 AOF 恢复的速度要快。</p>
+
+      
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+</div>
+
+
+
 
     
 
@@ -2707,521 +2855,6 @@
 </li>
 </ol>
 <p>否则会产生间隙锁，内部扩大锁定范围，导致系统性能下降，产生死锁。</p>
-
-      
-    </div>
-
-    
-    
-    
-
-    <footer class="post-footer">
-        <div class="post-eof"></div>
-      
-    </footer>
-  </article>
-</div>
-
-
-
-
-    
-
-
-<div class="post-block">
-  
-  
-
-  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="MySQL">
-    <link itemprop="mainEntityOfPage" href="http://yoursite-url/MySQL/%E7%B4%A2%E5%BC%95%E4%BC%98%E5%8C%96%E4%B8%8E%E6%9F%A5%E8%AF%A2%E4%BC%98%E5%8C%96/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="https://nodeandimg.oss-cn-wulanchabu.aliyuncs.com/}VRZRM08TG_W9[WMAD}69[O.png">
-      <meta itemprop="name" content="Hao">
-      <meta itemprop="description" content="It's an IT blog...">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Study Node">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          <a href="/MySQL/%E7%B4%A2%E5%BC%95%E4%BC%98%E5%8C%96%E4%B8%8E%E6%9F%A5%E8%AF%A2%E4%BC%98%E5%8C%96/" class="post-title-link" itemprop="url">索引优化与查询优化</a>
-        </h2>
-
-        <div class="post-meta-container">
-          <div class="post-meta">
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-calendar"></i>
-      </span>
-      <span class="post-meta-item-text">Posted on</span>
-
-      <time title="Created: 2022-02-11 23:29:07" itemprop="dateCreated datePublished" datetime="2022-02-11T23:29:07+08:00">2022-02-11</time>
-    </span>
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-folder"></i>
-      </span>
-      <span class="post-meta-item-text">In</span>
-        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-          <a href="/categories/MySQL%E9%AB%98%E7%BA%A7/" itemprop="url" rel="index"><span itemprop="name">MySQL高级</span></a>
-        </span>
-          , 
-        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-          <a href="/categories/MySQL%E9%AB%98%E7%BA%A7/%E6%95%B0%E6%8D%AE%E5%BA%93/" itemprop="url" rel="index"><span itemprop="name">数据库</span></a>
-        </span>
-    </span>
-
-  
-</div>
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-          <blockquote>
-<p>这里都是康师傅的MySQL笔记 写这些只是方便复习 不得不说康师傅讲的真好</p>
-</blockquote>
-<h1 id="索引失效案例"><a href="#索引失效案例" class="headerlink" title="索引失效案例"></a><strong>索引失效案例</strong></h1><h2 id="全值匹配我最爱"><a href="#全值匹配我最爱" class="headerlink" title="全值匹配我最爱"></a><strong>全值匹配我最爱</strong></h2><h2 id="最佳左前缀法则"><a href="#最佳左前缀法则" class="headerlink" title="最佳左前缀法则"></a><strong>最佳左前缀法则</strong></h2><blockquote>
-<p><strong>拓展：Alibaba《Java开发手册》</strong></p>
-<p>索引文件具有 B-Tree 的最左前缀匹配特性，如果左边的值未确定，那么无法使用此索引。</p>
-</blockquote>
-<h2 id="主键插入顺序"><a href="#主键插入顺序" class="headerlink" title="主键插入顺序"></a><strong>主键插入顺序</strong></h2><p><img src="https://nodeandimg.oss-cn-wulanchabu.aliyuncs.com/FRB7EL0M6T77KS.png"></p>
-<p>如果此时再插入一条主键值为 9 的记录，那它插入的位置就如下图：</p>
-<p><img src="https://nodeandimg.oss-cn-wulanchabu.aliyuncs.com/QT8MP2RAFMPNI2.png"></p>
-<p>可这个数据页已经满了，再插进来咋办呢？我们需要把当前 页面分裂 成两个页面，把本页中的一些记录移动到新创建的这个页中。页面分裂和记录移位意味着什么？意味着： 性能损耗 ！所以如果我们想尽量避免这样无谓的性能损耗，最好让插入的记录的 主键值依次递增 ，这样就不会发生这样的性能损耗了。所以我们建议：让主键具有AUTO_INCREMENT ，让存储引擎自己为表生成主键，而不是我们手动插入 ，比如： person_info 表：</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">CREATE TABLE person_info( </span><br><span class="line">id INT UNSIGNED NOT NULL AUTO_INCREMENT, </span><br><span class="line">name VARCHAR(100) NOT NULL, </span><br><span class="line">birthday DATE NOT NULL, </span><br><span class="line">phone_number CHAR(11) NOT NULL, </span><br><span class="line">country varchar(100) NOT NULL, </span><br><span class="line">PRIMARY KEY (id), </span><br><span class="line">KEY idx_name_birthday_phone_number (name(10), birthday, phone_number) </span><br><span class="line">);</span><br></pre></td></tr></table></figure>
-
-<p>我们自定义的主键列 id 拥有 AUTO_INCREMENT 属性，在插入记录时存储引擎会自动为我们填入自增的主键值。这样的主键占用空间小，顺序写入，减少页分裂。</p>
-<h2 id="计算、函数、类型转换-自动或手动-导致索引失效"><a href="#计算、函数、类型转换-自动或手动-导致索引失效" class="headerlink" title="计算、函数、类型转换(自动或手动)导致索引失效"></a><strong>计算、函数、类型转换(自动或手动)导致索引失效</strong></h2><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">EXPLAIN SELECT SQL_NO_CACHE * FROM student WHERE student.name LIKE &#x27;abc%&#x27;; </span><br></pre></td></tr></table></figure>
-
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">EXPLAIN SELECT SQL_NO_CACHE * FROM student WHERE LEFT(student.name,3) = &#x27;abc&#x27;; </span><br></pre></td></tr></table></figure>
-
-<p>创建索引</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">CREATE INDEX idx_name ON student(NAME);</span><br></pre></td></tr></table></figure>
-
-<p>第一种：索引优化生效</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">mysql&gt; EXPLAIN SELECT SQL_NO_CACHE * FROM student WHERE student.name LIKE &#x27;abc%&#x27;;</span><br></pre></td></tr></table></figure>
-
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br></pre></td><td class="code"><pre><span class="line">mysql&gt; SELECT SQL_NO_CACHE * FROM student WHERE student.name LIKE &#x27;abc%&#x27;; </span><br><span class="line">+---------+---------+--------+------+---------+ </span><br><span class="line">| id | stuno | name | age | classId | </span><br><span class="line">+---------+---------+--------+------+---------+ </span><br><span class="line">| 5301379 | 1233401 | AbCHEa | 164 | 259 | </span><br><span class="line">| 7170042 | 3102064 | ABcHeB | 199 | 161 | </span><br><span class="line">| 1901614 | 1833636 | ABcHeC | 226 | 275 | </span><br><span class="line">| 5195021 | 1127043 | abchEC | 486 | 72 | </span><br><span class="line">| 4047089 | 3810031 | AbCHFd | 268 | 210 | </span><br><span class="line">| 4917074 | 849096 | ABcHfD | 264 | 442 | </span><br><span class="line">| 1540859 | 141979 | abchFF | 119 | 140 | </span><br><span class="line">| 5121801 | 1053823 | AbCHFg | 412 | 327 | </span><br><span class="line">| 2441254 | 2373276 | abchFJ | 170 | 362 | </span><br><span class="line">| 7039146 | 2971168 | ABcHgI | 502 | 465 | </span><br><span class="line">| 1636826 | 1580286 | ABcHgK | 71 | 262 | </span><br><span class="line">| 374344 | 474345 | abchHL | 367 | 212 | </span><br><span class="line">| 1596534 | 169191 | AbCHHl | 102 | 146 | </span><br><span class="line">... </span><br><span class="line">| 5266837 | 1198859 | abclXe | 292 | 298 | </span><br><span class="line">| 8126968 | 4058990 | aBClxE | 316 | 150 | </span><br><span class="line">| 4298305 | 399962 | AbCLXF | 72 | 423 | </span><br><span class="line">| 5813628 | 1745650 | aBClxF | 356 | 323 | </span><br><span class="line">| 6980448 | 2912470 | AbCLXF | 107 | 78 | </span><br><span class="line">| 7881979 | 3814001 | AbCLXF | 89 | 497 | </span><br><span class="line">| 4955576 | 887598 | ABcLxg | 121 | 385 | </span><br><span class="line">| 3653460 | 3585482 | AbCLXJ | 130 | 174 | </span><br><span class="line">| 1231990 | 1283439 | AbCLYH | 189 | 429 | </span><br><span class="line">| 6110615 | 2042637 | ABcLyh | 157 | 40 | </span><br><span class="line">+---------+---------+--------+------+---------+ </span><br><span class="line">401 rows in set, 1 warning (0.01 sec) </span><br></pre></td></tr></table></figure>
-
-<p>第二种：索引优化失效</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">mysql&gt; EXPLAIN SELECT SQL_NO_CACHE * FROM student WHERE LEFT(student.name,3) = &#x27;abc&#x27;;</span><br></pre></td></tr></table></figure>
-
-<p><img src="https://nodeandimg.oss-cn-wulanchabu.aliyuncs.com/7XD26AYKGDKWT4X9W.png"></p>
-<p>type为“ALL”，表示没有使用到索引，查询时间为 3.62 秒，查询效率较之前低很多。</p>
-<p><strong>再举例：</strong></p>
-<ul>
-<li>student表的字段stuno上设置有索引</li>
-</ul>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">CREATE INDEX idx_sno ON student(stuno);</span><br></pre></td></tr></table></figure>
-
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">EXPLAIN SELECT SQL_NO_CACHE id, stuno, NAME FROM student WHERE stuno+1 = 900001;</span><br></pre></td></tr></table></figure>
-
-<p>运行结果：</p>
-<p><img src="https://nodeandimg.oss-cn-wulanchabu.aliyuncs.com/7XD26AYKGDKWT4X9W.png"></p>
-<ul>
-<li>索引优化生效</li>
-</ul>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">EXPLAIN SELECT SQL_NO_CACHE id, stuno, NAME FROM student WHERE stuno = 900000;</span><br></pre></td></tr></table></figure>
-
-<h2 id="类型转换导致索引失效"><a href="#类型转换导致索引失效" class="headerlink" title="类型转换导致索引失效"></a><strong>类型转换导致索引失效</strong></h2><p>下列哪个sql语句可以用到索引。（假设name字段上设置有索引）</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"># 未使用到索引 </span><br><span class="line">EXPLAIN SELECT SQL_NO_CACHE * FROM student WHERE name=123;</span><br></pre></td></tr></table></figure>
-
-<p><img src="https://nodeandimg.oss-cn-wulanchabu.aliyuncs.com/7A87IQMI0V.png"></p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"># 使用到索引 EXPLAIN SELECT SQL_NO_CACHE * FROM student WHERE name=&#x27;123&#x27;;</span><br></pre></td></tr></table></figure>
-
-<p><img src="https://nodeandimg.oss-cn-wulanchabu.aliyuncs.com/14YGTINIVHB5TV.png"></p>
-<ul>
-<li>name=123发生类型转换，索引失效。</li>
-</ul>
-<h2 id="范围条件右边的列索引失效"><a href="#范围条件右边的列索引失效" class="headerlink" title="范围条件右边的列索引失效"></a><strong>范围条件右边的列索引失效</strong></h2><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">ALTER TABLE student DROP INDEX idx_name; </span><br><span class="line">ALTER TABLE student DROP INDEX idx_age; </span><br><span class="line">ALTER TABLE student DROP INDEX idx_age_classid; </span><br><span class="line"></span><br><span class="line">EXPLAIN SELECT SQL_NO_CACHE * FROM student </span><br><span class="line">WHERE student.age=30 AND student.classId&gt;20 AND  student.name = &#x27;abc&#x27; ; </span><br></pre></td></tr></table></figure>
-
-<p><img src="https://nodeandimg.oss-cn-wulanchabu.aliyuncs.com/PZ7DUR6OGZH.png"></p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">create index idx_age_name_classid on student(age,name,classid);</span><br></pre></td></tr></table></figure>
-
-<ul>
-<li>将范围查询条件放置语句最后：</li>
-</ul>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">EXPLAIN SELECT SQL_NO_CACHE * FROM student WHERE student.age=30 AND student.name = &#x27;abc&#x27; AND student.classId&gt;20 ;</span><br></pre></td></tr></table></figure>
-
-<p><img src="https://nodeandimg.oss-cn-wulanchabu.aliyuncs.com/QVBZEGZFUG]IE6S5FJSF.png"></p>
-<h2 id="不等于-或者-lt-gt-索引失效"><a href="#不等于-或者-lt-gt-索引失效" class="headerlink" title="**不等于(!= **或者&lt;&gt;)索引失效"></a>**不等于(!= **或者&lt;&gt;)索引失效</h2><h2 id="is-null可以使用索引，is-not-null无法使用索引"><a href="#is-null可以使用索引，is-not-null无法使用索引" class="headerlink" title="is null可以使用索引，is not null无法使用索引"></a><strong>is null可以使用索引，is not null无法使用索引</strong></h2><h2 id="like以通配符-开头索引失效"><a href="#like以通配符-开头索引失效" class="headerlink" title="like以通配符%开头索引失效"></a><strong>like以通配符%开头索引失效</strong></h2><blockquote>
-<p><strong>拓展：Alibaba《Java开发手册》</strong></p>
-<p>【强制】页面搜索严禁左模糊或者全模糊，如果需要请走搜索引擎来解决。</p>
-</blockquote>
-<h2 id="OR-前后存在非索引的列，索引失效"><a href="#OR-前后存在非索引的列，索引失效" class="headerlink" title="OR 前后存在非索引的列，索引失效"></a><strong>OR</strong> <strong>前后存在非索引的列，索引失效</strong></h2><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"># 未使用到索引</span><br><span class="line">EXPLAIN SELECT SQL_NO_CACHE * FROM student WHERE age = 10 OR classid = 100;</span><br></pre></td></tr></table></figure>
-
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">#使用到索引</span><br><span class="line">EXPLAIN SELECT SQL_NO_CACHE * FROM student WHERE age = 10 OR name = &#x27;Abel&#x27;;</span><br></pre></td></tr></table></figure>
-
-<h2 id="数据库和表的字符集统一使用utf8mb4"><a href="#数据库和表的字符集统一使用utf8mb4" class="headerlink" title="数据库和表的字符集统一使用utf8mb4"></a><strong>数据库和表的字符集统一使用utf8mb4</strong></h2><p>统一使用utf8mb4( 5.5.3版本以上支持)兼容性更好，统一字符集可以避免由于字符集转换产生的乱码。不同的 字符集 进行比较前需要进行 转换 会造成索引失效。</p>
-<h1 id="关联查询优化"><a href="#关联查询优化" class="headerlink" title="关联查询优化"></a><strong>关联查询优化</strong></h1><h2 id="采用左外连接"><a href="#采用左外连接" class="headerlink" title="采用左外连接"></a><strong>采用左外连接</strong></h2><p>下面开始 EXPLAIN 分析</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">EXPLAIN SELECT SQL_NO_CACHE * FROM `type` LEFT JOIN book ON type.card = book.card;</span><br></pre></td></tr></table></figure>
-
-<p>结论：type 有All</p>
-<p>添加索引优化</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">ALTER TABLE book ADD INDEX Y ( card); #【被驱动表】，可以避免全表扫描 </span><br><span class="line"></span><br><span class="line">EXPLAIN SELECT SQL_NO_CACHE * FROM `type` LEFT JOIN book ON type.card = book.card;</span><br></pre></td></tr></table></figure>
-
-<p>可以看到第二行的 type 变为了 ref，rows 也变成了优化比较明显。这是由左连接特性决定的。LEFT JOIN条件用于确定如何从右表搜索行，左边一定都有，所以 右边是我们的关键点,一定需要建立索引 。</p>
-<p><img src="https://nodeandimg.oss-cn-wulanchabu.aliyuncs.com/KJ0XM%7D8LFTR0B9C4.png"></p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">ALTER TABLE `type` ADD INDEX X (card); #【驱动表】，无法避免全表扫描 </span><br><span class="line"></span><br><span class="line">EXPLAIN SELECT SQL_NO_CACHE * FROM `type` LEFT JOIN book ON type.card = book.card</span><br></pre></td></tr></table></figure>
-
-<p><img src="https://nodeandimg.oss-cn-wulanchabu.aliyuncs.com/Q4TSYJBB11U89K.png"></p>
-<p>接着：</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">DROP INDEX Y ON book;</span><br><span class="line"></span><br><span class="line">EXPLAIN SELECT SQL_NO_CACHE * FROM `type` LEFT JOIN book ON type.card = book.card;</span><br></pre></td></tr></table></figure>
-
-<p><img src="https://nodeandimg.oss-cn-wulanchabu.aliyuncs.com/6WWRF08PVT44VAO.png"></p>
-<h2 id="采用内连接"><a href="#采用内连接" class="headerlink" title="采用内连接"></a><strong>采用内连接</strong></h2><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">drop index X on type; </span><br><span class="line">drop index Y on book;（如果已经删除了可以不用再执行该操作）</span><br></pre></td></tr></table></figure>
-
-<p>换成 inner join（MySQL自动选择驱动表）</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">EXPLAIN SELECT SQL_NO_CACHE * FROM type INNER JOIN book ON type.card=book.card;</span><br></pre></td></tr></table></figure>
-
-<p><img src="https://nodeandimg.oss-cn-wulanchabu.aliyuncs.com/NQXPQBORGP4K69P.png"></p>
-<p>添加索引优化</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">ALTER TABLE book ADD INDEX Y ( card);</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">EXPLAIN SELECT SQL_NO_CACHE * FROM type INNER JOIN book ON type.card=book.card;</span><br></pre></td></tr></table></figure>
-
-<p><img src="https://nodeandimg.oss-cn-wulanchabu.aliyuncs.com/Q48R7Z2DFHV02UAAE7.png"></p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">ALTER TABLE type ADD INDEX X (card); </span><br><span class="line"></span><br><span class="line">EXPLAIN SELECT SQL_NO_CACHE * FROM type INNER JOIN book ON type.card=book.card;</span><br></pre></td></tr></table></figure>
-
-<p><img src="https://nodeandimg.oss-cn-wulanchabu.aliyuncs.com/LGH7PHWPZLCO4E.png"></p>
-<h2 id="join语句原理"><a href="#join语句原理" class="headerlink" title="join语句原理"></a><strong>join语句原理</strong></h2><ul>
-<li><strong>Index Nested-Loop Join</strong></li>
-</ul>
-<p> 我们来看一下这个语句：</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">EXPLAIN SELECT * FROM t1 STRAIGHT_JOIN t2 ON (t1.a=t2.a);</span><br></pre></td></tr></table></figure>
-
-<p>如果直接使用join语句，MySQL优化器可能会选择表t1或t2作为驱动表，这样会影响我们分析SQL语句的执行过程。所以，为了便于分析执行过程中的性能问题，我改用 straight_join 让MySQL使用固定的连接方式执行查询，这样优化器只会按照我们指定的方式去join。在这个语句里，t1 是驱动表，t2是被驱动表。</p>
-<p><img src="https://nodeandimg.oss-cn-wulanchabu.aliyuncs.com/GX76LLO3TZ8X5IDVWW34.png"></p>
-<p>可以看到，在这条语句里，被驱动表t2的字段a上有索引，join过程用上了这个索引，因此这个语句的执行流程是这样的：</p>
-<ol>
-<li><p>从表t1中读入一行数据 R； </p>
-</li>
-<li><p>从数据行R中，取出a字段到表t2里去查找；</p>
-</li>
-<li><p>取出表t2中满足条件的行，跟R组成一行，作为结果集的一部分；</p>
-</li>
-<li><p>重复执行步骤1到3，直到表t1的末尾循环结束。</p>
-</li>
-</ol>
-<p>这个过程是先遍历表t1，然后根据从表t1中取出的每行数据中的a值，去表t2中查找满足条件的记录。在形式上，这个过程就跟我们写程序时的嵌套查询类似，并且可以用上被驱动表的索引，所以我们称之为“Index Nested-Loop Join”，简称NLJ。</p>
-<p>它对应的流程图如下所示：</p>
-<p><img src="https://nodeandimg.oss-cn-wulanchabu.aliyuncs.com/YI21ZAHDNDC5F.png"></p>
-<p>在这个流程里：</p>
-<ol>
-<li><p>对驱动表t1做了全表扫描，这个过程需要扫描100行；</p>
-</li>
-<li><p>而对于每一行R，根据a字段去表t2查找，走的是树搜索过程。由于我们构造的数据都是一一对应的，因此每次的搜索过程都只扫描一行，也是总共扫描100行；</p>
-</li>
-<li><p>所以，整个执行流程，总扫描行数是200。</p>
-</li>
-</ol>
-<p><strong>引申问题1：能不能使用join?</strong></p>
-<p><strong>引申问题2：怎么选择驱动表？</strong></p>
-<blockquote>
-<p>比如：N扩大1000倍的话，扫描行数就会扩大1000倍；而M扩大1000倍，扫描行数扩大不到10倍。</p>
-</blockquote>
-<blockquote>
-<p>两个结论：</p>
-<ol>
-<li><p>使用join语句，性能比强行拆成多个单表执行SQL语句的性能要好；</p>
-</li>
-<li><p>如果使用join语句的话，需要让小表做驱动表。</p>
-</li>
-</ol>
-</blockquote>
-<ul>
-<li><p><strong>Simple Nested-Loop Join</strong> </p>
-</li>
-<li><p><strong>Block Nested-Loop Join</strong></p>
-</li>
-</ul>
-<p>这个过程的流程图如下：</p>
-<p><img src="https://nodeandimg.oss-cn-wulanchabu.aliyuncs.com/332PKFFPWJOF8SS6B.png"></p>
-<p>执行流程图也就变成这样：</p>
-<p><img src="https://nodeandimg.oss-cn-wulanchabu.aliyuncs.com/J035HYD03D3DXRAIFOK36X.png"></p>
-<p><strong>总结1：能不能使用xxx join语句？</strong></p>
-<p>1．如果可以使用Index Nested-Loop Join算法，也就是说可以用上被驱动表上的索引，是没问题的;</p>
-<p>2如果使用Block Nested-Loop Join算法，扫描行数就会过多。尤其是在大表上的join操作，这样可能要扫描被驱动表很多次，会占用大量的系统资源。所以这种join尽量不要用。</p>
-<p>所以你在判断要不要使用join语句时，就是看explain结果里面，Extra字段里面有没有出现“ Block NestedLoop”字样。</p>
-<p><strong>总结2：如果要使用join，应该选择大表做驱动表还是选择小表做驱动表？</strong></p>
-<p>1.如果是Index Nested-Loop Join算法，应该选择小表做驱动表;</p>
-<p>2.如果是Block Nested-Loop Join算法:</p>
-<ul>
-<li>在join_buffer_size足够大的时候，是一样的</li>
-<li>在join_buffer_size不够大的时候（这种情况更常见)，应该选择小表做驱动表。所以，这个问题的结论就是，总是应该使用小表做驱动表</li>
-</ul>
-<p><strong>总结3：什么叫作“小表”？</strong></p>
-<p><strong>在决定哪个表做驱动表的时候，应该是两个表按照各自的条件过滤，过滤完成之后，计算参与join的各个字段的总数据量，数据量小的那个表，就是小表，应该作为驱动表。</strong></p>
-<h2 id="小结"><a href="#小结" class="headerlink" title="小结"></a><strong>小结</strong></h2><ul>
-<li><p>保证被驱动表的JOIN字段已经创建了索引</p>
-</li>
-<li><p>需要JOIN 的字段，数据类型保持绝对一致。</p>
-</li>
-<li><p>LEFT JOIN 时，选择小表作为驱动表， 大表作为被驱动表 。减少外层循环的次数。</p>
-</li>
-<li><p>INNER JOIN 时，MySQL会自动将 小结果集的表选为驱动表 。选择相信MySQL优化策略。</p>
-</li>
-<li><p>能够直接多表关联的尽量直接关联，不用子查询。(减少查询的趟数)</p>
-</li>
-<li><p>不建议使用子查询，建议将子查询SQL拆开结合程序多次查询，或使用 JOIN 来代替子查询。</p>
-</li>
-<li><p>衍生表建不了索引</p>
-</li>
-</ul>
-<h1 id="子查询优化"><a href="#子查询优化" class="headerlink" title="子查询优化"></a><strong>子查询优化</strong></h1><p>MySQL从4.1版本开始支持子查询，使用子查询可以进行SELECT语句的嵌套查询，即一个SELECT查询的结果作为另一个SELECT语句的条件。 子查询可以一次性完成很多逻辑上需要多个步骤才能完成的SQL操作 。</p>
-<p><strong>子查询是</strong> <strong>MySQL</strong> <strong>的一项重要的功能，可以帮助我们通过一个</strong> <strong>SQL</strong> <strong>语句实现比较复杂的查询。但是，子查询的执行效率不高。</strong></p>
-<p>原因：</p>
-<p>① 执行子查询时，MySQL需要为内层查询语句的查询结果 建立一个临时表 ，然后外层查询语句从临时表中查询记录。查询完毕后，再 撤销这些临时表 。这样会消耗过多的CPU和IO资源，产生大量的慢查询。</p>
-<p>② 子查询的结果集存储的临时表，不论是内存临时表还是磁盘临时表都 不会存在索引 ，所以查询性能会受到一定的影响。</p>
-<p>③ 对于返回结果集比较大的子查询，其对查询性能的影响也就越大。</p>
-<p><strong>在MySQL中，可以使用连接（JOIN）查询来替代子查询。</strong>连接查询 不需要建立临时表 ，其 速度比子查询 要快 ，如果查询中使用索引的话，性能就会更好。</p>
-<blockquote>
-<p>结论：尽量不要使用NOT IN 或者 NOT EXISTS，用LEFT JOIN xxx ON xx WHERE xx IS NULL替代</p>
-</blockquote>
-<h1 id="排序优化"><a href="#排序优化" class="headerlink" title="排序优化"></a><strong>排序优化</strong></h1><h2 id="排序优化-1"><a href="#排序优化-1" class="headerlink" title="排序优化"></a><strong>排序优化</strong></h2><p><strong>问题：</strong>在 WHERE 条件字段上加索引，但是为什么在 ORDER BY 字段上还要加索引呢？</p>
-<p><strong>优化建议：</strong></p>
-<ol>
-<li><p>SQL 中，可以在 WHERE 子句和 ORDER BY 子句中使用索引，目的是在 WHERE 子句中 避免全表扫描 ，在 ORDER BY 子句 避免使用 FileSort 排序 。当然，某些情况下全表扫描，或者 FileSort 排序不一定比索引慢。但总的来说，我们还是要避免，以提高查询效率。</p>
-</li>
-<li><p>尽量使用 Index 完成 ORDER BY 排序。如果 WHERE 和 ORDER BY 后面是相同的列就使用单索引列；如果不同就使用联合索引。</p>
-</li>
-<li><p>无法使用 Index 时，需要对 FileSort 方式进行调优。</p>
-</li>
-</ol>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line">INDEX a_b_c(a,b,c) </span><br><span class="line">order by 能使用索引最左前缀 </span><br><span class="line">- ORDER BY a </span><br><span class="line">- ORDER BY a,b </span><br><span class="line">- ORDER BY a,b,c </span><br><span class="line">- ORDER BY a DESC,b DESC,c DESC </span><br><span class="line">如果WHERE使用索引的最左前缀定义为常量，则order by 能使用索引 </span><br><span class="line">- WHERE a = const ORDER BY b,c </span><br><span class="line">- WHERE a = const AND b = const ORDER BY c </span><br><span class="line">- WHERE a = const ORDER BY b,c </span><br><span class="line">- WHERE a = const AND b &gt; const ORDER BY b,c </span><br><span class="line">不能使用索引进行排序 </span><br><span class="line">- ORDER BY a ASC,b DESC,c DESC /* 排序不一致 */ </span><br><span class="line">- WHERE g = const ORDER BY b,c /*丢失a索引*/ </span><br><span class="line">- WHERE a = const ORDER BY c /*丢失b索引*/</span><br><span class="line">- WHERE a = const ORDER BY a,d /*d不是索引的一部分*/ </span><br><span class="line">- WHERE a in (...) ORDER BY b,c /*对于排序来说，多个相等条件也是范围查询*/ </span><br></pre></td></tr></table></figure>
-
-<h2 id="案例实战"><a href="#案例实战" class="headerlink" title="案例实战"></a><strong>案例实战</strong></h2><p>ORDER BY子句，尽量使用Index方式排序，避免使用FileSort方式排序。</p>
-<p>执行案例前先清除student上的索引，只留主键：</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">DROP INDEX idx_age ON student; </span><br><span class="line">DROP INDEX idx_age_classid_stuno ON student; </span><br><span class="line">DROP INDEX idx_age_classid_name ON student; </span><br><span class="line"></span><br><span class="line">#或者 </span><br><span class="line">call proc_drop_index(&#x27;atguigudb2&#x27;,&#x27;student&#x27;); </span><br></pre></td></tr></table></figure>
-
-<p><strong>场景:查询年龄为30岁的，且学生编号小于101000的学生，按用户名称排序</strong></p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">EXPLAIN SELECT SQL_NO_CACHE * FROM student WHERE age = 30 AND stuno &lt;101000 ORDER BY NAME ;</span><br></pre></td></tr></table></figure>
-
-<p><img src="https://nodeandimg.oss-cn-wulanchabu.aliyuncs.com/SW4EWS0UBEJP.png"></p>
-<p>查询结果如下：</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line">mysql&gt; SELECT SQL_NO_CACHE * FROM student WHERE age = 30 AND stuno &lt;101000 ORDER BY </span><br><span class="line">NAME ; </span><br><span class="line">+---------+--------+--------+------+---------+ </span><br><span class="line">| id | stuno | name | age | classId | </span><br><span class="line">+---------+--------+--------+------+---------+ </span><br><span class="line">| 922 | 100923 | elTLXD | 30 | 249 | </span><br><span class="line">| 3723263 | 100412 | hKcjLb | 30 | 59 | </span><br><span class="line">| 3724152 | 100827 | iHLJmh | 30 | 387 | </span><br><span class="line">| 3724030 | 100776 | LgxWoD | 30 | 253 | </span><br><span class="line">| 30 | 100031 | LZMOIa | 30 | 97 | </span><br><span class="line">| 3722887 | 100237 | QzbJdx | 30 | 440 | </span><br><span class="line">| 609 | 100610 | vbRimN | 30 | 481 | </span><br><span class="line">| 139 | 100140 | ZqFbuR | 30 | 351 | </span><br><span class="line">+---------+--------+--------+------+---------+ </span><br><span class="line">8 rows in set, 1 warning (3.16 sec) </span><br></pre></td></tr></table></figure>
-
-<blockquote>
-<p>结论：type 是 ALL，即最坏的情况。Extra 里还出现了 Using filesort,也是最坏的情况。优化是必须的。</p>
-</blockquote>
-<p>优化思路：</p>
-<p><strong>方案一: 为了去掉filesort我们可以把索引建成</strong></p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">#创建新索引 </span><br><span class="line">CREATE INDEX idx_age_name ON student(age,NAME);</span><br></pre></td></tr></table></figure>
-
-<p><strong>方案二: 尽量让where的过滤条件和排序使用上索引</strong></p>
-<p>建一个三个字段的组合索引：</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">DROP INDEX idx_age_name ON student; </span><br><span class="line">CREATE INDEX idx_age_stuno_name ON student (age,stuno,NAME); </span><br><span class="line">EXPLAIN SELECT SQL_NO_CACHE * FROM student WHERE age = 30 AND stuno &lt;101000 ORDER BY NAME ; </span><br></pre></td></tr></table></figure>
-
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line">mysql&gt; SELECT SQL_NO_CACHE * FROM student </span><br><span class="line">-&gt; WHERE age = 30 AND stuno &lt;101000 ORDER BY NAME ; </span><br><span class="line">+-----+--------+--------+------+---------+ </span><br><span class="line">| id | stuno | name | age | classId | </span><br><span class="line">+-----+--------+--------+------+---------+ </span><br><span class="line">| 167 | 100168 | AClxEF | 30 | 319 | </span><br><span class="line">| 323 | 100324 | bwbTpQ | 30 | 654 | </span><br><span class="line">| 651 | 100652 | DRwIac | 30 | 997 | </span><br><span class="line">| 517 | 100518 | HNSYqJ | 30 | 256 | </span><br><span class="line">| 344 | 100345 | JuepiX | 30 | 329 | </span><br><span class="line">| 905 | 100906 | JuWALd | 30 | 892 | </span><br><span class="line">| 574 | 100575 | kbyqjX | 30 | 260 | </span><br><span class="line">| 703 | 100704 | KJbprS | 30 | 594 | </span><br><span class="line">| 723 | 100724 | OTdJkY | 30 | 236 | </span><br><span class="line">| 656 | 100657 | Pfgqmj | 30 | 600 | </span><br><span class="line">| 982 | 100983 | qywLqw | 30 | 837 | </span><br><span class="line">| 468 | 100469 | sLEKQW | 30 | 346 | </span><br><span class="line">| 988 | 100989 | UBYqJl | 30 | 457 | </span><br><span class="line">| 173 | 100174 | UltkTN | 30 | 830 | </span><br><span class="line">| 332 | 100333 | YjWiZw | 30 | 824 | </span><br><span class="line">+-----+--------+--------+------+---------+ </span><br><span class="line">15 rows in set, 1 warning (0.00 sec) </span><br></pre></td></tr></table></figure>
-
-<p>结果竟然有 filesort的 sql 运行速度， 超过了已经优化掉 filesort的 sql ，而且快了很多，几乎一瞬间就出现了结果。</p>
-<blockquote>
-<p>结论：</p>
-<ol>
-<li><p>两个索引同时存在，mysql自动选择最优的方案。（对于这个例子，mysql选择idx_age_stuno_name）。但是， 随着数据量的变化，选择的索引也会随之变化的 。 </p>
-</li>
-<li><p><strong>当【范围条件】和【group by 或者order by】的字段出现二选一时，优先观察条件字段的过滤数量，如果过滤的数据足够多，而需要排序的数据并不多时，优先把索引放在范围字段上。反之，亦然。</strong></p>
-</li>
-</ol>
-</blockquote>
-<h2 id="filesort算法：双路排序和单路排序"><a href="#filesort算法：双路排序和单路排序" class="headerlink" title="filesort算法：双路排序和单路排序"></a><strong>filesort算法：双路排序和单路排序</strong></h2><p><strong>双路排序 （慢）</strong></p>
-<ul>
-<li>MySQL 4.1之前是使用双路排序 ，字面意思就是两次扫描磁盘，最终得到数据， 读取行指针和order by列 ，对他们进行排序，然后扫描已经排序好的列表，按照列表中的值重新从列表中读取对应的数据输出</li>
-<li>从磁盘取排序字段，在buffer进行排序，再从 磁盘取其他字段 。</li>
-</ul>
-<p>取一批数据，要对磁盘进行两次扫描，众所周知，IO是很耗时的，所以在mysql4.1之后，出现了第二种改进的算法，就是单路排序。</p>
-<p><strong>单路排序 （快）</strong></p>
-<p>从磁盘读取查询需要的 所有列 ，按照order by列在buffer对它们进行排序，然后扫描排序后的列表进行输出， 它的效率更快一些，避免了第二次读取数据。并且把随机IO变成了顺序IO，但是它会使用更多的空间， 因为它把每一行都保存在内存中了。</p>
-<p><strong>结论及引申出的问题</strong></p>
-<ul>
-<li><p>由于单路是后出的，总体而言好过双路</p>
-</li>
-<li><p>但是用单路有问题</p>
-</li>
-</ul>
-<p><strong>优化策略</strong></p>
-<p><strong>1.</strong> <strong>尝试提高</strong> <strong>sort_buffer_size</strong> </p>
-<ul>
-<li>不管用哪种算法，提高这个参数都会提高效率，要根据系统的能力去提高，因为这个参数是针对每个进程(connection)的1M-8M之间调整。MySQL5.7，InnoDB存储引擎默认值是1048576字节，1MB</li>
-</ul>
-<p><strong>2.</strong> <strong>尝试提高</strong> <strong>max_length_for_sort_data</strong> </p>
-<ul>
-<li>提高这个参数，会增加用改进算法的概率。</li>
-<li>但是如果设的太高，数据总容量超出sort_buffer_size的概率就增大，明显症状是高的磁盘l/o活动和低的处理器使用率。如果需要返回的列的总长度大于max_length_for_sort_data，使用双路算法，否则使用单路算法。1024-8192字节之间调整</li>
-</ul>
-<p><strong>3. Order by</strong> 时select <strong>是一个大忌。最好只Query需要的字段。</strong></p>
-<ul>
-<li>当Query的字段大小总和小于max_length_for_sort_data，而且排序字段不是TEXT]BLOB类型时，会用改进后的算法――单路排序，否则用老算法――多路排序。</li>
-<li>两种算法的数据都有可能超出sort_buffer_size的容量，超出之后，会创建tmp文件进行合并排序，导致多次I/o，但是用单路排序算法的风险会更大一些，所以要提高sort_buffer_size。</li>
-</ul>
-<h2 id="GROUP-BY优化"><a href="#GROUP-BY优化" class="headerlink" title="GROUP BY优化"></a><strong>GROUP BY优化</strong></h2><ul>
-<li><p>group by 使用索引的原则几乎跟order by一致 ，group by 即使没有过滤条件用到索引，也可以直接使用索引。</p>
-</li>
-<li><p>group by 先排序再分组，遵照索引建的最佳左前缀法则</p>
-</li>
-<li><p>当无法使用索引列，增大 max_length_for_sort_data 和 sort_buffer_size 参数的设置</p>
-</li>
-<li><p>where效率高于having，能写在where限定的条件就不要写在having中了</p>
-</li>
-<li><p>减少使用order by，和业务沟通能不排序就不排序，或将排序放到程序端去做。Order by、group by、distinct这些语句较为耗费CPU，数据库的CPU资源是极其宝贵的。</p>
-</li>
-<li><p>包含了order by、group by、distinct这些查询的语句，where条件过滤出来的结果集请保持在1000行以内，否则SQL会很慢。</p>
-</li>
-</ul>
-<h1 id="优化分页查询"><a href="#优化分页查询" class="headerlink" title="优化分页查询"></a><strong>优化分页查询</strong></h1><p><strong>优化思路一</strong></p>
-<p>在索引上完成排序分页操作，最后根据主键关联回原表查询所需要的其他列内容。</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">EXPLAIN SELECT * FROM student t,(SELECT id FROM student ORDER BY id LIMIT 2000000,10) a</span><br><span class="line">WHERE t.id = a.id;</span><br></pre></td></tr></table></figure>
-
-<p><strong>优化思路二</strong></p>
-<p>该方案适用于主键自增的表，可以把Limit 查询转换成某个位置的查询 。</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">EXPLAIN SELECT * FROM student WHERE id &gt; 2000000 LIMIT 10;</span><br></pre></td></tr></table></figure>
-
-<h1 id="优先考虑覆盖索引"><a href="#优先考虑覆盖索引" class="headerlink" title="优先考虑覆盖索引"></a><strong>优先考虑覆盖索引</strong></h1><h2 id="什么是覆盖索引？"><a href="#什么是覆盖索引？" class="headerlink" title="什么是覆盖索引？"></a>什么是覆盖索引？</h2><p><strong>理解方式一</strong>：索引是高效找到行的一个方法，但是一般数据库也能使用索引找到一个列的数据，因此它不必读取整个行。毕竟索引叶子节点存储了它们索引的数据；当能通过读取索引就可以得到想要的数据，那就不需要读取行了。<strong>一个索引包含了满足查询结果的数据就叫做覆盖索引。</strong></p>
-<p><strong>理解方式二</strong>：非聚簇复合索引的一种形式，它包括在查询里的SELECT、JOIN和WHERE子句用到的所有列（即建索引的字段正好是覆盖查询条件中所涉及的字段）。</p>
-<p>简单说就是， 索引列+主键 包含 SELECT 到 FROM之间查询的列 。 </p>
-<h2 id="覆盖索引的利弊"><a href="#覆盖索引的利弊" class="headerlink" title="覆盖索引的利弊"></a><strong>覆盖索引的利弊</strong></h2><p><strong>好处：</strong></p>
-<p><strong>1.</strong> <strong>避免Innodb表进行索引的二次查询（回表）</strong></p>
-<p>Innodb是以聚集索引的顺序来存储的，对于Innodb来说，二级索引在叶子节点中所保存的是行的主键信息，如果是用二级索引查询数据，在查找到相应的键值后，还需通过主键进行二次查询才能获取我们真实所需要的数据。</p>
-<p>在覆盖索引中，二级索引的键值中可以获取所要的数据，避免了对主键的二次查询，减少了IO操作，提升了查询效率。</p>
-<p><strong>2.</strong> <strong>可以把随机IO变成顺序IO加快查询效率</strong></p>
-<p>由于覆盖索引是按键值的顺序存储的，对于I0密集型的范围查找来说，对比随机从磁盘读取每一行的数据Io要少的多，因此利用覆盖索引在访问时也可以把磁盘的随机读取的IO转变成索引查找的顺序I0。</p>
-<p><strong>由于覆盖索引可以减少树的搜索次数，显著提升查询性能，所以使用覆盖索引是一个常用的性能优化手段。</strong></p>
-<p><strong>弊端：</strong></p>
-<p>索引字段的维护 总是有代价的。因此，在建立冗余索引来支持覆盖索引时就需要权衡考虑了。这是业务DBA，或者称为业务数据架构师的工作。</p>
-<h1 id="如何给字符串添加索引"><a href="#如何给字符串添加索引" class="headerlink" title="如何给字符串添加索引"></a><strong>如何给字符串添加索引</strong></h1><p>有一张教师表，表定义如下：</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">create table teacher( </span><br><span class="line">ID bigint unsigned primary key, </span><br><span class="line">email varchar(64), </span><br><span class="line">... </span><br><span class="line">)engine=innodb; </span><br></pre></td></tr></table></figure>
-
-<p>讲师要使用邮箱登录，所以业务代码中一定会出现类似于这样的语句：</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">mysql&gt; select col1, col2 from teacher where email=&#x27;xxx&#x27;;</span><br></pre></td></tr></table></figure>
-
-<p>如果email这个字段上没有索引，那么这个语句就只能做 全表扫描 。 </p>
-<h2 id="前缀索引"><a href="#前缀索引" class="headerlink" title="前缀索引"></a><strong>前缀索引</strong></h2><p>MySQL是支持前缀索引的。默认地，如果你创建索引的语句不指定前缀长度，那么索引就会包含整个字符串。</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">mysql&gt; alter table teacher add index index1(email); </span><br><span class="line">#或</span><br><span class="line">mysql&gt; alter table teacher add index index2(email(6));</span><br></pre></td></tr></table></figure>
-
-<p>这两种不同的定义在数据结构和存储上有什么区别呢？下图就是这两个索引的示意图。</p>
-<p><img src="https://nodeandimg.oss-cn-wulanchabu.aliyuncs.com/RLHUFYUQ2XCGMK.png"></p>
-<p>以及</p>
-<p><img src="https://nodeandimg.oss-cn-wulanchabu.aliyuncs.com/4NVFP7H8AE81.png"></p>
-<p><strong>如果使用的是index1</strong>（即email整个字符串的索引结构），执行顺序是这样的：</p>
-<ol>
-<li><p>从index1索引树找到满足索引值是’ <strong><a href="mailto:&#x7a;&#104;&#97;&#110;&#103;&#x73;&#115;&#120;&#121;&#122;&#64;&#120;&#x78;&#120;&#46;&#99;&#111;&#x6d;">&#x7a;&#104;&#97;&#110;&#103;&#x73;&#115;&#120;&#121;&#122;&#64;&#120;&#x78;&#120;&#46;&#99;&#111;&#x6d;</a></strong> ’的这条记录，取得ID2的值；</p>
-</li>
-<li><p>到主键上查到主键值是ID2的行，判断email的值是正确的，将这行记录加入结果集；</p>
-</li>
-<li><p>取index1索引树上刚刚查到的位置的下一条记录，发现已经不满足email=’ <strong><a href="mailto:&#122;&#x68;&#x61;&#110;&#103;&#115;&#115;&#x78;&#121;&#x7a;&#64;&#120;&#x78;&#x78;&#x2e;&#99;&#x6f;&#109;">&#122;&#x68;&#x61;&#110;&#103;&#115;&#115;&#x78;&#121;&#x7a;&#64;&#120;&#x78;&#x78;&#x2e;&#99;&#x6f;&#109;</a></strong> ’的条件了，循环结束。</p>
-</li>
-</ol>
-<p>这个过程中，只需要回主键索引取一次数据，所以系统认为只扫描了一行。</p>
-<p><strong>如果使用的是index2</strong>（即email(6)索引结构），执行顺序是这样的：</p>
-<ol>
-<li><p>从index2索引树找到满足索引值是’zhangs’的记录，找到的第一个是ID1； </p>
-</li>
-<li><p>到主键上查到主键值是ID1的行，判断出email的值不是’ <strong><a href="mailto:&#x7a;&#x68;&#97;&#110;&#x67;&#115;&#115;&#120;&#x79;&#x7a;&#64;&#120;&#x78;&#120;&#46;&#99;&#111;&#x6d;">&#x7a;&#x68;&#97;&#110;&#x67;&#115;&#115;&#120;&#x79;&#x7a;&#64;&#120;&#x78;&#120;&#46;&#99;&#111;&#x6d;</a></strong> ’，这行记录丢弃；</p>
-</li>
-<li><p>取index2上刚刚查到的位置的下一条记录，发现仍然是’zhangs’，取出ID2，再到ID索引上取整行然后判断，这次值对了，将这行记录加入结果集；</p>
-</li>
-<li><p>重复上一步，直到在idxe2上取到的值不是’zhangs’时，循环结束。</p>
-</li>
-</ol>
-<p>也就是说<strong>使用前缀索引，定义好长度，就可以做到既节省空间，又不用额外增加太多的查询成本。</strong>前面已经讲过区分度，区分度越高越好。因为区分度越高，意味着重复的键值越少。</p>
-<h2 id="前缀索引对覆盖索引的影响"><a href="#前缀索引对覆盖索引的影响" class="headerlink" title="前缀索引对覆盖索引的影响"></a><strong>前缀索引对覆盖索引的影响</strong></h2><blockquote>
-<p>结论：</p>
-<p>使用前缀索引就用不上覆盖索引对查询性能的优化了，这也是你在选择是否使用前缀索引时需要考虑的一个因素。</p>
-</blockquote>
-<h1 id="索引下推"><a href="#索引下推" class="headerlink" title="索引下推"></a><strong>索引下推</strong></h1><p>Index Condition Pushdown(ICP)是MySQL 5.6中新特性，是一种在存储引擎层使用索引过滤数据的一种优化方式。ICP可以减少存储引擎访问基表的次数以及MySQL服务器访问存储引擎的次数。</p>
-<h2 id="使用前后的扫描过程"><a href="#使用前后的扫描过程" class="headerlink" title="使用前后的扫描过程"></a><strong>使用前后的扫描过程</strong></h2><p><strong>在不使用ICP索引扫描的过程：</strong></p>
-<p>storage层：只将满足index key条件的索引记录对应的整行记录取出，返回给server层 </p>
-<p>server 层：对返回的数据，使用后面的where条件过滤，直至返回最后一行。</p>
-<p><img src="https://nodeandimg.oss-cn-wulanchabu.aliyuncs.com/UMGZ4DC2LHL46M5VZPH.png"></p>
-<p><img src="https://nodeandimg.oss-cn-wulanchabu.aliyuncs.com/TWOUEM7SZIUCSIC6QKN.png"></p>
-<p><strong>使用ICP扫描的过程：</strong></p>
-<ul>
-<li>storage层：</li>
-</ul>
-<p>首先将index key条件满足的索引记录区间确定，然后在索引上使用index filter进行过滤。将满足的index filter条件的索引记录才去回表取出整行记录返回server层。不满足index filter条件的索引记录丢弃，不回表、也不会返回server层。</p>
-<ul>
-<li>server 层：</li>
-</ul>
-<p>对返回的数据，使用table filter条件做最后的过滤</p>
-<p><img src="https://nodeandimg.oss-cn-wulanchabu.aliyuncs.com/R9DUZ97UCX%7B6W.png"></p>
-<p><img src="https://nodeandimg.oss-cn-wulanchabu.aliyuncs.com/jjkjhkhiuhui87897987.png"></p>
-<p><strong>使用前后的成本差别</strong></p>
-<p>使用前，存储层多返回了需要被index filter过滤掉的整行记录</p>
-<p>使用ICP后，直接就去掉了不满足index filter条件的记录，省去了他们回表和传递到server层的成本。</p>
-<p>ICP的 加速效果 取决于在存储引擎内通过 ICP筛选 掉的数据的比例。</p>
-<p><strong>ICP的使用条件</strong></p>
-<p><strong>ICP的使用条件：</strong></p>
-<p>① 只能用于二级索引(secondary index) </p>
-<p>②explain显示的执行计划中type值（join 类型）为 range 、 ref 、 eq_ref 或者 ref_or_null 。 </p>
-<p>③ 并非全部where条件都可以用ICP筛选，如果where条件的字段不在索引列中，还是要读取整表的记录到server端做where过滤。</p>
-<p>④ ICP可以用于MyISAM和InnnoDB存储引擎</p>
-<p>⑤ MySQL 5.6版本的不支持分区表的ICP功能，5.7版本的开始支持。</p>
-<p>⑥ 当SQL使用覆盖索引时，不支持ICP优化方法。</p>
-<h1 id="普通索引-vs-唯一索引"><a href="#普通索引-vs-唯一索引" class="headerlink" title="普通索引 vs 唯一索引"></a><strong>普通索引</strong> <strong>vs</strong> <strong>唯一索引</strong></h1><p><strong>从性能的角度考虑，你选择唯一索引还是普通索引呢？选择的依据是什么呢？</strong></p>
-<p>假设，我们有一个主键列为ID的表，表中有字段k，并且在k上有索引，假设字段 k 上的值都不重复。这个表的建表语句是：</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">mysql&gt; create table test( </span><br><span class="line">id int primary key, </span><br><span class="line">k int not null, </span><br><span class="line">name varchar(16), </span><br><span class="line">index (k) </span><br><span class="line">)engine=InnoDB;</span><br></pre></td></tr></table></figure>
-
-<p>表中R1~R5的(ID,k)值分别为(100,1)、(200,2)、(300,3)、(500,5)和(600,6)</p>
-<h2 id="查询过程"><a href="#查询过程" class="headerlink" title="查询过程"></a><strong>查询过程</strong></h2><p>假设，执行查询的语句是 select id from test where k=5。</p>
-<ul>
-<li><p>对于普通索引来说，查找到满足条件的第一个记录(5,500)后，需要查找下一个记录，直到碰到第一个不满足k=5条件的记录。</p>
-</li>
-<li><p>对于唯一索引来说，由于索引定义了唯一性，查找到第一个满足条件的记录后，就会停止继续检索。</p>
-</li>
-</ul>
-<p>那么，这个不同带来的性能差距会有多少呢？答案是， <code>微乎其微</code> 。 </p>
-<h2 id="更新过程"><a href="#更新过程" class="headerlink" title="更新过程"></a><strong>更新过程</strong></h2><p>为了说明普通索引和唯一索引对更新语句性能的影响这个问题，介绍一下change buffer。</p>
-<p>当需要更新一个数据页时，如果数据页在内存中就直接更新，而如果这个数据页还没有在内存中的话，在不影响数据一致性的前提下，***  InooDB会将这些更新操作缓存在change buffer中** ，这样就不需要从磁盘中读入这个数据页了。在下次查询需要访问这个数据页的时候，将数据页读入内存，然后执行change buffer中与这个页有关的操作。通过这种方式就能保证这个数据逻辑的正确性。</p>
-<p>将change buffer中的操作应用到原数据页，得到最新结果的过程称为 merge 。除了 访问这个数据页 会触发merge外，系统有 后台线程会定期 merge。在 数据库正常关闭（shutdown） 的过程中，也会执行merge操作。</p>
-<p>如果能够将更新操作先记录在change buffer， <strong>减少读磁盘</strong> ，语句的执行速度会得到明显的提升。而且，数据读入内存是需要占用 buffer pool 的，所以这种方式还能够 <strong>避免占用内存</strong> ，提高内存利用率。<strong>唯一索引的更新就不能使用change buffer</strong> ，实际上也只有普通索引可以使用。</p>
-<h2 id="change-buffer的使用场景"><a href="#change-buffer的使用场景" class="headerlink" title="change buffer的使用场景"></a><strong>change buffer的使用场景</strong></h2><ol>
-<li><p>普通索引和唯一索引应该怎么选择？其实，这两类索引在查询能力上是没差别的，主要考虑的是对 <strong>更新性能</strong> 的影响。所以，建议你** 尽量选择普通索引** 。 </p>
-</li>
-<li><p>在实际使用中会发现，*** 普通索引 ** 和 **change buffer **的配合使用，对于 数据量大 的表的更新优化还是很明显的。</p>
-</li>
-<li><p>如果所有的更新后面，都马上 伴随着对这个记录的查询 ，那么你应该 关闭change buffer 。而在其他情况下，change buffer都能提升更新性能。</p>
-</li>
-<li><p>由于唯一索引用不上change buffer的优化机制，因此如果 业务可以接受 ，从性能角度出发建议优先考虑非唯一索引。但是如果”业务可能无法确保”的情况下，怎么处理呢？</p>
-</li>
-</ol>
-<ul>
-<li><p>首先， <strong>业务正确性优先</strong> 。我们的前提是“业务代码已经保证不会写入重复数据”的情况下，讨论性能问题。如果业务不能保证，或者业务就是要求数据库来做约束，那么没得选，必须创建唯一索引。这种情况下，本节的意义在于，如果碰上了大量插入数据慢、内存命中率低的时候，给你多提供一个排查思路。</p>
-</li>
-<li><p>然后，在一些“ 归档库 ”的场景，你是可以考虑使用唯一索引的。比如，线上数据只需要保留半年，然后历史数据保存在归档库。这时候，归档数据已经是确保没有唯一键冲突了。要提高归档效率，可以考虑把表里面的唯一索引改成普通索引。</p>
-</li>
-</ul>
-<h1 id="其它查询优化策略"><a href="#其它查询优化策略" class="headerlink" title="其它查询优化策略"></a><strong>其它查询优化策略</strong></h1><h2 id="EXISTS-和-IN的区分"><a href="#EXISTS-和-IN的区分" class="headerlink" title="**EXISTS 和 **IN的区分"></a>**EXISTS 和 **IN的区分</h2><p><strong>问题：</strong></p>
-<p>不太理解哪种情况下应该使用 EXISTS，哪种情况应该用 IN。选择的标准是看能否使用表的索引吗？</p>
-<p><strong>回答:</strong></p>
-<p>索引是个前提，其实选择与否还是要看表的大小。你可以将选择的标准理解为小表驱动大表。在这种方式下效率是最高的。</p>
-<h2 id="COUNT-与COUNT-具体字段-效率"><a href="#COUNT-与COUNT-具体字段-效率" class="headerlink" title="COUNT(*)与COUNT(具体字段)效率"></a><strong>COUNT(*)与COUNT(具体字段)效率</strong></h2><p>问：在 MySQL 中统计数据表的行数，可以使用三种方式： SELECT COUNT(*) 、 SELECT COUNT(1) 和 SELECT COUNT(具体字段) ，使用这三者之间的查询效率是怎样的？</p>
-<p>前提:如果你要统计的是某个字段的非空数据行数，则另当别论，毕竟比较执行效率的前提是结果一样才可以。</p>
-<p>**环节1:*<em>COUNT(</em>)和COUNT(1)都是对所有结果进行COUNT，COUNT(*)和COUNT(1)本质上并没有区别(二者执行时间可能略有差别，不过你还是可以把它俩的执行效率看成是相等的)。如果有WHERE子句，则是对所有符合筛选条件的数据行进行统计;如果没有IHERE子句，则是对数据表的数据行数进行统计。<br>**环节2:**如果是MylISAM存储引擎，统计数据表的行数只需要0(1)的复杂度，这是因为每张MyISAM的数据表都有一个meta信息存储了row_count值，而一致性则由表级锁来保证。<br>如果是InnoDB存储引擎，因为InnoDB支持事务，采用行级锁和MVCC机制，所以无法像MyISAM一样，维护一个row_count变量，因此需要采用扫描全表，进行循环＋计数的方式来完成统计。<br>**环节3:*<em>在InnoDB引擎中，如果采用COUNT(具体字段)来统计数据行数，要尽量采用二级索引。因为主键采用的索引是聚簇索引，聚簇索引包含的信息多，明显会大于二级索引(非聚簇索引)。对于COUNT(</em>)和COUNT(1)来说，它们不需要查找具体的行，只是统计行数，系统会自动采用占用空间更小的二级索引来进行统计。</p>
-<p>如果有多个二级索引，会使用key_len 小的二级索引进行扫描。当没有二级索引的时候，才会采用主键索引来进行统计。</p>
-<h2 id="关于SELECT"><a href="#关于SELECT" class="headerlink" title="关于SELECT(*)"></a><strong>关于SELECT(*)</strong></h2><p>在表查询中，建议明确字段，不要使用 * 作为查询的字段列表，推荐使用SELECT &lt;字段列表&gt; 查询。原</p>
-<p>因：</p>
-<p>① MySQL 在解析的过程中，会通过 查询数据字典 将”*”按序转换成所有列名，这会大大的耗费资源和时</p>
-<p>间。</p>
-<p>② 无法使用 覆盖索引 </p>
-<h2 id="LIMIT-1-对优化的影响"><a href="#LIMIT-1-对优化的影响" class="headerlink" title="LIMIT 1 对优化的影响"></a><strong>LIMIT 1 对优化的影响</strong></h2><p>针对的是会扫描全表的 SQL 语句，如果你可以确定结果集只有一条，那么加上 LIMIT 1 的时候，当找到一条结果的时候就不会继续扫描了，这样会加快查询速度。</p>
-<p>如果数据表已经对字段建立了唯一索引，那么可以通过索引进行查询，不会全表扫描的话，就不需要加上 LIMIT 1 了。</p>
-<h2 id="多使用COMMIT"><a href="#多使用COMMIT" class="headerlink" title="多使用COMMIT"></a><strong>多使用COMMIT</strong></h2><p>只要有可能，在程序中尽量多使用 COMMIT，这样程序的性能得到提高，需求也会因为 COMMIT 所释放</p>
-<p>的资源而减少。</p>
-<p>COMMIT 所释放的资源：</p>
-<ul>
-<li><p>回滚段上用于恢复数据的信息</p>
-</li>
-<li><p> 被程序语句获得的锁</p>
-</li>
-<li><p>redo / undo log buffer 中的空间</p>
-</li>
-<li><p>管理上述 3 种资源中的内部花费</p>
-</li>
-</ul>
 
       
     </div>
