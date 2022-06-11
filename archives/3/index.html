@@ -133,7 +133,7 @@
   <nav class="site-state">
       <div class="site-state-item site-state-posts">
         <a href="/archives/">
-          <span class="site-state-item-count">76</span>
+          <span class="site-state-item-count">77</span>
           <span class="site-state-item-name">posts</span>
         </a>
       </div>
@@ -181,6 +181,186 @@
 
 
     <div class="main-inner index posts-expand">
+
+    
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="设计模式">
+    <link itemprop="mainEntityOfPage" href="http://yoursite-url/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F/%E7%BB%93%E6%9E%84%E5%9E%8B%E6%A8%A1%E5%BC%8F-%E9%80%82%E9%85%8D%E5%99%A8%E6%A8%A1%E5%BC%8F/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="https://nodeandimg.oss-cn-wulanchabu.aliyuncs.com/}VRZRM08TG_W9[WMAD}69[O.png">
+      <meta itemprop="name" content="Hao">
+      <meta itemprop="description" content="It's an IT blog...">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Study Node">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          <a href="/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F/%E7%BB%93%E6%9E%84%E5%9E%8B%E6%A8%A1%E5%BC%8F-%E9%80%82%E9%85%8D%E5%99%A8%E6%A8%A1%E5%BC%8F/" class="post-title-link" itemprop="url">结构型模式 - 适配器模式</a>
+        </h2>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">Posted on</span>
+
+      <time title="Created: 2022-04-03 18:56:52" itemprop="dateCreated datePublished" datetime="2022-04-03T18:56:52+08:00">2022-04-03</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">In</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F/" itemprop="url" rel="index"><span itemprop="name">设计模式</span></a>
+        </span>
+          , 
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F/%E7%BC%96%E7%A8%8B%E6%80%9D%E6%83%B3/" itemprop="url" rel="index"><span itemprop="name">编程思想</span></a>
+        </span>
+    </span>
+
+  
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+          <p>结构型模式描述如何将类或对象按某种布局组成更大的结构，有以下两种：</p>
+<ul>
+<li><strong>类结构型模式</strong>：采用继承机制来组织接口和类。</li>
+<li><strong>对象结构型模式</strong>：釆用组合或聚合来组合对象。</li>
+</ul>
+<p>由于组合关系或聚合关系比继承关系<a target="_blank" rel="noopener" href="https://so.csdn.net/so/search?q=%E8%80%A6%E5%90%88%E5%BA%A6&spm=1001.2101.3001.7020">耦合度</a>低，满足 “合成复用原则”，所以对象结构型模式比类结构型模式具有更大的灵活性。</p>
+<p>结构型模式分为以下 7 种：</p>
+<ul>
+<li>代理模式</li>
+<li>适配器模式</li>
+<li>装饰者模式</li>
+<li>桥接模式</li>
+<li>外观模式</li>
+<li>组合模式</li>
+<li>享元模式</li>
+</ul>
+<h1 id="适配器模式"><a href="#适配器模式" class="headerlink" title="适配器模式"></a>适配器模式</h1><h2 id="概述"><a href="#概述" class="headerlink" title="概述"></a>概述</h2><blockquote>
+<p>如果去欧洲国家去旅游的话，他们的插座如下图最左边，是欧洲标准。而我们使用的插头如下图最右边的。因此我们的笔记本电脑，手机在当地不能直接充电。所以就需要一个插座转换器，转换器第 1 面插入当地的插座，第 2 面供我们充电，这样使得我们的插头在当地能使用。生活中这样的例子很多，手机充电器（将 220v 转换为 5v 的电压），读卡器等，其实就是使用到了适配器模式。</p>
+</blockquote>
+<p><strong>定义</strong>：将一个类的接口转换成客户希望的另外一个接口，使得原本由于接口不兼容而不能一起工作的那些类能一起工作。</p>
+<ul>
+<li>适配器模式分为<strong>类适配器模式</strong>和<strong>对象适配器模式</strong>，前者由于类之间的耦合度比后者高，且要求程序员了解现有组件库中的相关组件的内部结构，所以应用相对较少些。</li>
+</ul>
+<h2 id="结构"><a href="#结构" class="headerlink" title="结构"></a>结构</h2><p>适配器模式（Adapter）包含以下主要角色：</p>
+<ul>
+<li>目标（Target）接口：当前系统业务所期望访问的接口，它可以是抽象类或接口。</li>
+<li>适配者（Adaptee）类：它是被访问和适配的现存组件库中的组件接口。</li>
+<li>适配器（Adapter）类：它是一个转换器，通过继承或引用适配者的对象，把适配者接口转换成目标接口，让客户按目标接口的格式访问适配者。</li>
+</ul>
+<blockquote>
+<p>适配者类，其实是要被适配到目标接口的类。</p>
+</blockquote>
+<h2 id="类适配器模式"><a href="#类适配器模式" class="headerlink" title="类适配器模式"></a>类适配器模式</h2><p>实现方式：定义一个适配器类来<strong>实现当前系统的业务接口</strong>，同时又继承<strong>现有组件库中已经存在的组件</strong>。</p>
+<blockquote>
+<p>实现业务接口，继承已有组件</p>
+</blockquote>
+<p>【例】读卡器</p>
+<p>现有一台电脑只能读取 SD 卡，而要读取 TF 卡中的内容的话就需要使用到适配器模式。</p>
+<p>创建一个读卡器，将 TF 卡中的内容读取出来，类图如下：</p>
+<p>SDCard 是目标接口，它是 Computer 所期望访问的接口<br>TFCard 是适配者类，它将会被适配到 Computer 可以访问的 SDCard<br>SDAdapterTF 是适配器类，它实现让目标访问 SDCard 却达到 TFCard 的功能。</p>
+<p><img src="https://nodeandimg.oss-cn-wulanchabu.aliyuncs.com/DEW6BQXMN6ON9JD1.png"></p>
+<p>代码如下：</p>
+<p>Computer：可以直接访问 SDCard，但是不能直接访问 TFCard，即将通过适配器去访问 TFCard</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">Computer</span> </span>&#123;</span><br><span class="line">    <span class="comment">// 从SD卡中读取数据</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> String <span class="title">readSD</span><span class="params">(SDCard sdCard)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">if</span> (sdCard == <span class="keyword">null</span>) &#123;</span><br><span class="line">            <span class="keyword">throw</span> <span class="keyword">new</span> NullPointerException(<span class="string">&quot;sd card can not be null&quot;</span>);</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">return</span> sdCard.readSD();</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p><strong>目标接口</strong>：SDCard 是 Computer 期望访问的接口</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * SD卡的接口</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">interface</span> <span class="title">SDCard</span> </span>&#123;</span><br><span class="line">    <span class="comment">// 从SD卡中读取数据</span></span><br><span class="line">    <span class="function">String <span class="title">readSD</span><span class="params">()</span></span>;</span><br><span class="line">    <span class="comment">// 往SD卡中写数据</span></span><br><span class="line">    <span class="function"><span class="keyword">void</span> <span class="title">writeSD</span><span class="params">(String msg)</span></span>;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * SD卡的实现类</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">SDCardImpl</span> <span class="keyword">implements</span> <span class="title">SDCard</span> </span>&#123;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> String <span class="title">readSD</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        String msg = <span class="string">&quot;sd card read a msg :hello word SD&quot;</span>;</span><br><span class="line">        <span class="keyword">return</span> msg;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">writeSD</span><span class="params">(String msg)</span> </span>&#123;</span><br><span class="line">        System.out.println(<span class="string">&quot;sd card write msg : &quot;</span> + msg);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p><strong>适配者类</strong>：TFCard 是要被适配的接口，适配成可以通过 SDCard 来访问</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * TF卡的接口</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">interface</span> <span class="title">TFCard</span> </span>&#123;</span><br><span class="line">    <span class="comment">// 从TF卡中读取数据</span></span><br><span class="line">    <span class="function">String <span class="title">readTF</span><span class="params">()</span></span>;</span><br><span class="line">    <span class="comment">// 往TF卡中写数据</span></span><br><span class="line">    <span class="function"><span class="keyword">void</span> <span class="title">writeTF</span><span class="params">(String msg)</span></span>;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * TF卡的实现类</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">TFCardImpl</span> <span class="keyword">implements</span> <span class="title">TFCard</span> </span>&#123;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> String <span class="title">readTF</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        String msg = <span class="string">&quot;TFCard read msg: hello word TFCard&quot;</span>;</span><br><span class="line">        <span class="keyword">return</span> msg;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">writeTF</span><span class="params">(String msg)</span> </span>&#123;</span><br><span class="line">        System.out.println(<span class="string">&quot;TFCard write msg: &quot;</span> + msg);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<p><strong>适配器类</strong>：实现业务接口，继承已有组件</p>
+<ul>
+<li>本质上还是要执行 TFCard 的功能，因此 <code>extends TFCardImpl</code></li>
+<li>但是又可以让 Computer 通过 SDCard 接口来访问，因此 <code>implements SDCard</code></li>
+</ul>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">SDAdapterTF</span> <span class="keyword">extends</span> <span class="title">TFCardImpl</span> <span class="keyword">implements</span> <span class="title">SDCard</span> </span>&#123;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> String <span class="title">readSD</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        System.out.println(<span class="string">&quot;adapter read tf card&quot;</span>);</span><br><span class="line">        <span class="keyword">return</span> readTF();</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">writeSD</span><span class="params">(String msg)</span> </span>&#123;</span><br><span class="line">        System.out.println(<span class="string">&quot;adapter write tf card&quot;</span>);</span><br><span class="line">        writeTF(msg);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>测试类：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">Client</span> </span>&#123;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> </span>&#123;</span><br><span class="line">        <span class="comment">// 创建计算机对象</span></span><br><span class="line">        Computer computer = <span class="keyword">new</span> Computer();</span><br><span class="line">        <span class="comment">// 电脑读取SD卡中的数据(可直接读)</span></span><br><span class="line">        String msg = computer.readSD(<span class="keyword">new</span> SDCardImpl());</span><br><span class="line">        System.out.println(msg);</span><br><span class="line"></span><br><span class="line">        System.out.println(<span class="string">&quot;===============&quot;</span>);</span><br><span class="line">        <span class="comment">// 使用电脑读取TF卡中的数据(无法直接读)</span></span><br><span class="line">        <span class="comment">// 定义适配器类</span></span><br><span class="line">        String msg1 = computer.readSD(<span class="keyword">new</span> SDAdapterTF());</span><br><span class="line">        System.out.println(msg1);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<p><strong>类适配器模式违背了合成复用原则</strong>，类适配器是客户类有一个接口规范的情况下可用，反之不可用。</p>
+<h2 id="对象适配器模式"><a href="#对象适配器模式" class="headerlink" title="对象适配器模式"></a>对象适配器模式</h2><p>实现方式：对象适配器模式可釆用将现有组件库中已经实现的组件引入适配器类中，该类同时实现当前系统的业务接口。</p>
+<blockquote>
+<p>实现业务接口，引入已有组件</p>
+</blockquote>
+<p>【例】读卡器</p>
+<p>我们使用对象适配器模式将读卡器的案例进行改写，类图如下：</p>
+<blockquote>
+<p>注意 SDAdapterTF 不再是直接继承 TFCardImpl，而是聚合 TFCard 接口</p>
+</blockquote>
+<p><img src="https://nodeandimg.oss-cn-wulanchabu.aliyuncs.com/OG36ZDK5F7AC8EEM.png"></p>
+<p>代码如下：类适配器模式的代码，我们只需要修改适配器类（SDAdapterTF）和测试类</p>
+<p><strong>适配器类</strong>：通过聚合一个适配者类，来使用它的方法</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">SDAdapterTF</span> <span class="keyword">implements</span> <span class="title">SDCard</span> </span>&#123;</span><br><span class="line">    <span class="comment">// 声明适配者类</span></span><br><span class="line">    <span class="keyword">private</span> TFCard tfCard;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="title">SDAdapterTF</span><span class="params">(TFCard tfCard)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">this</span>.tfCard = tfCard;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> String <span class="title">readSD</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        System.out.println(<span class="string">&quot;adapter read tf card&quot;</span>);</span><br><span class="line">        <span class="keyword">return</span> tfCard.readTF();</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">writeSD</span><span class="params">(String msg)</span> </span>&#123;</span><br><span class="line">        System.out.println(<span class="string">&quot;adapter write tf card&quot;</span>);</span><br><span class="line">        tfCard.writeTF(msg);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<p>测试类：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">Client</span> </span>&#123;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> </span>&#123;</span><br><span class="line">        <span class="comment">// 创建计算机对象</span></span><br><span class="line">        Computer computer = <span class="keyword">new</span> Computer();</span><br><span class="line">        <span class="comment">// 电脑读取SD卡中的数据(可直接读)</span></span><br><span class="line">        String msg = computer.readSD(<span class="keyword">new</span> SDCardImpl());</span><br><span class="line">        System.out.println(msg);</span><br><span class="line"></span><br><span class="line">        System.out.println(<span class="string">&quot;===============&quot;</span>);</span><br><span class="line">        <span class="comment">// 使用电脑读取TF卡中的数据(无法直接读)</span></span><br><span class="line">        <span class="comment">// 创建适配器类对象</span></span><br><span class="line">        SDAdapterTF sdAdapterTF = <span class="keyword">new</span> SDAdapterTF(<span class="keyword">new</span> TFCardImpl());</span><br><span class="line">        String msg1 = computer.readSD(sdAdapterTF);</span><br><span class="line">        System.out.println(msg1);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<h2 id="接口适配器模式"><a href="#接口适配器模式" class="headerlink" title="接口适配器模式"></a>接口适配器模式</h2><p>当不希望实现一个接口中所有的方法时，可以创建一个抽象类 Adapter 实现接口所有方法，然后只需要继承该抽象类即可。</p>
+<h2 id="应用场景"><a href="#应用场景" class="headerlink" title="应用场景"></a>应用场景</h2><ul>
+<li>以前开发的系统存在满足新系统功能需求的类，但其接口同新系统的接口不一致。</li>
+<li>使用第三方提供的组件，但组件接口定义和自己要求的接口定义不同。</li>
+</ul>
+<h2 id="JDK-源码-Reader-与-InputStream"><a href="#JDK-源码-Reader-与-InputStream" class="headerlink" title="JDK 源码 - Reader 与 InputStream"></a>JDK 源码 - Reader 与 InputStream</h2><blockquote>
+<p><strong>解码</strong>：字节数据 -&gt; 字符数据</p>
+<p><strong>编码</strong>：字符数据 -&gt; 字节数据</p>
+</blockquote>
+<p>Reader（字符流）、InputStream（字节流）之间适配使用的是 InputStreamReader。（表面上是这样）</p>
+<p>InputStreamReader 继承自 java.io 包中的 Reader，对他中的抽象的未实现的方法给出实现。如：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">int</span> <span class="title">read</span><span class="params">()</span> <span class="keyword">throws</span> IOException </span>&#123;</span><br><span class="line">    <span class="keyword">return</span> sd.read();</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">int</span> <span class="title">read</span><span class="params">(<span class="keyword">char</span> cbuf[], <span class="keyword">int</span> offset, <span class="keyword">int</span> length)</span> <span class="keyword">throws</span> IOException </span>&#123;</span><br><span class="line">    <span class="keyword">return</span> sd.read(cbuf, offset, length);</span><br><span class="line">&#125;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<p>如上代码中的 sd（StreamDecoder 类对象），在 Sun 的 JDK 实现中，实际的方法实现是对 sun.nio.cs.StreamDecoder 类的同名方法的调用封装。类结构图如下：</p>
+<p><img src="https://nodeandimg.oss-cn-wulanchabu.aliyuncs.com/3EMOPGQBTFOQVHGA.png"></p>
+<p>从上图可以看出：</p>
+<ul>
+<li>InputStreamReader 是对同样实现了 Reader 的 StreamDecoder 的封装。</li>
+<li>StreamDecoder 不是 Java SE API 中的内容，是 Sun JDK 给出的自身实现，它对构造方法中的字节流类（InputStream）进行封装，并通过该类进行了字节流和字符流之间的解码转换。</li>
+</ul>
+<p>结论：</p>
+<ul>
+<li>表面看，InputStreamReader 做了 InputStream 字节流类到 Reader 字符流之间的转换。</li>
+<li>而从如上 Sun JDK 中的实现类关系结构中可以看出，是 StreamDecoder 在设计实现上采用了适配器模式。</li>
+</ul>
+
+      
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+</div>
+
+
+
 
     
 
@@ -1807,103 +1987,6 @@
 <li>redis不好在线扩容，集群数量一旦打到上限，扩容就十分麻烦</li>
 <li>实现哨兵模式的配置其实很麻烦，里面有很多选择</li>
 </ul>
-
-      
-    </div>
-
-    
-    
-    
-
-    <footer class="post-footer">
-        <div class="post-eof"></div>
-      
-    </footer>
-  </article>
-</div>
-
-
-
-
-    
-
-
-<div class="post-block">
-  
-  
-
-  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="Reids">
-    <link itemprop="mainEntityOfPage" href="http://yoursite-url/Reids/Redis%E5%8F%91%E5%B8%83%E4%B8%8E%E8%AE%A2%E9%98%85/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="https://nodeandimg.oss-cn-wulanchabu.aliyuncs.com/}VRZRM08TG_W9[WMAD}69[O.png">
-      <meta itemprop="name" content="Hao">
-      <meta itemprop="description" content="It's an IT blog...">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Study Node">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          <a href="/Reids/Redis%E5%8F%91%E5%B8%83%E4%B8%8E%E8%AE%A2%E9%98%85/" class="post-title-link" itemprop="url">Redis发布与订阅</a>
-        </h2>
-
-        <div class="post-meta-container">
-          <div class="post-meta">
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-calendar"></i>
-      </span>
-      <span class="post-meta-item-text">Posted on</span>
-
-      <time title="Created: 2022-03-21 21:49:31" itemprop="dateCreated datePublished" datetime="2022-03-21T21:49:31+08:00">2022-03-21</time>
-    </span>
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-folder"></i>
-      </span>
-      <span class="post-meta-item-text">In</span>
-        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-          <a href="/categories/NoSQL/" itemprop="url" rel="index"><span itemprop="name">NoSQL</span></a>
-        </span>
-          , 
-        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-          <a href="/categories/NoSQL/Redis/" itemprop="url" rel="index"><span itemprop="name">Redis</span></a>
-        </span>
-    </span>
-
-  
-</div>
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-          <h1 id="Redis发布与订阅"><a href="#Redis发布与订阅" class="headerlink" title="Redis发布与订阅"></a>Redis发布与订阅</h1><p>要求更多的话可以使用消息队列（Kafka等MQ）</p>
-<p>Redis发布订阅（pub/sub)是一种消息通信模式：发布者发送消息，订阅者接收消息。（如微博、微信、关注系统等）</p>
-<p>Redis客户端可以订阅任意数量的频道</p>
-<p>订阅/发布消息图</p>
-<p>消息发送者、消息订阅者、频道</p>
-<p><img src="https://nodeandimg.oss-cn-wulanchabu.aliyuncs.com/2WVA18JSSD7YL7[V.png"></p>
-<h2 id="命令"><a href="#命令" class="headerlink" title="命令"></a>命令</h2><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">基础命令</span><br><span class="line">SUBSCRIBE channel1 channel2		<span class="comment">#订阅频道</span></span><br><span class="line">PUBLISH channel message			<span class="comment">#发布信息</span></span><br><span class="line">UNSUBSCRIBE channel1 channel2	<span class="comment">#退订频道</span></span><br><span class="line">PSUBSCRIBE pattern1 pattern2	<span class="comment">#订阅一个或多个符合给定模式的频道</span></span><br><span class="line">PUBSUB suncommand				<span class="comment">#查看订阅与发布系统的状态</span></span><br><span class="line">PUNSUBSCRIBE pattern1 pattern2	<span class="comment">#退订所给模式的频道</span></span><br><span class="line">这些命令被广泛用于构建即时通信应用，比如网络聊天室、实时广播和实时通信等</span><br></pre></td></tr></table></figure>
-
-<h2 id="示例"><a href="#示例" class="headerlink" title="示例"></a>示例</h2><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line">------------订阅端----------------------</span><br><span class="line">127.0.0.1:6379&gt; SUBSCRIBE sakura <span class="comment"># 订阅sakura频道</span></span><br><span class="line">Reading messages... (press Ctrl-C to quit) <span class="comment"># 等待接收消息</span></span><br><span class="line">1) <span class="string">&quot;subscribe&quot;</span> <span class="comment"># 订阅成功的消息</span></span><br><span class="line">2) <span class="string">&quot;sakura&quot;</span></span><br><span class="line">3) (<span class="built_in">integer</span>) 1</span><br><span class="line">1) <span class="string">&quot;message&quot;</span> <span class="comment"># 接收到来自sakura频道的消息 &quot;hello world&quot;</span></span><br><span class="line">2) <span class="string">&quot;sakura&quot;</span></span><br><span class="line">3) <span class="string">&quot;hello world&quot;</span></span><br><span class="line">1) <span class="string">&quot;message&quot;</span> <span class="comment"># 接收到来自sakura频道的消息 &quot;hello i am sakura&quot;</span></span><br><span class="line">2) <span class="string">&quot;sakura&quot;</span></span><br><span class="line">3) <span class="string">&quot;hello i am sakura&quot;</span></span><br><span class="line"></span><br><span class="line">--------------消息发布端-------------------</span><br><span class="line">127.0.0.1:6379&gt; PUBLISH sakura <span class="string">&quot;hello world&quot;</span> <span class="comment"># 发布消息到sakura频道</span></span><br><span class="line">(<span class="built_in">integer</span>) 1</span><br><span class="line">127.0.0.1:6379&gt; PUBLISH sakura <span class="string">&quot;hello i am sakura&quot;</span> <span class="comment"># 发布消息</span></span><br><span class="line">(<span class="built_in">integer</span>) 1</span><br><span class="line"></span><br><span class="line">-----------------查看活跃的频道------------</span><br><span class="line">127.0.0.1:6379&gt; PUBSUB channels</span><br><span class="line">1) <span class="string">&quot;sakura&quot;</span></span><br></pre></td></tr></table></figure>
-
-<h2 id="原理"><a href="#原理" class="headerlink" title="原理"></a>原理</h2><p>每个 Redis 服务器进程都维持着一个表示服务器状态的 redis.h/redisServer 结构， 结构的 pubsub_channels 属性是一个字典， 这个字典就用于保存订阅频道的信息，其中，字典的键为正在被订阅的频道， 而字典的值则是一个链表， 链表中保存了所有订阅这个频道的客户端。<br><img src="https://nodeandimg.oss-cn-wulanchabu.aliyuncs.com/AORLM7AWE1SM2K%7B5.png"></p>
-<p>客户端订阅，就被链接到对应频道的链表的尾部，退订则就是将客户端节点从链表中移除。</p>
-<h2 id="缺点"><a href="#缺点" class="headerlink" title="缺点"></a>缺点</h2><ol>
-<li>如果一个客户端订阅了频道，但自己读取消息的速度却不够快的话，那么不断积压的消息会使redis输出缓冲区的体积变得越来越大，这可能使得redis本身的速度变慢，甚至直接崩溃。</li>
-<li>这和数据传输可靠性有关，如果在订阅方断线，那么他将会丢失所有在短线期间发布者发布的消息。</li>
-</ol>
-<h2 id="应用"><a href="#应用" class="headerlink" title="应用"></a>应用</h2><ol>
-<li>消息订阅：公众号订阅，微博关注等等（起始更多是使用消息队列来进行实现）</li>
-<li>多人在线聊天室。</li>
-</ol>
-<p>稍微复杂的场景，我们就会使用消息中间件MQ处理。</p>
 
       
     </div>
