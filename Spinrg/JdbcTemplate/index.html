@@ -1,0 +1,458 @@
+<!DOCTYPE html>
+<html lang="Spinrg">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 5.4.0">
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5.15.4/css/all.min.css" integrity="sha256-mUZM63G8m73Mcidfrv5E+Y61y7a12O5mW4ezU3bxqW4=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/animate.css@3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/pace-js@1.2.4/themes/blue/pace-theme-minimal.css">
+  <script src="https://cdn.jsdelivr.net/npm/pace-js@1.2.4/pace.min.js" integrity="sha256-gqd7YTjg/BtfqWSwsJOvndl0Bxc8gFImLEkXQT8+qj0=" crossorigin="anonymous"></script>
+
+<script class="next-config" data-name="main" type="application/json">{"hostname":"yoursite-url","root":"/","images":"/images","scheme":"Gemini","darkmode":false,"version":"8.8.1","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12},"copycode":false,"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"Searching...","empty":"We didn't find any results for the search: ${query}","hits_time":"${hits} results found in ${time} ms","hits":"${hits} results found"}}</script><script src="/js/config.js"></script>
+<meta name="description" content="Spring JDBC数据访问Spring JDBC概述什么是JDBC Template？之前我们采用的是手动封装JdbcTemplate，其好处是通过(sql语句+参数)模板化了编程。而真正的JdbcTemplate类，是Spring框架为我们写好的。它是 Spring 框架中提供的一个对象，是对原始 Jdbc API 对象的简单封装。除了JdbcTemplate，Spring 框架还为我们提供">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Spring-JDBC">
+<meta property="og:url" content="http://yoursite-url/Spinrg/JdbcTemplate/index.html">
+<meta property="og:site_name" content="Study Node">
+<meta property="og:description" content="Spring JDBC数据访问Spring JDBC概述什么是JDBC Template？之前我们采用的是手动封装JdbcTemplate，其好处是通过(sql语句+参数)模板化了编程。而真正的JdbcTemplate类，是Spring框架为我们写好的。它是 Spring 框架中提供的一个对象，是对原始 Jdbc API 对象的简单封装。除了JdbcTemplate，Spring 框架还为我们提供">
+<meta property="og:locale">
+<meta property="og:image" content="https://nodeandimg.oss-cn-wulanchabu.aliyuncs.com/0JH29GFFMD4OGHAFFA0.png">
+<meta property="og:image" content="https://nodeandimg.oss-cn-wulanchabu.aliyuncs.com/IOTYUHEZE7VHQ1YRBR.png">
+<meta property="og:image" content="https://nodeandimg.oss-cn-wulanchabu.aliyuncs.com/Q55DJI00FTMIUKX3S90K.png">
+<meta property="og:image" content="https://nodeandimg.oss-cn-wulanchabu.aliyuncs.com/CY65ZEHJEZ5RHW.png">
+<meta property="og:image" content="https://nodeandimg.oss-cn-wulanchabu.aliyuncs.com/KHZWQLJ6KV9W5W.png">
+<meta property="og:image" content="https://nodeandimg.oss-cn-wulanchabu.aliyuncs.com/66GGSURG79U30VWF6DH.png">
+<meta property="article:published_time" content="2022-06-19T12:59:50.000Z">
+<meta property="article:modified_time" content="2022-06-19T12:59:50.000Z">
+<meta property="article:author" content="Hao">
+<meta property="article:tag" content="Spring">
+<meta property="article:tag" content="框架">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://nodeandimg.oss-cn-wulanchabu.aliyuncs.com/0JH29GFFMD4OGHAFFA0.png">
+
+
+<link rel="canonical" href="http://yoursite-url/Spinrg/JdbcTemplate/">
+
+
+
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"Spinrg","comments":true,"permalink":"http://yoursite-url/Spinrg/JdbcTemplate/","path":"Spinrg/JdbcTemplate/","title":"Spring-JDBC"}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title>Spring-JDBC | Study Node</title>
+  
+
+
+
+
+  <noscript>
+    <link rel="stylesheet" href="/css/noscript.css">
+  </noscript>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="Toggle navigation bar" role="button">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <h1 class="site-title">Study Node</h1>
+      <i class="logo-line"></i>
+    </a>
+      <p class="site-subtitle" itemprop="description">True mastery of any skill takes a lifetime</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu">
+        <li class="menu-item menu-item-home"><a href="/" rel="section"><i class="fa fa-home fa-fw"></i>Home</a></li>
+        <li class="menu-item menu-item-tags"><a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>Tags</a></li>
+        <li class="menu-item menu-item-categories"><a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>Categories</a></li>
+        <li class="menu-item menu-item-archives"><a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>Archives</a></li>
+  </ul>
+</nav>
+
+
+
+
+</div>
+        
+  
+  <div class="toggle sidebar-toggle" role="button">
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+  </div>
+
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          Table of Contents
+        </li>
+        <li class="sidebar-nav-overview">
+          Overview
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#Spring-JDBC%E6%95%B0%E6%8D%AE%E8%AE%BF%E9%97%AE"><span class="nav-number">1.</span> <span class="nav-text">Spring JDBC数据访问</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#Spring-JDBC%E6%A6%82%E8%BF%B0"><span class="nav-number">1.0.1.</span> <span class="nav-text">Spring JDBC概述</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%BB%80%E4%B9%88%E6%98%AFJDBC-Template%EF%BC%9F"><span class="nav-number">1.0.2.</span> <span class="nav-text">什么是JDBC Template？</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Spring-JDBC-%E8%83%BD%E5%81%9A%E4%BB%80%E4%B9%88%EF%BC%9F"><span class="nav-number">1.0.3.</span> <span class="nav-text">Spring JDBC 能做什么？</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#JDBC%E8%AE%BF%E9%97%AE%E6%95%B0%E6%8D%AE%E7%9A%84%E6%96%B9%E6%B3%95"><span class="nav-number">1.0.4.</span> <span class="nav-text">JDBC访问数据的方法</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Spring%E6%A1%86%E6%9E%B6%E7%9A%84JDBC%E6%8A%BD%E8%B1%A1%E6%A1%86%E6%9E%B6%E7%94%B1%E5%9B%9B%E4%B8%AA%E4%B8%8D%E5%90%8C%E7%9A%84%E8%BD%AF%E4%BB%B6%E5%8C%85%E7%BB%84%E6%88%90"><span class="nav-number">1.0.5.</span> <span class="nav-text">Spring框架的JDBC抽象框架由四个不同的软件包组成</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%BD%BF%E7%94%A8JBDC-Template"><span class="nav-number">1.1.</span> <span class="nav-text">使用JBDC Template</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E9%85%8D%E7%BD%AE%E6%95%B0%E6%8D%AE%E5%BA%93%E9%93%BE%E6%8E%A5%E6%B1%A0"><span class="nav-number">1.1.1.</span> <span class="nav-text">配置数据库链接池</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%88%9B%E5%BB%BAService%E5%92%8CDao%EF%BC%8C%E5%B9%B6%E5%9C%A8Dao%E4%B8%AD%E6%B3%A8%E5%85%A5JDBC-Template%E5%AF%B9%E8%B1%A1"><span class="nav-number">1.1.2.</span> <span class="nav-text">创建Service和Dao，并在Dao中注入JDBC Template对象</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%EF%BC%881%EF%BC%89%E6%B7%BB%E5%8A%A0%E6%95%B0%E6%8D%AE"><span class="nav-number">1.1.2.1.</span> <span class="nav-text">（1）添加数据</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%EF%BC%882%EF%BC%89%E4%BF%AE%E6%94%B9%E6%95%B0%E6%8D%AE%E5%92%8C%E5%88%A0%E9%99%A4%E6%95%B0%E6%8D%AE"><span class="nav-number">1.1.2.2.</span> <span class="nav-text">（2）修改数据和删除数据</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%EF%BC%883%EF%BC%89%E8%BF%94%E5%9B%9E%E6%9F%90%E4%B8%AA%E5%85%B7%E4%BD%93%E7%9A%84%E5%80%BC"><span class="nav-number">1.1.2.3.</span> <span class="nav-text">（3）返回某个具体的值</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%EF%BC%884%EF%BC%89%E8%BF%94%E5%9B%9E%E4%B8%80%E4%B8%AA%E5%AF%B9%E8%B1%A1"><span class="nav-number">1.1.2.4.</span> <span class="nav-text">（4）返回一个对象</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%EF%BC%885%EF%BC%89%E6%9F%A5%E8%AF%A2%E8%BF%94%E5%9B%9E%E9%9B%86%E5%90%88"><span class="nav-number">1.1.2.5.</span> <span class="nav-text">（5）查询返回集合</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%EF%BC%886%EF%BC%89%E5%AE%9E%E7%8E%B0%E6%89%B9%E9%87%8F%E6%93%8D%E4%BD%9C"><span class="nav-number">1.1.2.6.</span> <span class="nav-text">（6）实现批量操作</span></a></li></ol></li></ol></li></ol></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-author site-overview-item animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="Hao"
+      src="https://nodeandimg.oss-cn-wulanchabu.aliyuncs.com/}VRZRM08TG_W9[WMAD}69[O.png">
+  <p class="site-author-name" itemprop="name">Hao</p>
+  <div class="site-description" itemprop="description">It's an IT blog...</div>
+</div>
+<div class="site-state-wrap site-overview-item animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        <a href="/archives/">
+          <span class="site-state-item-count">79</span>
+          <span class="site-state-item-name">posts</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+          <a href="/categories/">
+        <span class="site-state-item-count">16</span>
+        <span class="site-state-item-name">categories</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+          <a href="/tags/">
+        <span class="site-state-item-count">17</span>
+        <span class="site-state-item-name">tags</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author site-overview-item animated">
+      <span class="links-of-author-item">
+        <a href="https://github.com/byteflow666" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;byteflow666" rel="noopener" target="_blank">GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="https://mail.qq.com/cgi-bin/frame_html?sid=1aPXzaqY4yWqbjhZ&r=98902ddef6ed390980f08fe54374e19b" title="E-Mail → https:&#x2F;&#x2F;mail.qq.com&#x2F;cgi-bin&#x2F;frame_html?sid&#x3D;1aPXzaqY4yWqbjhZ&amp;r&#x3D;98902ddef6ed390980f08fe54374e19b" rel="noopener" target="_blank">E-Mail</a>
+      </span>
+  </div>
+
+
+
+        </div>
+      </div>
+    </div>
+  </aside>
+  <div class="sidebar-dimmer"></div>
+
+
+    </header>
+
+    
+  <div class="back-to-top" role="button" aria-label="Back to top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="Spinrg">
+    <link itemprop="mainEntityOfPage" href="http://yoursite-url/Spinrg/JdbcTemplate/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="https://nodeandimg.oss-cn-wulanchabu.aliyuncs.com/}VRZRM08TG_W9[WMAD}69[O.png">
+      <meta itemprop="name" content="Hao">
+      <meta itemprop="description" content="It's an IT blog...">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Study Node">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          Spring-JDBC
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">Posted on</span>
+
+      <time title="Created: 2022-06-19 20:59:50" itemprop="dateCreated datePublished" datetime="2022-06-19T20:59:50+08:00">2022-06-19</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">In</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/Spring-%E6%A1%86%E6%9E%B6/" itemprop="url" rel="index"><span itemprop="name">-- Spring - 框架</span></a>
+        </span>
+    </span>
+
+  
+    <span class="post-meta-item" title="Views" id="busuanzi_container_page_pv">
+      <span class="post-meta-item-icon">
+        <i class="far fa-eye"></i>
+      </span>
+      <span class="post-meta-item-text">Views: </span>
+      <span id="busuanzi_value_page_pv"></span>
+    </span>
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+        <h1 id="Spring-JDBC数据访问"><a href="#Spring-JDBC数据访问" class="headerlink" title="Spring JDBC数据访问"></a>Spring JDBC数据访问</h1><h3 id="Spring-JDBC概述"><a href="#Spring-JDBC概述" class="headerlink" title="Spring JDBC概述"></a>Spring JDBC概述</h3><h3 id="什么是JDBC-Template？"><a href="#什么是JDBC-Template？" class="headerlink" title="什么是JDBC Template？"></a>什么是JDBC Template？</h3><p>之前我们采用的是手动封装JdbcTemplate，其好处是通过(sql语句+参数)模板化了编程。而真正的JdbcTemplate类，是Spring框架为我们写好的。它是 Spring 框架中提供的一个对象，是对原始 Jdbc API 对象的简单封装。除了JdbcTemplate，Spring 框架还为我们提供了很多的操作模板类。</p>
+<p><code>操作关系型数据的</code>：JdbcTemplate和HibernateTemplate。<br><code>操作 nosql 数据库的</code>：RedisTemplate。<br><code>操作消息队列的</code>：JmsTemplate。</p>
+<h3 id="Spring-JDBC-能做什么？"><a href="#Spring-JDBC-能做什么？" class="headerlink" title="Spring JDBC 能做什么？"></a>Spring JDBC 能做什么？</h3><table>
+<thead>
+<tr>
+<th></th>
+<th></th>
+<th></th>
+</tr>
+</thead>
+<tbody><tr>
+<td>操作项目</td>
+<td>Spring帮你做的</td>
+<td>你需要做的</td>
+</tr>
+<tr>
+<td>定义连接参数</td>
+<td></td>
+<td>✔</td>
+</tr>
+<tr>
+<td>打开连接</td>
+<td>✔</td>
+<td></td>
+</tr>
+<tr>
+<td>指定SQL语句</td>
+<td></td>
+<td>✔</td>
+</tr>
+<tr>
+<td>声明参数并提供参数值</td>
+<td></td>
+<td>✔</td>
+</tr>
+<tr>
+<td>准备并运行该语句</td>
+<td>✔</td>
+<td></td>
+</tr>
+<tr>
+<td>设置循环以遍历结果（如果有）</td>
+<td>✔</td>
+<td></td>
+</tr>
+<tr>
+<td>进行每次迭代的工作</td>
+<td></td>
+<td>✔</td>
+</tr>
+<tr>
+<td>处理任何异常</td>
+<td>✔</td>
+<td></td>
+</tr>
+<tr>
+<td>处理交易</td>
+<td>✔</td>
+<td></td>
+</tr>
+<tr>
+<td>关闭连接，语句和结果集</td>
+<td>✔</td>
+<td></td>
+</tr>
+</tbody></table>
+<h3 id="JDBC访问数据的方法"><a href="#JDBC访问数据的方法" class="headerlink" title="JDBC访问数据的方法"></a>JDBC访问数据的方法</h3><ul>
+<li><p><code>JdbcTemplate</code>：是经典且最受欢迎的Spring<br>JDBC方法。这种“最低级别”的方法以及其他所有方法都在幕后使用JdbcTemplate。</p>
+</li>
+<li><p><code>NamedParameterJdbcTemplate</code>：封装JdbcTemplate以提供命名参数，而不是传统的JDBC ‘?’ 占位符。当您有多个SQL语句参数时，此方法可提供更好的文档编制和易用性。</p>
+</li>
+<li><p>SimpleJdbcInsert和SimpleJdbcCall：优化数据库元数据以限制必要的配置量。这种方法简化了编码，因此您只需要提供表或过程的名称，并提供与列名称匹配的参数映射即可。仅当数据库提供足够的元数据时，此方法才有效。如果数据库不提供此元数据，则必须提供参数的显式配置。</p>
+</li>
+<li><p>RDBMS对象：（包括MappingSqlQuery，SqlUpdate和StoredProcedure）要求您在数据访问层初始化期间创建可重用且线程安全的对象。此方法以JDO Query为模型，其中您定义查询字符串，声明参数并编译查询。一旦你这样做，execute(…)，update(…)，和findObject(…)方法可以用不同的参数值多次调用。</p>
+</li>
+</ul>
+<h3 id="Spring框架的JDBC抽象框架由四个不同的软件包组成"><a href="#Spring框架的JDBC抽象框架由四个不同的软件包组成" class="headerlink" title="Spring框架的JDBC抽象框架由四个不同的软件包组成"></a>Spring框架的JDBC抽象框架由四个不同的软件包组成</h3><p><img src="https://nodeandimg.oss-cn-wulanchabu.aliyuncs.com/0JH29GFFMD4OGHAFFA0.png"></p>
+<ul>
+<li>core：：org.springframework.jdbc.core程序包包含JdbcTemplate该类及其各种回调接口，以及各种相关类。org.springframework.jdbc.core.simple包含SimpleJdbcInsert和<br>SimpleJdbcCall类。另一个名为org.springframework.jdbc.core.namedparam的子程序包包含NamedParameterJdbcTemplate 该类和相关的支持类。</li>
+<li>datasource：该org.springframework.jdbc.datasource软件包包含一个易于DataSource访问的实用程序类<br>和各种简单的DataSource实现，可用于在Java<br>EE容器之外测试和运行未修改的JDBC代码。org.springfamework.jdbc.datasource.embedded支持使用Java数据库引擎（例如HSQL，H2和Derby）创建嵌入式数据库。</li>
+<li>object：org.springframework.jdbc.object程序包包含将RDBMS查询，更新和存储过程表示为线程安全的可重用对象的类。尽管查询返回的对象自然会与数据库断开连接，但此方法由JDO建模。较高级别的JDBC抽象取决于org.springframework.jdbc.core程序包中的较低级别的抽象。</li>
+<li>support：org.springframework.jdbc.support提供了SQLException翻译功能和一些实用程序类。JDBC处理期间引发的异常将转换为org.springframework.dao包中定义的异常。这意味着使用Spring JDBC抽象层的代码不需要实现JDBC或RDBMS特定的错误处理。所有翻译的异常均未选中，这使您可以选择捕获可从中恢复的异常，同时将其他异常传播到调用方。</li>
+</ul>
+<h2 id="使用JBDC-Template"><a href="#使用JBDC-Template" class="headerlink" title="使用JBDC Template"></a>使用JBDC Template</h2><h3 id="配置数据库链接池"><a href="#配置数据库链接池" class="headerlink" title="配置数据库链接池"></a>配置数据库链接池</h3><p>新建<code>bean1.xml</code>, 配置数据库连接池，并配置JDBC Template对象，注入datasource；最后开启组件扫描</p>
+<p>(1）代码配置</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">DriverManagerDataSource dataSource = <span class="keyword">new</span> DriverManagerDataSource();</span><br><span class="line">dataSource.setDriverClassName(<span class="string">&quot;org.hsqldb.jdbcDriver&quot;</span>);</span><br><span class="line">dataSource.setUrl(<span class="string">&quot;jdbc:hsqldb:hsql://localhost:&quot;</span>);</span><br><span class="line">dataSource.setUsername(<span class="string">&quot;sa&quot;</span>);</span><br><span class="line">dataSource.setPassword(<span class="string">&quot;&quot;</span>);</span><br></pre></td></tr></table></figure>
+
+<p>（2）xml配置</p>
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot;?&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">beans</span> <span class="attr">xmlns</span>=<span class="string">&quot;http://www.springframework.org/schema/beans&quot;</span></span></span><br><span class="line"><span class="tag">       <span class="attr">xmlns:context</span>=<span class="string">&quot;http://www.springframework.org/schema/context&quot;</span></span></span><br><span class="line"><span class="tag">       <span class="attr">xmlns:xsi</span>=<span class="string">&quot;http://www.w3.org/2001/XMLSchema-instance&quot;</span></span></span><br><span class="line"><span class="tag">       <span class="attr">xsi:schemaLocation</span>=<span class="string">&quot;http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd</span></span></span><br><span class="line"><span class="string"><span class="tag">        http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd&quot;</span>&gt;</span></span><br><span class="line">    <span class="comment">&lt;!--开启组件扫描--&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">context:component-scan</span> <span class="attr">base-package</span>=<span class="string">&quot;com.micah&quot;</span>/&gt;</span></span><br><span class="line"></span><br><span class="line">    <span class="comment">&lt;!-- 数据库连接池 --&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">bean</span> <span class="attr">id</span>=<span class="string">&quot;dataSource&quot;</span> <span class="attr">class</span>=<span class="string">&quot;com.alibaba.druid.pool.DruidDataSource&quot;</span></span></span><br><span class="line"><span class="tag">          <span class="attr">destroy-method</span>=<span class="string">&quot;close&quot;</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">property</span> <span class="attr">name</span>=<span class="string">&quot;url&quot;</span> <span class="attr">value</span>=<span class="string">&quot;jdbc:mysql:///user_db&quot;</span> /&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">property</span> <span class="attr">name</span>=<span class="string">&quot;username&quot;</span> <span class="attr">value</span>=<span class="string">&quot;root&quot;</span> /&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">property</span> <span class="attr">name</span>=<span class="string">&quot;password&quot;</span> <span class="attr">value</span>=<span class="string">&quot;root&quot;</span> /&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">property</span> <span class="attr">name</span>=<span class="string">&quot;driverClassName&quot;</span> <span class="attr">value</span>=<span class="string">&quot;com.mysql.jdbc.Driver&quot;</span> /&gt;</span></span><br><span class="line">    <span class="tag">&lt;/<span class="name">bean</span>&gt;</span></span><br><span class="line"></span><br><span class="line">    <span class="comment">&lt;!--创建jdbcTemplate对象--&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">bean</span> <span class="attr">id</span>=<span class="string">&quot;jdbcTemplate&quot;</span> <span class="attr">class</span>=<span class="string">&quot;org.springframework.jdbc.core.JdbcTemplate&quot;</span>&gt;</span></span><br><span class="line">        <span class="comment">&lt;!--注入--&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">property</span> <span class="attr">name</span>=<span class="string">&quot;dataSource&quot;</span> <span class="attr">ref</span>=<span class="string">&quot;dataSource&quot;</span>/&gt;</span></span><br><span class="line">    <span class="tag">&lt;/<span class="name">bean</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">beans</span>&gt;</span></span><br></pre></td></tr></table></figure>
+
+<h3 id="创建Service和Dao，并在Dao中注入JDBC-Template对象"><a href="#创建Service和Dao，并在Dao中注入JDBC-Template对象" class="headerlink" title="创建Service和Dao，并在Dao中注入JDBC Template对象"></a>创建Service和Dao，并在Dao中注入JDBC Template对象</h3><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * <span class="doctag">@Author</span> Hao</span></span><br><span class="line"><span class="comment"> * <span class="doctag">@Date</span> 2021/2/28 下午9:32</span></span><br><span class="line"><span class="comment"> * <span class="doctag">@Version</span> 1.0</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">Book</span> </span>&#123;</span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">int</span> userId;</span><br><span class="line">    <span class="keyword">private</span> String username;</span><br><span class="line">    <span class="keyword">private</span> String userStatus;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">int</span> <span class="title">getUserId</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        <span class="keyword">return</span> userId;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">setUserId</span><span class="params">(<span class="keyword">int</span> userId)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">this</span>.userId = userId;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> String <span class="title">getUsername</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        <span class="keyword">return</span> username;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">setUsername</span><span class="params">(String username)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">this</span>.username = username;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> String <span class="title">getUserStatus</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        <span class="keyword">return</span> userStatus;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">setUserStatus</span><span class="params">(String userStatus)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">this</span>.userStatus = userStatus;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * <span class="doctag">@Author</span> Hao</span></span><br><span class="line"><span class="comment"> * <span class="doctag">@Date</span> 2021/2/28 下午9:19</span></span><br><span class="line"><span class="comment"> * <span class="doctag">@Version</span> 1.0</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="meta">@Service</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">BookService</span> </span>&#123;</span><br><span class="line">    <span class="meta">@Autowired</span></span><br><span class="line">    <span class="keyword">private</span> BookDao bookDao;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">addBook</span><span class="params">(Book book)</span></span>&#123;</span><br><span class="line">        bookDao.add(book);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">updateBook</span><span class="params">(Book book)</span></span>&#123;</span><br><span class="line">        bookDao.update(book);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">deleteBook</span><span class="params">(String id)</span></span>&#123;</span><br><span class="line">        bookDao.deleteBook(id);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">selectCount</span><span class="params">()</span></span>&#123;</span><br><span class="line">        <span class="keyword">int</span> count = bookDao.selectCount();</span><br><span class="line">        System.out.println(count);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">batchAddBook</span><span class="params">(List&lt;Object[]&gt; books)</span></span>&#123;</span><br><span class="line">        bookDao.batchAddBook(books);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">batchUpdateBook</span><span class="params">(List&lt;Object[]&gt; books)</span> </span>&#123;</span><br><span class="line">        bookDao.batchUpdateBook(books);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">batchDelBook</span><span class="params">(List&lt;Object[]&gt; ids)</span> </span>&#123;</span><br><span class="line">        bookDao.batchDelBook(ids);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * <span class="doctag">@Author</span> Hao</span></span><br><span class="line"><span class="comment"> * <span class="doctag">@Date</span> 2021/2/28 下午9:20</span></span><br><span class="line"><span class="comment"> * <span class="doctag">@Version</span> 1.0</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">interface</span> <span class="title">BookDao</span> </span>&#123;</span><br><span class="line">    <span class="comment">/**</span></span><br><span class="line"><span class="comment">     * 添加add</span></span><br><span class="line"><span class="comment">     */</span></span><br><span class="line">    <span class="function"><span class="keyword">void</span> <span class="title">add</span><span class="params">(Book book)</span></span>;</span><br><span class="line">    <span class="comment">/**</span></span><br><span class="line"><span class="comment">     * update</span></span><br><span class="line"><span class="comment">     */</span></span><br><span class="line">    <span class="function"><span class="keyword">void</span> <span class="title">update</span><span class="params">(Book book)</span></span>;</span><br><span class="line"></span><br><span class="line">    <span class="comment">/**</span></span><br><span class="line"><span class="comment">     * delete</span></span><br><span class="line"><span class="comment">     */</span></span><br><span class="line">    <span class="function"><span class="keyword">void</span> <span class="title">deleteBook</span><span class="params">(String id)</span></span>;</span><br><span class="line"></span><br><span class="line">    <span class="comment">/**</span></span><br><span class="line"><span class="comment">     * count(*)</span></span><br><span class="line"><span class="comment">     */</span></span><br><span class="line">    <span class="function"><span class="keyword">int</span> <span class="title">selectCount</span><span class="params">()</span></span>;</span><br><span class="line"></span><br><span class="line">    <span class="comment">/**</span></span><br><span class="line"><span class="comment">     * batchAddBooks</span></span><br><span class="line"><span class="comment">     * <span class="doctag">@param</span> books</span></span><br><span class="line"><span class="comment">     */</span></span><br><span class="line">    <span class="function"><span class="keyword">void</span> <span class="title">batchAddBook</span><span class="params">(List&lt;Object[]&gt; books)</span></span>;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">void</span> <span class="title">batchUpdateBook</span><span class="params">(List&lt;Object[]&gt; books)</span></span>;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">void</span> <span class="title">batchDelBook</span><span class="params">(List&lt;Object[]&gt; ids)</span></span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h4 id="（1）添加数据"><a href="#（1）添加数据" class="headerlink" title="（1）添加数据"></a>（1）添加数据</h4><p><img src="https://nodeandimg.oss-cn-wulanchabu.aliyuncs.com/IOTYUHEZE7VHQ1YRBR.png"></p>
+<p>第一个参数：sql语句<br>第二个参数：@Nullable允许为空，设置SQL语句中的参数值</p>
+<h4 id="（2）修改数据和删除数据"><a href="#（2）修改数据和删除数据" class="headerlink" title="（2）修改数据和删除数据"></a>（2）修改数据和删除数据</h4><p>方法同上</p>
+<h4 id="（3）返回某个具体的值"><a href="#（3）返回某个具体的值" class="headerlink" title="（3）返回某个具体的值"></a>（3）返回某个具体的值</h4><p><img src="https://nodeandimg.oss-cn-wulanchabu.aliyuncs.com/Q55DJI00FTMIUKX3S90K.png"></p>
+<h4 id="（4）返回一个对象"><a href="#（4）返回一个对象" class="headerlink" title="（4）返回一个对象"></a>（4）返回一个对象</h4><p><img src="https://nodeandimg.oss-cn-wulanchabu.aliyuncs.com/CY65ZEHJEZ5RHW.png"></p>
+<p>第一个参数：sql语句<br> 第二个参数：RowMapper 是接口，针对返回不同类型数据，使用这个接口里面实现类完成数据封装<br> 第三个参数：sql语句值</p>
+<h4 id="（5）查询返回集合"><a href="#（5）查询返回集合" class="headerlink" title="（5）查询返回集合"></a>（5）查询返回集合</h4><p><img src="https://nodeandimg.oss-cn-wulanchabu.aliyuncs.com/KHZWQLJ6KV9W5W.png"></p>
+<p> 第一个参数：sql语句<br> 第二个参数：RowMapper 是接口，针对返回不同类型数据，使用这个接口里面实现类完成数据封装<br> 第三个参数：sql语句值</p>
+<h4 id="（6）实现批量操作"><a href="#（6）实现批量操作" class="headerlink" title="（6）实现批量操作"></a>（6）实现批量操作</h4><p><img src="https://nodeandimg.oss-cn-wulanchabu.aliyuncs.com/66GGSURG79U30VWF6DH.png"></p>
+<p>第一个参数是SQL语句，第二个参数是要添加的集合数据</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * <span class="doctag">@Author</span> m.kong</span></span><br><span class="line"><span class="comment"> * <span class="doctag">@Date</span> 2021/2/28 下午9:20</span></span><br><span class="line"><span class="comment"> * <span class="doctag">@Version</span> 1.0</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="meta">@Repository</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">BookDaoImpl</span> <span class="keyword">implements</span> <span class="title">BookDao</span></span>&#123;</span><br><span class="line">    <span class="comment">/**</span></span><br><span class="line"><span class="comment">     * 批量添加数据</span></span><br><span class="line"><span class="comment">     * <span class="doctag">@param</span> books</span></span><br><span class="line"><span class="comment">     */</span></span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">batchAddBook</span><span class="params">(List&lt;Object[]&gt; books)</span> </span>&#123;</span><br><span class="line">        String sql = <span class="string">&quot;Insert into t_user values(?,?,?)&quot;</span>;</span><br><span class="line">        <span class="keyword">int</span>[] res = jdbcTemplate.batchUpdate(sql, books);</span><br><span class="line">        System.out.println(Arrays.toString(res));</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">/**</span></span><br><span class="line"><span class="comment">     * 批量删除</span></span><br><span class="line"><span class="comment">     */</span></span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">batchDelBook</span><span class="params">(List&lt;Object[]&gt; ids)</span> </span>&#123;</span><br><span class="line">        String sql = <span class="string">&quot;DELETE FROM t_user WHERE user_id = ?&quot;</span>;</span><br><span class="line">        <span class="keyword">int</span>[] res = jdbcTemplate.batchUpdate(sql, ids);</span><br><span class="line">        System.out.println(Arrays.toString(res));</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">/**</span></span><br><span class="line"><span class="comment">     * 批量更新数据</span></span><br><span class="line"><span class="comment">     * <span class="doctag">@param</span> books</span></span><br><span class="line"><span class="comment">     */</span></span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">batchUpdateBook</span><span class="params">(List&lt;Object[]&gt; books)</span> </span>&#123;</span><br><span class="line">        String sql = <span class="string">&quot;Update t_user set username = ?,ustates = ? where user_id = ?&quot;</span>;</span><br><span class="line">        <span class="keyword">int</span>[] res = jdbcTemplate.batchUpdate(sql, books);</span><br><span class="line">        System.out.println(Arrays.toString(res));</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">/**</span></span><br><span class="line"><span class="comment">     * 注入JdbcTemplate</span></span><br><span class="line"><span class="comment">     */</span></span><br><span class="line">    <span class="meta">@Autowired</span></span><br><span class="line">    <span class="keyword">private</span> JdbcTemplate jdbcTemplate;</span><br><span class="line"></span><br><span class="line">    <span class="comment">/**</span></span><br><span class="line"><span class="comment">     * 添加方法</span></span><br><span class="line"><span class="comment">     * <span class="doctag">@param</span> book 书</span></span><br><span class="line"><span class="comment">     */</span></span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">add</span><span class="params">(Book book)</span> </span>&#123;</span><br><span class="line">        Object[] args = &#123;book.getUserId(),book.getUsername(),book.getUserStatus()&#125;;</span><br><span class="line">        <span class="keyword">int</span> update = jdbcTemplate.update(<span class="string">&quot;insert into t_user values (?,?,?)&quot;</span>, args);</span><br><span class="line">        System.out.println(<span class="string">&quot;update successful!&quot;</span> + update);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">update</span><span class="params">(Book book)</span> </span>&#123;</span><br><span class="line">        Object[] args = &#123;book.getUsername(),book.getUserStatus(),book.getUserId()&#125;;</span><br><span class="line">        <span class="keyword">int</span> update = jdbcTemplate.update(<span class="string">&quot;update t_user set username = ?,ustates = ? where user_id = ?&quot;</span>, args);</span><br><span class="line">        System.out.println(<span class="string">&quot;update successful!&quot;</span> + update);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">deleteBook</span><span class="params">(String id)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">int</span> update = jdbcTemplate.update(<span class="string">&quot;delete from t_user  where user_id = ?&quot;</span>, id);</span><br><span class="line">        System.out.println(<span class="string">&quot;delete successful!&quot;</span> + update);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">int</span> <span class="title">selectCount</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        String sql = <span class="string">&quot;select count(*) from t_user&quot;</span>;</span><br><span class="line">        <span class="keyword">int</span> count = jdbcTemplate.queryForObject(sql,Integer.class);</span><br><span class="line">        <span class="keyword">return</span> count;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/Spring/" rel="tag"># Spring</a>
+              <a href="/tags/%E6%A1%86%E6%9E%B6/" rel="tag"># 框架</a>
+          </div>
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/Spinrg/Spring-JDBC/" rel="prev" title="Spring-JDBC">
+                  <i class="fa fa-chevron-left"></i> Spring-JDBC
+                </a>
+            </div>
+            <div class="post-nav-item">
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+
+<div class="copyright">
+  &copy; 
+  <span itemprop="copyrightYear">2022</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Hao</span>
+</div>
+<div class="busuanzi-count">
+    <span class="post-meta-item" id="busuanzi_container_site_uv">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-user"></i>
+      </span>
+      <span class="site-uv" title="Total Visitors">
+        <span id="busuanzi_value_site_uv"></span>
+      </span>
+    </span>
+    <span class="post-meta-item" id="busuanzi_container_site_pv">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-eye"></i>
+      </span>
+      <span class="site-pv" title="Total Views">
+        <span id="busuanzi_value_site_pv"></span>
+      </span>
+    </span>
+</div>
+  <div class="powered-by">Powered by <a href="https://hexo.io/" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/" rel="noopener" target="_blank">NexT.Gemini</a>
+  </div>
+
+    </div>
+  </footer>
+
+  
+  <script src="https://cdn.jsdelivr.net/npm/animejs@3.2.1/lib/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous"></script>
+<script src="/js/comments.js"></script><script src="/js/utils.js"></script><script src="/js/motion.js"></script><script src="/js/next-boot.js"></script>
+
+  
+
+
+
+
+  <script src="/js/third-party/pace.js"></script>
+
+  
+  <script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+
+
+
+
+</body>
+</html>

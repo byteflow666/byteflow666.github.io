@@ -133,7 +133,7 @@
   <nav class="site-state">
       <div class="site-state-item site-state-posts">
         <a href="/archives/">
-          <span class="site-state-item-count">77</span>
+          <span class="site-state-item-count">79</span>
           <span class="site-state-item-name">posts</span>
         </a>
       </div>
@@ -181,6 +181,311 @@
 
 
     <div class="main-inner index posts-expand">
+
+    
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="设计模式">
+    <link itemprop="mainEntityOfPage" href="http://yoursite-url/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F/%E7%BB%93%E6%9E%84%E5%9E%8B%E6%A8%A1%E5%BC%8F-%E6%A1%A5%E6%8E%A5%E6%A8%A1%E5%BC%8F/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="https://nodeandimg.oss-cn-wulanchabu.aliyuncs.com/}VRZRM08TG_W9[WMAD}69[O.png">
+      <meta itemprop="name" content="Hao">
+      <meta itemprop="description" content="It's an IT blog...">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Study Node">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          <a href="/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F/%E7%BB%93%E6%9E%84%E5%9E%8B%E6%A8%A1%E5%BC%8F-%E6%A1%A5%E6%8E%A5%E6%A8%A1%E5%BC%8F/" class="post-title-link" itemprop="url">结构型模式 - 桥接模式</a>
+        </h2>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">Posted on</span>
+
+      <time title="Created: 2022-04-04 21:41:48" itemprop="dateCreated datePublished" datetime="2022-04-04T21:41:48+08:00">2022-04-04</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">In</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F/" itemprop="url" rel="index"><span itemprop="name">设计模式</span></a>
+        </span>
+          , 
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F/%E7%BC%96%E7%A8%8B%E6%80%9D%E6%83%B3/" itemprop="url" rel="index"><span itemprop="name">编程思想</span></a>
+        </span>
+    </span>
+
+  
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+          <p>结构型模式描述如何将类或对象按某种布局组成更大的结构，有以下两种：</p>
+<ul>
+<li><strong>类结构型模式</strong>：采用继承机制来组织接口和类。</li>
+<li><strong>对象结构型模式</strong>：釆用组合或聚合来组合对象。</li>
+</ul>
+<p>由于组合关系或聚合关系比继承关系耦合度低，满足 “合成复用原则”，所以对象结构型模式比类结构型模式具有更大的灵活性。</p>
+<p>结构型模式分为以下 7 种：</p>
+<ul>
+<li>代理模式</li>
+<li>适配器模式</li>
+<li>装饰者模式</li>
+<li>桥接模式</li>
+<li>外观模式</li>
+<li>组合模式</li>
+<li>享元模式</li>
+</ul>
+<h1 id="桥接模式"><a href="#桥接模式" class="headerlink" title="桥接模式"></a>桥接模式</h1><h2 id="概述"><a href="#概述" class="headerlink" title="概述"></a>概述</h2><p>现在有一个需求，需要创建不同的图形，并且每个图形都有可能会有不同的颜色。可以利用继承的方式来设计类的关系：</p>
+<p><img src="https://nodeandimg.oss-cn-wulanchabu.aliyuncs.com/F8YGNU6CI2RQ96D.png"></p>
+<p>可以发现有很多的类，假如需要增加一个形状或再增加一种颜色，就需要创建更多的类。</p>
+<p>在一个有多种可能会变化的维度的系统中，用继承方式会造成类爆炸，扩展起来不灵活。每次在一个维度上新增一个具体实现都要增加多个子类。为了更加灵活的设计系统，此时可以考虑使用桥接模式。</p>
+<p>桥接模式：将抽象与实现分离，使它们可以独立变化。它是用组合关系代替继承关系来实现，从而降低了抽象和实现这两个可变维度的耦合度。</p>
+<h2 id="结构"><a href="#结构" class="headerlink" title="结构"></a>结构</h2><p>桥接（Bridge）模式包含以下主要角色：</p>
+<ul>
+<li>抽象化（Abstraction）角色 ：定义抽象类，并包含一个对实现化对象的引用。</li>
+<li>扩展抽象化（Refined Abstraction）角色 ：抽象化角色的子类，实现父类中的业务方法，并通过组合关系调用实现化角色中的业务方法。</li>
+<li>实现化（Implementor）角色 ：定义实现化角色的接口，供扩展抽象化角色调用。</li>
+<li>具体实现化（Concrete Implementor）角色 ：给出实现化角色接口的具体实现。</li>
+</ul>
+<h2 id="案例"><a href="#案例" class="headerlink" title="案例"></a>案例</h2><p>【例】视频播放器</p>
+<p>需要开发一个跨平台视频播放器，可以在不同操作系统平台（Windows、Mac、Linux 等）上播放多种格式的视频文件，常见的视频格式包括 RMVB、AVI、WMV 等，该播放器包含了<strong>两个维度</strong>，适合使用桥接模式。</p>
+<blockquote>
+<p>两个维度是指：不同操作系统、不同的视频格式，这些都有可能任意变化</p>
+</blockquote>
+<p>类图如下：</p>
+<p><img src="https://nodeandimg.oss-cn-wulanchabu.aliyuncs.com/91VC0CTZJCTT9L60O.png"></p>
+<p><strong>实现化角色</strong>：视频文件格式接口</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">interface</span> <span class="title">VideoFile</span> </span>&#123;</span><br><span class="line">    <span class="comment">// 解码功能</span></span><br><span class="line">    <span class="function"><span class="keyword">void</span> <span class="title">decode</span><span class="params">(String fileName)</span></span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p><strong>具体实现化角色</strong>：具体的视频文件类，avi、rmvb 等</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">AviFile</span> <span class="keyword">implements</span> <span class="title">VideoFile</span> </span>&#123;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">decode</span><span class="params">(String fileName)</span> </span>&#123;</span><br><span class="line">        System.out.println(<span class="string">&quot;avi视频文件 ：&quot;</span> + fileName);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">RmvbFile</span> <span class="keyword">implements</span> <span class="title">VideoFile</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">decode</span><span class="params">(String fileName)</span> </span>&#123;</span><br><span class="line">        System.out.println(<span class="string">&quot;rmvb视频文件 ：&quot;</span> + fileName);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p><strong>抽象化角色</strong>：操作系统抽象类</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">abstract</span> <span class="class"><span class="keyword">class</span> <span class="title">OperatingSystem</span> </span>&#123;</span><br><span class="line">    <span class="comment">// 声明videFile变量</span></span><br><span class="line">    <span class="keyword">protected</span> VideoFile videoFile;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="title">OperatingSystem</span><span class="params">(VideoFile videoFile)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">this</span>.videoFile = videoFile;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">abstract</span> <span class="keyword">void</span> <span class="title">play</span><span class="params">(String fileName)</span></span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p><strong>拓展抽象化角色</strong>：Windows、Mac 操作系统</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">Windows</span> <span class="keyword">extends</span> <span class="title">OperatingSystem</span> </span>&#123;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="title">Windows</span><span class="params">(VideoFile videoFile)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">super</span>(videoFile);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">play</span><span class="params">(String fileName)</span> </span>&#123;</span><br><span class="line">        videoFile.decode(fileName);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">Mac</span> <span class="keyword">extends</span> <span class="title">OperatingSystem</span> </span>&#123;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="title">Mac</span><span class="params">(VideoFile videoFile)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">super</span>(videoFile);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">play</span><span class="params">(String fileName)</span> </span>&#123;</span><br><span class="line">        videoFile.decode(fileName);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>测试类：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">Client</span> </span>&#123;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> </span>&#123;</span><br><span class="line">        <span class="comment">// 创建Mac系统对象</span></span><br><span class="line">        OperatingSystem system = <span class="keyword">new</span> Mac(<span class="keyword">new</span> AviFile());</span><br><span class="line">        <span class="comment">// 使用操作系统播放视频文件</span></span><br><span class="line">        system.play(<span class="string">&quot;战狼3&quot;</span>);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">avi视频文件 ：战狼<span class="number">3</span></span><br></pre></td></tr></table></figure>
+
+<h2 id="使用场景"><a href="#使用场景" class="headerlink" title="使用场景"></a>使用场景</h2><ul>
+<li>当一个类存在两个独立变化的维度，且这两个维度都需要进行扩展时。</li>
+<li>当一个系统不希望使用继承或因为多层次继承导致出现 “类爆炸” 的情况时。</li>
+</ul>
+<blockquote>
+<p><strong>类爆炸</strong>：类的个数急剧增加</p>
+</blockquote>
+<ul>
+<li><p>当一个系统需要在构件的抽象化角色和具体化角色之间增加更多的灵活性时。</p>
+<p>避免在两个层次之间建立静态的继承联系，通过桥接模式可以使它们在抽象层建立一个关联关系。</p>
+</li>
+</ul>
+
+      
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+</div>
+
+
+
+
+    
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="设计模式">
+    <link itemprop="mainEntityOfPage" href="http://yoursite-url/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F/%E7%BB%93%E6%9E%84%E5%9E%8B%E6%A8%A1%E5%BC%8F-%E8%A3%85%E9%A5%B0%E8%80%85%E6%A8%A1%E5%BC%8F/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="https://nodeandimg.oss-cn-wulanchabu.aliyuncs.com/}VRZRM08TG_W9[WMAD}69[O.png">
+      <meta itemprop="name" content="Hao">
+      <meta itemprop="description" content="It's an IT blog...">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Study Node">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          <a href="/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F/%E7%BB%93%E6%9E%84%E5%9E%8B%E6%A8%A1%E5%BC%8F-%E8%A3%85%E9%A5%B0%E8%80%85%E6%A8%A1%E5%BC%8F/" class="post-title-link" itemprop="url">结构型模式 - 装饰者模式</a>
+        </h2>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">Posted on</span>
+
+      <time title="Created: 2022-04-03 19:30:03" itemprop="dateCreated datePublished" datetime="2022-04-03T19:30:03+08:00">2022-04-03</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">In</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F/" itemprop="url" rel="index"><span itemprop="name">设计模式</span></a>
+        </span>
+          , 
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F/%E7%BC%96%E7%A8%8B%E6%80%9D%E6%83%B3/" itemprop="url" rel="index"><span itemprop="name">编程思想</span></a>
+        </span>
+    </span>
+
+  
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+          <p>结构型模式描述如何将类或对象按某种布局组成更大的结构，有以下两种：</p>
+<ul>
+<li><strong>类结构型模式</strong>：采用继承机制来组织接口和类。</li>
+<li><strong>对象结构型模式</strong>：釆用组合或聚合来组合对象。</li>
+</ul>
+<p>由于组合关系或聚合关系比继承关系<a target="_blank" rel="noopener" href="https://so.csdn.net/so/search?q=%E8%80%A6%E5%90%88%E5%BA%A6&spm=1001.2101.3001.7020">耦合度</a>低，满足 “合成复用原则”，所以对象结构型模式比类结构型模式具有更大的灵活性。</p>
+<p>结构型模式分为以下 7 种：</p>
+<ul>
+<li>代理模式</li>
+<li>适配器模式</li>
+<li>装饰者模式</li>
+<li>桥接模式</li>
+<li>外观模式</li>
+<li>组合模式</li>
+<li>享元模式</li>
+</ul>
+<h1 id="装饰者模式"><a href="#装饰者模式" class="headerlink" title="装饰者模式"></a>装饰者模式</h1><h2 id="概述"><a href="#概述" class="headerlink" title="概述"></a>概述</h2><p>先来看一个快餐店的例子：快餐店有炒面、炒饭等快餐，可以额外附加鸡蛋、火腿、培根这些配菜，当然加配菜需要额外加钱，每个配菜的价钱通常不太一样，那么计算总价就会显得比较麻烦。下面是使用继承方式的类图：</p>
+<p><img src="https://nodeandimg.oss-cn-wulanchabu.aliyuncs.com/FTF0EPM9IA1WN0.png"></p>
+<p>使用继承的方式存在的问题：</p>
+<ul>
+<li><strong>扩展性不好</strong>：如果要再加一种配料（火腿肠），我们就会发现需要给 FriedRice 和 FriedNoodles 分别定义一个子类。如果要新增一个快餐品类（炒河粉）的话，就需要定义更多的子类。</li>
+<li><strong>产生过多的子类</strong></li>
+</ul>
+<p><strong>装饰者模式：</strong>在不改变现有对象结构的情况下，动态地给该对象增加一些职责（即增加其额外功能）的模式。</p>
+<h2 id="结构"><a href="#结构" class="headerlink" title="结构"></a>结构</h2><p>装饰者（Decorator）模式中的角色：</p>
+<ul>
+<li>抽象构件（Component）角色 ：定义一个抽象接口以规范准备接收附加责任的对象。</li>
+<li>具体构件（Concrete Component）角色 ：实现抽象构件，通过装饰角色为其添加一些职责。</li>
+<li>抽象装饰（Decorator）角色 ： 继承或实现抽象构件，并包含具体构件的实例，可以通过其子类扩展具体构件的功能。</li>
+<li>具体装饰（ConcreteDecorator）角色 ：实现抽象装饰的相关方法，并给具体构件对象添加附加的责任。</li>
+</ul>
+<h2 id="案例"><a href="#案例" class="headerlink" title="案例"></a>案例</h2><p>使用装饰者模式对快餐店案例进行改进，类图如下：</p>
+<p><img src="https://nodeandimg.oss-cn-wulanchabu.aliyuncs.com/Y1FYPAYARROZQJ.png"></p>
+<p><strong>抽象构件角色</strong>：快餐类</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Data</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">abstract</span> <span class="class"><span class="keyword">class</span> <span class="title">FastFood</span> </span>&#123;</span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">float</span> price; <span class="comment">// 价格</span></span><br><span class="line">    <span class="keyword">private</span> String desc; <span class="comment">// 描述</span></span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="title">FastFood</span><span class="params">(<span class="keyword">float</span> price, String desc)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">this</span>.price = price;</span><br><span class="line">        <span class="keyword">this</span>.desc = desc;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">abstract</span> <span class="keyword">float</span> <span class="title">cost</span><span class="params">()</span></span>;</span><br><span class="line">&#125;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<p><strong>具体构件角色</strong>：炒饭类、炒面类</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">FriedRice</span> <span class="keyword">extends</span> <span class="title">FastFood</span> </span>&#123;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="title">FriedRice</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        <span class="keyword">super</span>(<span class="number">10</span>, <span class="string">&quot;炒饭&quot;</span>);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">float</span> <span class="title">cost</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        <span class="keyword">return</span> getPrice();</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">FriedNoodles</span> <span class="keyword">extends</span> <span class="title">FastFood</span> </span>&#123;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="title">FriedNoodles</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        <span class="keyword">super</span>(<span class="number">12</span>, <span class="string">&quot;炒面&quot;</span>);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">float</span> <span class="title">cost</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        <span class="keyword">return</span> getPrice();</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p><strong>抽象装饰者角色</strong>：配料类</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Data</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">abstract</span> <span class="class"><span class="keyword">class</span> <span class="title">Garnish</span> <span class="keyword">extends</span> <span class="title">FastFood</span> </span>&#123;</span><br><span class="line">    <span class="comment">// 声明快餐类的变量</span></span><br><span class="line">    <span class="keyword">private</span> FastFood fastFood;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="title">Garnish</span><span class="params">(FastFood fastFood, <span class="keyword">float</span> price, String desc)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">super</span>(price, desc);</span><br><span class="line">        <span class="keyword">this</span>.fastFood = fastFood;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p><strong>具体装饰者角色</strong>：鸡蛋配料类、培根配料类</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">Egg</span> <span class="keyword">extends</span> <span class="title">Garnish</span> </span>&#123;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="title">Egg</span><span class="params">(FastFood fastFood)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">super</span>(fastFood, <span class="number">1</span>, <span class="string">&quot;鸡蛋&quot;</span>);</span><br><span class="line">    &#125;</span><br><span class="line">  </span><br><span class="line">    <span class="comment">// 计算价格</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">float</span> <span class="title">cost</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        <span class="keyword">return</span> getPrice() + getFastFood().cost();</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> String <span class="title">getDesc</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="keyword">super</span>.getDesc() + getFastFood().getDesc();</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">Bacon</span> <span class="keyword">extends</span> <span class="title">Garnish</span> </span>&#123;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="title">Bacon</span><span class="params">(FastFood fastFood)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">super</span>(fastFood, <span class="number">2</span>, <span class="string">&quot;培根&quot;</span>);</span><br><span class="line">    &#125;</span><br><span class="line">	</span><br><span class="line">  	<span class="comment">// 计算价格</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">float</span> <span class="title">cost</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        <span class="keyword">return</span> getPrice() + getFastFood().cost();</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> String <span class="title">getDesc</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="keyword">super</span>.getDesc() + getFastFood().getDesc();</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>测试类：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">Client</span> </span>&#123;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> </span>&#123;</span><br><span class="line">        <span class="comment">//  点一份炒饭</span></span><br><span class="line">        FastFood food = <span class="keyword">new</span> FriedRice();</span><br><span class="line">        System.out.println(food.getDesc() + <span class="string">&quot;  &quot;</span> + food.cost() + <span class="string">&quot;元&quot;</span>);</span><br><span class="line">        <span class="comment">// 在上面的炒饭中加一个鸡蛋</span></span><br><span class="line">        food = <span class="keyword">new</span> Egg(food);</span><br><span class="line">        System.out.println(food.getDesc() + <span class="string">&quot;  &quot;</span> + food.cost() + <span class="string">&quot;元&quot;</span>);</span><br><span class="line">        <span class="comment">// 再加一个鸡蛋</span></span><br><span class="line">        food = <span class="keyword">new</span> Egg(food);</span><br><span class="line">        System.out.println(food.getDesc() + <span class="string">&quot;  &quot;</span> + food.cost() + <span class="string">&quot;元&quot;</span>);</span><br><span class="line">        <span class="comment">// 再加一个培根</span></span><br><span class="line">        food = <span class="keyword">new</span> Bacon(food);</span><br><span class="line">        System.out.println(food.getDesc() + <span class="string">&quot;  &quot;</span> + food.cost() + <span class="string">&quot;元&quot;</span>);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">炒饭  <span class="number">10.0</span>元</span><br><span class="line">鸡蛋炒饭  <span class="number">11.0</span>元</span><br><span class="line">鸡蛋鸡蛋炒饭  <span class="number">12.0</span>元</span><br><span class="line">培根鸡蛋鸡蛋炒饭  <span class="number">14.0</span>元</span><br></pre></td></tr></table></figure>
+
+<h2 id="使用场景"><a href="#使用场景" class="headerlink" title="使用场景"></a>使用场景</h2><ul>
+<li>当不能采用继承的方式对系统进行扩充或者采用继承不利于系统扩展和维护时。</li>
+</ul>
+<blockquote>
+<p>不能采用继承的情况主要有两类：</p>
+<ul>
+<li>第一类是系统中存在大量独立的扩展，为支持每一种组合将产生大量的子类，使得子类数目呈爆炸性增长。</li>
+<li>第二类是因为类定义不能继承（如 final 类）。</li>
+</ul>
+</blockquote>
+<ul>
+<li>在不影响其他对象的情况下，以动态、透明的方式给单个对象添加职责。</li>
+<li>当对象的功能要求可以动态地添加，也可以再动态地撤销时。</li>
+</ul>
+<h2 id="JDK源码解析"><a href="#JDK源码解析" class="headerlink" title="JDK源码解析"></a>JDK源码解析</h2><p>IO流中的包装类使用到了装饰者模式：BufferedInputStream，BufferedOutputStream，BufferedReader，BufferedWriter。</p>
+<p>以 BufferedWriter 举例来说明，先看看如何使用 BufferedWriter：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 创建FileWriter对象</span></span><br><span class="line">FileWriter fw = <span class="keyword">new</span> FileWriter(<span class="string">&quot;C:\\Users\\Think\\Desktop\\a.txt&quot;</span>);</span><br><span class="line"><span class="comment">// 创建BufferedWriter对象</span></span><br><span class="line">BufferedWriter bw = <span class="keyword">new</span> BufferedWriter(fw);</span><br><span class="line"><span class="comment">// 写数据</span></span><br><span class="line">bw.write(<span class="string">&quot;hello Buffered&quot;</span>);</span><br><span class="line">bw.close();</span><br></pre></td></tr></table></figure>
+
+<p>使用起来感觉确实像是装饰者模式，接下来看它们的结构：</p>
+<p><img src="https://nodeandimg.oss-cn-wulanchabu.aliyuncs.com/5F2G24Q28V8U77M.png"></p>
+<p>BufferedWriter 使用装饰者模式对 Writer 子实现类进行了增强，添加了缓冲区，提高了写数据的效率。</p>
+<h2 id="代理和装饰者的区别"><a href="#代理和装饰者的区别" class="headerlink" title="代理和装饰者的区别"></a>代理和装饰者的区别</h2><p><strong>相同点</strong>：</p>
+<ul>
+<li>都要实现与目标类相同的业务接口</li>
+<li>在两个类中都要声明目标对象</li>
+<li>都可以在不修改目标类的前提下增强目标方法</li>
+</ul>
+<p><strong>不同点</strong>：</p>
+<ul>
+<li><p>目的不同</p>
+<p>装饰者是为了增强目标对象<br>静态代理是为了保护和隐藏目标对象</p>
+</li>
+</ul>
+<blockquote>
+<p>装饰者可以迭代增强，代理只能增强一次</p>
+</blockquote>
+<ul>
+<li>获取目标对象构建的地方不同<br>装饰者是由外界传递进来，可以通过构造方法传递<br>静态代理是在代理类内部创建，以此来隐藏目标对象</li>
+</ul>
+
+      
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+</div>
+
+
+
 
     
 
@@ -1736,257 +2041,6 @@
 <p>例如，汽车和船实现了交通工具，其类图如下图所示：</p>
 <p><img src="https://nodeandimg.oss-cn-wulanchabu.aliyuncs.com/JREKPW4LN48ZPJ1K68H.png"></p>
 <p>在 UML 类图中，实现关系使用<strong>带空心三角箭头的虚线</strong>来表示，箭头从实现类指向接口。</p>
-
-      
-    </div>
-
-    
-    
-    
-
-    <footer class="post-footer">
-        <div class="post-eof"></div>
-      
-    </footer>
-  </article>
-</div>
-
-
-
-
-    
-
-
-<div class="post-block">
-  
-  
-
-  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="Reids">
-    <link itemprop="mainEntityOfPage" href="http://yoursite-url/Reids/%E7%BC%93%E5%AD%98%E7%A9%BF%E9%80%8F%E4%B8%8E%E9%9B%AA%E5%B4%A9/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="https://nodeandimg.oss-cn-wulanchabu.aliyuncs.com/}VRZRM08TG_W9[WMAD}69[O.png">
-      <meta itemprop="name" content="Hao">
-      <meta itemprop="description" content="It's an IT blog...">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Study Node">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          <a href="/Reids/%E7%BC%93%E5%AD%98%E7%A9%BF%E9%80%8F%E4%B8%8E%E9%9B%AA%E5%B4%A9/" class="post-title-link" itemprop="url">缓存穿透与雪崩</a>
-        </h2>
-
-        <div class="post-meta-container">
-          <div class="post-meta">
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-calendar"></i>
-      </span>
-      <span class="post-meta-item-text">Posted on</span>
-
-      <time title="Created: 2022-03-22 22:02:20" itemprop="dateCreated datePublished" datetime="2022-03-22T22:02:20+08:00">2022-03-22</time>
-    </span>
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-folder"></i>
-      </span>
-      <span class="post-meta-item-text">In</span>
-        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-          <a href="/categories/NoSQL/" itemprop="url" rel="index"><span itemprop="name">NoSQL</span></a>
-        </span>
-          , 
-        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-          <a href="/categories/NoSQL/Redis/" itemprop="url" rel="index"><span itemprop="name">Redis</span></a>
-        </span>
-    </span>
-
-  
-</div>
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-          <h1 id="缓存穿透与雪崩"><a href="#缓存穿透与雪崩" class="headerlink" title="缓存穿透与雪崩"></a>缓存穿透与雪崩</h1><h2 id="缓存穿透（查不到）"><a href="#缓存穿透（查不到）" class="headerlink" title="缓存穿透（查不到）"></a>缓存穿透（查不到）</h2><h3 id="概念"><a href="#概念" class="headerlink" title="概念"></a>概念</h3><p>在默认情况下，用户请求数据时，会先在缓存(Redis)中查找，若没找到即缓存未命中，再在数据库中进行查找，数量少可能问题不大，可是一旦大量的请求数据（例如秒杀场景）缓存都没有命中的话，就会全部转移到数据库上，造成数据库极大的压力，就有可能导致数据库崩溃。网络安全中也有人恶意使用这种手段进行攻击被称为洪水攻击。</p>
-<h3 id="解决方案"><a href="#解决方案" class="headerlink" title="解决方案"></a>解决方案</h3><p><strong>布隆过滤器</strong></p>
-<p>对所有可能查询的参数以Hash的形式存储，以便快速确定是否存在这个值，在控制层先进行拦截校验，校验不通过直接打回，减轻了存储系统的压力。</p>
-<p><img src="https://nodeandimg.oss-cn-wulanchabu.aliyuncs.com/TNHG3ZUJ588]QTYR6K.png"></p>
-<p><strong>缓存空对象</strong></p>
-<p>一次请求若在缓存和数据库中都没找到，就在缓存中方一个空对象用于处理后续这个请求。</p>
-<p><img src="https://nodeandimg.oss-cn-wulanchabu.aliyuncs.com/W9GCNUEPECV5HIEXJBB.png"></p>
-<p> 这样做有一个缺陷：存储空对象也需要空间，大量的空对象会耗费一定的空间，存储效率并不高。解决这个缺陷的方式就是设置较短过期时间</p>
-<p>即使对空值设置了过期时间，还是会存在缓存层和存储层的数据会有一段时间窗口的不一致，这对于需要保持一致性的业务会有影响。</p>
-<h2 id="缓存击穿（量太大，缓存过期）"><a href="#缓存击穿（量太大，缓存过期）" class="headerlink" title="缓存击穿（量太大，缓存过期）"></a>缓存击穿（量太大，缓存过期）</h2><h3 id="概念-1"><a href="#概念-1" class="headerlink" title="概念"></a>概念</h3><p> 相较于缓存穿透，缓存击穿的目的性更强，一个存在的key，在缓存过期的一刻，同时有大量的请求，这些请求都会击穿到DB，造成瞬时DB请求量大、压力骤增。这就是缓存被击穿，只是针对其中某个key的缓存不可用而导致击穿，但是其他的key依然可以使用缓存响应。</p>
-<p> 比如热搜排行上，一个热点新闻被同时大量访问就可能导致缓存击穿。</p>
-<h3 id="解决方案-1"><a href="#解决方案-1" class="headerlink" title="解决方案"></a>解决方案</h3><p>1.设置热点数据永不过期</p>
-<p>这样就不会出现热点数据过期的情况，但是当Redis内存空间满的时候也会清理部分数据，而且此种方案会占用空间，一旦热点数据多了起来，就会占用部分空间。</p>
-<p>2.加互斥锁(分布式锁)</p>
-<p>在访问key之前，采用SETNX（set if not exists）来设置另一个短期key来锁住当前key的访问，访问结束再删除该短期key。保证同时刻只有一个线程访问。这样对锁的要求就十分高。</p>
-<h2 id="缓存雪崩"><a href="#缓存雪崩" class="headerlink" title="缓存雪崩"></a>缓存雪崩</h2><h3 id="概念-2"><a href="#概念-2" class="headerlink" title="概念"></a>概念</h3><p>大量的key设置了相同的过期时间，导致在缓存在同一时刻全部失效，造成瞬时DB请求量大、压力骤增，引起雪崩。</p>
-<p><img src="https://nodeandimg.oss-cn-wulanchabu.aliyuncs.com/7Q22831LO2EIXBQN.png"></p>
-<h3 id="解决方案-2"><a href="#解决方案-2" class="headerlink" title="解决方案"></a>解决方案</h3><ul>
-<li>redis高可用</li>
-</ul>
-<p>这个思想的含义是，既然redis有可能挂掉，那我多增设几台redis，这样一台挂掉之后其他的还可以继续工作，其实就是搭建的集群</p>
-<ul>
-<li>限流降级</li>
-</ul>
-<p>这个解决方案的思想是，在缓存失效后，通过加锁或者队列来控制读数据库写缓存的线程数量。比如对某个key只允许一个线程查询数据和写缓存，其他线程等待。</p>
-<ul>
-<li>数据预热</li>
-</ul>
-<p>数据加热的含义就是在正式部署之前，我先把可能的数据先预先访问一遍，这样部分可能大量访问的数据就会加载到缓存中。在即将发生大并发访问前手动触发加载缓存不同的key，设置不同的过期时间，让缓存失效的时间点尽量均匀。</p>
-
-      
-    </div>
-
-    
-    
-    
-
-    <footer class="post-footer">
-        <div class="post-eof"></div>
-      
-    </footer>
-  </article>
-</div>
-
-
-
-
-    
-
-
-<div class="post-block">
-  
-  
-
-  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="Reids">
-    <link itemprop="mainEntityOfPage" href="http://yoursite-url/Reids/Redis%E4%B8%BB%E4%BB%8E%E5%A4%8D%E5%88%B6%E5%8F%8A%E5%93%A8%E5%85%B5%E6%A8%A1%E5%BC%8F/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="https://nodeandimg.oss-cn-wulanchabu.aliyuncs.com/}VRZRM08TG_W9[WMAD}69[O.png">
-      <meta itemprop="name" content="Hao">
-      <meta itemprop="description" content="It's an IT blog...">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Study Node">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          <a href="/Reids/Redis%E4%B8%BB%E4%BB%8E%E5%A4%8D%E5%88%B6%E5%8F%8A%E5%93%A8%E5%85%B5%E6%A8%A1%E5%BC%8F/" class="post-title-link" itemprop="url">Redis主从复制及哨兵模式</a>
-        </h2>
-
-        <div class="post-meta-container">
-          <div class="post-meta">
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-calendar"></i>
-      </span>
-      <span class="post-meta-item-text">Posted on</span>
-
-      <time title="Created: 2022-03-21 21:57:36" itemprop="dateCreated datePublished" datetime="2022-03-21T21:57:36+08:00">2022-03-21</time>
-    </span>
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-folder"></i>
-      </span>
-      <span class="post-meta-item-text">In</span>
-        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-          <a href="/categories/NoSQL/" itemprop="url" rel="index"><span itemprop="name">NoSQL</span></a>
-        </span>
-          , 
-        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-          <a href="/categories/NoSQL/Redis/" itemprop="url" rel="index"><span itemprop="name">Redis</span></a>
-        </span>
-    </span>
-
-  
-</div>
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-          <h1 id="Redis主从复制及哨兵模式"><a href="#Redis主从复制及哨兵模式" class="headerlink" title="Redis主从复制及哨兵模式"></a>Redis主从复制及哨兵模式</h1><h2 id="Redis主从复制"><a href="#Redis主从复制" class="headerlink" title="Redis主从复制"></a>Redis主从复制</h2><h3 id="概念"><a href="#概念" class="headerlink" title="概念"></a>概念</h3><p> 主从复制，是指将一台Redis服务器的数据，复制到其他的Redis服务器。前者称为主节点（Master/Leader）,后者称为从节点（Slave/Follower）， 数据的复制是单向的！只能由主节点复制到从节点（主节点以写为主、从节点以读为主）。</p>
-<p>默认情况下，每台Redis服务器都是主节点，一个主节点可以有0个或者多个从节点，但每个从节点只能由一个主节点。</p>
-<h3 id="作用"><a href="#作用" class="headerlink" title="作用"></a>作用</h3><p>数据冗余：主从复制实现了数据的热备份，是持久化之外的一种数据冗余的方式。<br>故障恢复：当主节点故障时，从节点可以暂时替代主节点提供服务，是一种服务冗余的方式<br>负载均衡：在主从复制的基础上，配合读写分离，由主节点进行写操作，从节点进行读操作，分担服务器的负载；尤其是在多读少写的场景下，通过多个从节点分担负载，提高并发量。<br>高可用基石：主从复制还是哨兵和集群能够实施的基础。</p>
-<h3 id="为什么使用集群"><a href="#为什么使用集群" class="headerlink" title="为什么使用集群"></a>为什么使用集群</h3><ol>
-<li>单台服务器难以负载大量的请求</li>
-<li>单台服务器故障率高，系统崩坏概率大</li>
-<li>单台服务器内存容量有限。</li>
-</ol>
-<h3 id="环境配置"><a href="#环境配置" class="headerlink" title="环境配置"></a>环境配置</h3><p>查看当前库的信息：<code>info replication</code></p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">127.0.0.1:6379&gt; info replication</span><br><span class="line"><span class="comment"># Replication</span></span><br><span class="line">role:master <span class="comment"># 角色</span></span><br><span class="line">connected_slaves:0 <span class="comment"># 从机数量</span></span><br><span class="line">master_replid:3b54deef5b7b7b7f7dd8acefa23be48879b4fcff</span><br><span class="line">master_replid2:0000000000000000000000000000000000000000</span><br><span class="line">master_repl_offset:0</span><br><span class="line">second_repl_offset:-1</span><br><span class="line">repl_backlog_active:0</span><br><span class="line">repl_backlog_size:1048576</span><br><span class="line">repl_backlog_first_byte_offset:0</span><br><span class="line">repl_backlog_histlen:0</span><br></pre></td></tr></table></figure>
-
-<p>既然需要启动多个服务，就需要多个配置文件。每个配置文件对应修改以下信息：</p>
-<ul>
-<li>端口号</li>
-<li>pid文件名</li>
-<li>日志文件名</li>
-<li>rdb文件名</li>
-</ul>
-<p>启动单机多服务集群：</p>
-<p>配置这边就不详细写了</p>
-<h3 id="使用规则"><a href="#使用规则" class="headerlink" title="使用规则"></a>使用规则</h3><p>1.从机只能读，不能写，主机可读可写但是多用于写。</p>
-<figure class="highlight pgsql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"> <span class="number">127.0</span><span class="number">.0</span><span class="number">.1</span>:<span class="number">6381</span>&gt; <span class="keyword">set</span> <span class="type">name</span> sakura # 从机<span class="number">6381</span>写入失败</span><br><span class="line">(error) READONLY You can<span class="string">&#x27;t write against a read only replica.</span></span><br><span class="line"><span class="string"></span></span><br><span class="line"><span class="string">127.0.0.1:6380&gt; set name sakura # 从机6380写入失败</span></span><br><span class="line"><span class="string">(error) READONLY You can&#x27;</span>t <span class="keyword">write</span> against a <span class="keyword">read</span> <span class="keyword">only</span> <span class="keyword">replica</span>.</span><br><span class="line"></span><br><span class="line"><span class="number">127.0</span><span class="number">.0</span><span class="number">.1</span>:<span class="number">6379</span>&gt; <span class="keyword">set</span> <span class="type">name</span> sakura</span><br><span class="line">OK</span><br><span class="line"><span class="number">127.0</span><span class="number">.0</span><span class="number">.1</span>:<span class="number">6379</span>&gt; <span class="keyword">get</span> <span class="type">name</span></span><br><span class="line">&quot;sakura&quot;</span><br></pre></td></tr></table></figure>
-
-<p>2.当主机断电宕机后，默认情况下从机的角色不会发生变化 ，集群中只是失去了写操作，当主机恢复以后，又会连接上从机恢复原状</p>
-<p>3.当从机断电宕机后，若不是使用配置文件配置的从机，再次启动后作为主机是无法获取之前主机的数据的，若此时重新配置称为从机，又可以获取到主机的所有数据。这里就要提到一个同步原理。</p>
-<p>4.第二条中提到，默认情况下，主机故障后，不会出现新的主机，有两种方式可以产生新的主机</p>
-<ul>
-<li>从机手动执行命令<code>slaveof no one</code>,这样执行以后从机会独立出来成为一个主机</li>
-<li>使用哨兵模式（自动选举）</li>
-</ul>
-<blockquote>
-<p>如果没有老大了，这个时候能不能选择出来一个老大呢？手动！</p>
-</blockquote>
-<p>如果主机断开了连接，我们可以使用<code>SLAVEOF no one</code>让自己变成主机！其他的节点就可以手动连接到最新的主节点（手动）！如果这个时候老大修复了，那么久重新连接！</p>
-<h2 id="哨兵模式"><a href="#哨兵模式" class="headerlink" title="哨兵模式"></a>哨兵模式</h2><blockquote>
-<p>没有哨兵模式的时候</p>
-</blockquote>
-<p>当主机宕机后，这时候需要从从机中选出一个来当主节点。即使主机回来后，也无法当之前的主节点了。</p>
-<blockquote>
-<figure class="highlight nginx"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="attribute">SLAVEOF</span> <span class="literal">no</span> one		<span class="comment">#从节点变为主节点</span></span><br></pre></td></tr></table></figure>
-</blockquote>
-<h3 id="概述："><a href="#概述：" class="headerlink" title="概述："></a><strong>概述</strong>：</h3><p>主从切换技术的方法是：当主服务器宕机后，需要手动把一台服务器切换为主服务器，这就需要人工干预，费时费力，还会造成一段时间内服务不可用。这不是一种推荐的方式，更多时候，我们优先考虑哨兵模式。Redis从2.8开始正式提供Sentinel（哨兵）架构来解决这个问题。</p>
-<p>能够监控主机是否故障，如果故障了根据投票数自动将从库转化为主库</p>
-<p>哨兵模式是一种特殊的模式，首先redis提供了哨兵的命令，哨兵是一个独立的进程，作为进程，它会独立运行。原理是：哨兵通过发送命令，等待redis服务器响应，从而监控多个redis示例。</p>
-<p><img src="https://nodeandimg.oss-cn-wulanchabu.aliyuncs.com/ONBG2WN1POVI1Y3Y]R.png"></p>
-<p>（单机哨兵）</p>
-<p>一个哨兵进行监控，可能会出现问题，为此，我们可以使用多个哨兵进行监控。各个哨兵之间还会进行监控，这样就形成了哨兵模式</p>
-<p><img src="https://nodeandimg.oss-cn-wulanchabu.aliyuncs.com/8ZV0BL0WL448JR7NTX.png"></p>
-<p>（多哨兵模式）</p>
-<p>假设主服务器宕机，哨兵1先检测到这个结果，系统并不会马上进行failover(重新选举)，仅仅是哨兵1主观认为主服务器不可用，称为<strong>主观下线</strong>。当后面的哨兵也检测到主服务器不可用，并且打到一定数量是，那么哨兵就会进行一次投票，投票的结果由一个哨兵发起，进行failover【故障转移】操作。切换成功后，通过发布订阅模式，让各个哨兵把自己监控的从服务器切换成主服务器，这个过程称为<strong>客观下线</strong></p>
-<p>开启哨兵模式</p>
-<p>配置sentinel.conf文件</p>
-<ul>
-<li>创建一个哨兵配置文件（sentinel.conf）</li>
-<li>配置文件</li>
-</ul>
-<figure class="highlight smali"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sentinel<span class="built_in"> monitor </span>被监控的主机名称 host port 1  <span class="comment">#1代表主机挂了，要进行重新选举</span></span><br></pre></td></tr></table></figure>
-
-<figure class="highlight 1c"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">redis-sentinel kconfig/sentinel.conf		<span class="meta">#启动哨兵模式</span></span><br></pre></td></tr></table></figure>
-
-<h3 id="缺点"><a href="#缺点" class="headerlink" title="缺点"></a>缺点</h3><p>优点：</p>
-<ul>
-<li>主从可以切换、故障可以转移，可用性高</li>
-<li>哨兵模式是主从模式的升级，手动到自动，更加健壮</li>
-</ul>
-<p>缺点：</p>
-<ul>
-<li>redis不好在线扩容，集群数量一旦打到上限，扩容就十分麻烦</li>
-<li>实现哨兵模式的配置其实很麻烦，里面有很多选择</li>
-</ul>
 
       
     </div>
